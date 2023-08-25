@@ -19,8 +19,8 @@
             ”, or “
             <b>our</b>
             ”), concerning your access to and use of the
-            <span class="s1">https://wallet.avax.network/</span>
-            website and related features and services, including but not limited to the FLR wallet
+            <span class="s1">https://staking.flare.network/</span>
+            website and related features and services, including but not limited to the AVAX wallet
             functionality, as well as any other media form, media channel, mobile website or mobile
             application related, linked, or otherwise connected thereto, (collectively, the “Site”).
             You agree that by accessing the Site, you have read, understood, and agreed to be bound
