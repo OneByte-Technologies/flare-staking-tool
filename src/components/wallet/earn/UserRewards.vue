@@ -3,7 +3,7 @@
         <template v-if="totLength > 0">
             <div>
                 <label>{{ $t('earn.rewards.total') }}</label>
-                <p class="amt">{{ totalRewardBig.toLocaleString(9) }} AVAX</p>
+                <p class="amt">{{ totalRewardBig.toLocaleString(9) }} FLR</p>
             </div>
             <div v-if="validatorTxs.length > 0">
                 <h3>{{ $t('earn.rewards.validation') }}</h3>
