@@ -189,7 +189,7 @@ export default class CurrencyInputDropdown extends Vue {
 
         let avaxId = this.avaxAsset.id
 
-        // Max amount is BALANCE - FEE for AVAX
+        // Max amount is BALANCE - FEE for FLR
         if (assetId === avaxId) {
             let fee = avm.getTxFee()
             // console.log(fee);

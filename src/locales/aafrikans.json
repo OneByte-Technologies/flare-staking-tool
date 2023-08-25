@@ -85,7 +85,7 @@
         "nftcol": "NFTs",
         "nftempty": "U het geen tekens wat nie aanpasbaar is nie versamel.",
         "locked": "Gesluit",
-        "info2": "Ek het muntstukke in die Teken Uitverkoping gekoop. Waar is my AVAX?",
+        "info2": "Ek het muntstukke in die Teken Uitverkoping gekoop. Waar is my FLR?",
         "info2_desc": "Hierdie beursie is aan die Avalanche Everest-toetsnetwerk gekoppel. U aankoop sal in die beursie verskyn na die bekendstelling van Avalanche Mainnet.",
         "hover1": "Bekyk Adres-QR-kode",
         "hover2": "Druk",
@@ -172,13 +172,13 @@
     },
     "earn": {
         "title": "Verdien",
-        "desc": "U kan meer AVAX verdien deur u bestaande tekens in te sit.",
+        "desc": "U kan meer FLR verdien deur u bestaande tekens in te sit.",
         "subtitle1": "Valideer",
         "subtitle2": "Delegeer",
         "subtitle3": "Kruiskettingoordrag",
         "subtitle4": "Geskatte belonings",
-        "warning_1": "U moet ten minste {0} AVAX aan die P-ketting hê om 'n valideerder te word.",
-        "warning_2": "U moet ten minste {0} AVAX aan die P-ketting hê om 'n afgevaardigde te word.",
+        "warning_1": "U moet ten minste {0} FLR aan die P-ketting hê om 'n valideerder te word.",
+        "warning_2": "U moet ten minste {0} FLR aan die P-ketting hê om 'n afgevaardigde te word.",
         "validate_card": {
             "title": "Valideer",
             "desc": "U het 'n Avalanche-nodus waarmee u wil 'n insetting maak.",
@@ -191,7 +191,7 @@
         },
         "transfer_card": {
             "title": "Kruiskettingoordrag",
-            "desc": "Om ' insetting te maak moet AVAX in die P-ketting wees. Dra tekens oor tussen X en P.",
+            "desc": "Om ' insetting te maak moet FLR in die P-ketting wees. Dra tekens oor tussen X en P.",
             "submit": "Oordrag"
         },
         "rewards_card": {
@@ -242,7 +242,7 @@
             },
             "amount": {
                 "label": "Beleggingsbedrag",
-                "desc": "Die hoeveelheid AVAX wat gesluit moet word om in te sit."
+                "desc": "Die hoeveelheid FLR wat gesluit moet word om in te sit."
             },
             "fee": {
                 "label": "Delegasie fooi",
@@ -281,7 +281,7 @@
             },
             "errs": {
                 "date": "Begindatum moet in die toekoms wees en einddatum moet na begindatum wees.",
-                "amount": "Insettingsbedrag moet tenminste {0} AVAX wees",
+                "amount": "Insettingsbedrag moet tenminste {0} FLR wees",
                 "id": "Ongeldige Nodus-ID. Moet begin met \"NodeID-\"",
                 "address": "Ongeldige beloningsadresadres."
             }
@@ -319,8 +319,8 @@
                 },
                 "amount": {
                     "label": "Insettingsbedrag",
-                    "desc": "Die hoeveelheid AVAX wat gesluit moet word om in te sit.",
-                    "desc2": "Die beskikbare delegasiebedrag vir hierdie nodus is {0} AVAX"
+                    "desc": "Die hoeveelheid FLR wat gesluit moet word om in te sit.",
+                    "desc2": "Die beskikbare delegasiebedrag vir hierdie nodus is {0} FLR"
                 },
                 "reward": {
                     "label": "Beloningsadres",
@@ -345,7 +345,7 @@
                 "max_dur": "Maksimum insettingsduur is 2 weke.",
                 "no_node": "U moet 'n valideerder spesifiseer.",
                 "val_end": "Die einddatum van die delegasie kan nie langer as die valideerder se einddatum wees nie.",
-                "amt": "Delegasiebedrag moet tenminste {0} AVAX wees."
+                "amt": "Delegasiebedrag moet tenminste {0} FLR wees."
             },
             "summary": {
                 "duration": "Insettingstydperk",

@@ -3,7 +3,7 @@
         <p class="actionTitle">{{ actionTitle }} ({{ chainAlias }})</p>
         <div class="flex-column">
             <p v-if="isExportReceiver" class="amt">
-                {{ toLocaleString(outputReceivedBalances, 9) }} AVAX
+                {{ toLocaleString(outputReceivedBalances, 9) }} FLR
             </p>
             <template v-else>
                 <p class="amt" v-for="(bal, key) in balances" :key="key">

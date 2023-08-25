@@ -26,12 +26,12 @@
             </div>
             <div class="balance_row">
                 <p class="balance" data-cy="wallet_balance" v-if="!balanceTextRight">
-                    {{ balanceTextLeft }} AVAX
+                    {{ balanceTextLeft }} FLR
                 </p>
                 <p class="balance" data-cy="wallet_balance" v-else>
                     {{ balanceTextLeft }}
                     <span>.{{ balanceTextRight }}</span>
-                    AVAX
+                    FLR
                 </p>
                 <div style="display: flex; flex-direction: row">
                     <p class="balance_usd">
@@ -39,7 +39,7 @@
                         USD
                     </p>
                     <p class="balance_usd" style="background-color: transparent">
-                        <b>1 AVAX</b>
+                        <b>1 FLR</b>
                         =
                         <b>${{ avaxPriceText }}</b>
                         USD
@@ -51,47 +51,47 @@
                 <div class="alt_non_breakdown" v-if="!isBreakdown">
                     <div>
                         <label>{{ $t('top.balance.available') }}</label>
-                        <p>{{ unlockedText }} AVAX</p>
+                        <p>{{ unlockedText }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.locked') }}</label>
-                        <p>{{ balanceTextLocked }} AVAX</p>
+                        <p>{{ balanceTextLocked }} FLR</p>
                     </div>
                     <div v-if="hasMultisig">
                         <label>Multisig</label>
-                        <p>{{ balanceTextMultisig }} AVAX</p>
+                        <p>{{ balanceTextMultisig }} FLR</p>
                     </div>
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
-                        <p>{{ stakingText }} AVAX</p>
+                        <p>{{ stakingText }} FLR</p>
                     </div>
                 </div>
                 <div class="alt_breakdown" v-else>
                     <div>
                         <label>{{ $t('top.balance.available') }} (X)</label>
-                        <p>{{ avmUnlocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (P)</label>
-                        <p>{{ platformUnlocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ platformUnlocked | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
-                        <p>{{ evmUnlocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ evmUnlocked | cleanAvaxBN }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.balance.locked') }} (X)</label>
-                        <p>{{ avmLocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ avmLocked | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.locked') }} (P)</label>
-                        <p>{{ platformLocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ platformLocked | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.locked_stake') }} (P)</label>
-                        <p>{{ platformLockedStakeable | cleanAvaxBN }} AVAX</p>
+                        <p>{{ platformLockedStakeable | cleanAvaxBN }} FLR</p>
                     </div>
                     <div v-if="hasMultisig">
                         <label>Multisig (X)</label>
-                        <p>{{ avmMultisig | cleanAvaxBN }} AVAX</p>
+                        <p>{{ avmMultisig | cleanAvaxBN }} FLR</p>
                         <label>Multisig (P)</label>
-                        <p>{{ platformMultisig | cleanAvaxBN }} AVAX</p>
+                        <p>{{ platformMultisig | cleanAvaxBN }} FLR</p>
                     </div>
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
-                        <p>{{ stakingText }} AVAX</p>
+                        <p>{{ stakingText }} FLR</p>
                     </div>
                 </div>
             </div>
@@ -233,7 +233,7 @@ export default class BalanceCard extends Vue {
         return ''
     }
 
-    // Locked balance is the sum of locked AVAX tokens on X and P chain
+    // Locked balance is the sum of locked FLR tokens on X and P chain
     get balanceTextLocked(): string {
         if (this.isUpdateBalance) return '--'
 

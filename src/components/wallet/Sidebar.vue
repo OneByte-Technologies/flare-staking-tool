@@ -27,7 +27,7 @@
                 <router-link to="/wallet/earn" data-cy="wallet_earn" class="wallet_link">
                     <img v-if="$root.theme === 'day'" src="@/assets/sidebar/earn_nav.png" />
                     <img v-else src="@/assets/sidebar/earn_nav_night.png" />
-                    {{ $t('wallet.sidebar.earn') }}
+                    {{ $t('wallet.sidebar.staking') }}
                 </router-link>
                 <router-link to="/wallet/studio" data-cy="wallet_studio" class="wallet_link">
                     <img v-if="$root.theme === 'day'" src="@/assets/sidebar/studio_nav.svg" />

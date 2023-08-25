@@ -161,7 +161,7 @@ abstract class AbstractWallet {
             utxoSet = await this.evmGetAtomicUTXOs(sourceChain)
         }
 
-        // TODO: Only use AVAX utxos
+        // TODO: Only use FLR utxos
         // TODO?: If the import fee for a utxo is greater than the value of the utxo, ignore it
 
         if (utxoSet.getAllUTXOs().length === 0) {

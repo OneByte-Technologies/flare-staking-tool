@@ -85,7 +85,7 @@
         "nftcol": "NFT:s",
         "nftempty": "Du har inte samlat in några icke fungibla tokens.",
         "locked": "Låst",
-        "info2": "Jag köpte mynt i Tokenförsäljningen. Var är mina AVAX?",
+        "info2": "Jag köpte mynt i Tokenförsäljningen. Var är mina FLR?",
         "info2_desc": "Denna plånbok är ansluten till Avalanche Everest testnätverk. Ditt köp kommer att visas i plånboken efter lanseringen av Avalanche Mainnet.",
         "hover1": "Visa Adress QR-kod",
         "hover2": "Skriv ut",
@@ -172,13 +172,13 @@
     },
     "earn": {
         "title": "Tjäna",
-        "desc": "Du kan tjäna mer AVAX genom att placera dina befintliga tokens.",
+        "desc": "Du kan tjäna mer FLR genom att placera dina befintliga tokens.",
         "subtitle1": "Validera",
         "subtitle2": "Delegera",
         "subtitle3": "Cross Chain Överförelser",
         "subtitle4": "Beräknade belöningar",
-        "warning_1": "Du måste ha minst {0} AVAX i P-kedjan för att bli validerare.",
-        "warning_2": "Du måste ha minst {0} AVAX i P-kedjan för att bli delegator.",
+        "warning_1": "Du måste ha minst {0} FLR i P-kedjan för att bli validerare.",
+        "warning_2": "Du måste ha minst {0} FLR i P-kedjan för att bli delegator.",
         "validate_card": {
             "title": "Validera",
             "desc": "Du har en Avalanche-nod som du vill placera med.",
@@ -191,7 +191,7 @@
         },
         "transfer_card": {
             "title": "Cross Chain Överföring",
-            "desc": "Satsa kräver AVAX i P-kedjan. Överför tokens mellan X och P.",
+            "desc": "Satsa kräver FLR i P-kedjan. Överför tokens mellan X och P.",
             "submit": "Överföring"
         },
         "rewards_card": {
@@ -242,7 +242,7 @@
             },
             "amount": {
                 "label": "Satsningsbelopp",
-                "desc": "Mängden AVAX att låsa för satsning."
+                "desc": "Mängden FLR att låsa för satsning."
             },
             "fee": {
                 "label": "Delegeringsavgift",
@@ -281,7 +281,7 @@
             },
             "errs": {
                 "date": "Startdatum måste vara i framtiden och slutdatum måste vara efter startdatum.",
-                "amount": "Insatsbeloppet måste vara minst {0} AVAX",
+                "amount": "Insatsbeloppet måste vara minst {0} FLR",
                 "id": "Ogiltig Node ID. den måste börja med \"NodeID-\"",
                 "address": "Ogiltig belöningsadress."
             }
@@ -319,8 +319,8 @@
                 },
                 "amount": {
                     "label": "Satsningsbelopp",
-                    "desc": "Antalet AVAX att låsas för satsning.",
-                    "desc2": "Det tillgängliga delegerade beloppet för denna node är {0} AVAX"
+                    "desc": "Antalet FLR att låsas för satsning.",
+                    "desc2": "Det tillgängliga delegerade beloppet för denna node är {0} FLR"
                 },
                 "reward": {
                     "label": "Belöningsadress",
@@ -345,7 +345,7 @@
                 "max_dur": "Högsta satsningstid är 1 år.",
                 "no_node": "Du måste ange en validerare.",
                 "val_end": "Delegationens slutdatum kan inte vara längre än validerings slutdatum.",
-                "amt": "Delegationsbeloppet måste vara minst {0} AVAX."
+                "amt": "Delegationsbeloppet måste vara minst {0} FLR."
             },
             "summary": {
                 "duration": "Satsningstid",
