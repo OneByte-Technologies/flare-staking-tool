@@ -2,7 +2,7 @@ import { AvaNetwork } from '@/js/AvaNetwork'
 
 export const MainnetConfig = new AvaNetwork(
     'Mainnet',
-    'https://flare-api.flare.network/ext/C/rpc'.
+    'https://flare-api.flare.network/ext/C/rpc',
     14,
     'https://flare-explorer.flare.network',
     'https://flare-explorer.flare.network',
