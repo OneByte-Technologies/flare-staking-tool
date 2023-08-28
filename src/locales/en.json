@@ -11,15 +11,15 @@
         "cookie_desc": "We use cookies to develop improvements and enhance your experience. To find out more, read our"
     },
     "home": {
-        "desc": "Avalanche Wallet is a simple, secure, non-custodial wallet for storing Avalanche assets.",
+        "desc": "Flare is a simple, secure, non-custodial tool for staking multiple assets.",
         "access": {
             "title": "Welcome Back!",
-            "desc": "Access your existing Avalanche wallet here.",
+            "desc": "Access your existing staking tool here.",
             "submit": "Access Wallet"
         },
         "create": {
-            "title": "New to Avalanche Wallet?",
-            "desc": "Create a new wallet to send, receive and swap Avalanche assets.",
+            "title": "New to Flare?",
+            "desc": "Create a new dashboard to stake Flare assets.",
             "submit": "Create New Wallet"
         }
     },
@@ -84,18 +84,18 @@
         }
     },
     "create": {
-        "generate": "Generate a new key phrase to setup your Avalanche Wallet.",
+        "generate": "Generate a new key phrase to setup your Flare dashboard.",
         "but_have": "Already have a wallet?",
         "submit": "Generate Key Phrase",
         "cancel": "Cancel",
         "mnemonic_title": "This is your key phrase.",
-        "mnemonic_desc": "Use these 24 words in sequential order to recover your Avalanche Wallet",
+        "mnemonic_desc": "Use these 24 words in sequential order to recover your Flare Wallet",
         "attention": "Attention!",
-        "warning": "Store this key phrase in a secure location. Anyone with this key phrase can access your Avalanche Wallet. There is no way to recover lost key phrases.",
+        "warning": "Store this key phrase in a secure location. Anyone with this key phrase can access your Flare Wallet. There is no way to recover lost key phrases.",
         "confirm": "I wrote down my key phrase in a secure location.",
         "regenerate": "Regenerate",
         "success_title": "Congratulations!",
-        "success_desc": "It's time to access your Avalanche Wallet.",
+        "success_desc": "It's time to access your Flare Dashboard.",
         "success_submit": "Access Wallet",
         "verify": "Verify",
         "verifytitle": "Verify Mnemonic",
@@ -104,7 +104,7 @@
         "error_word": "The mnemonic phrase you entered for word not match the actual phrase."
     },
     "top": {
-        "title1": "Derived Avalanche Wallet Address",
+        "title1": "Derived Flare Wallet Address",
         "title2": "Balance",
         "title3": "Subnet",
         "title4": "Network",
@@ -112,7 +112,7 @@
         "nftempty": "You have not collected any non fungible tokens.",
         "locked": "Locked",
         "info2": "I bought coins in the Token Sale. Where are my FLR?",
-        "info2_desc": "This wallet is connected to the Avalanche Everest test network. Your purchase will appear in the wallet after the Avalanche Mainnet launch.",
+        "info2_desc": "This wallet is connected to the Flare test network. Your purchase will appear in the wallet after the Avalanche Mainnet launch.",
         "hover1": "View Address QR Code",
         "hover2": "Paper Wallet",
         "hover3": "Copy",
@@ -127,7 +127,7 @@
             "collectibles": "Collectibles"
         },
         "address": {
-            "derived": "Derived Avalanche Wallet Address",
+            "derived": "Derived Flare Wallet Address",
             "title_x": "Derived Wallet Address",
             "title_p": "Derived Platform Wallet Address",
             "title_c": "Derived EVM Wallet Address",
