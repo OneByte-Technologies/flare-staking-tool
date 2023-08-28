@@ -78,14 +78,14 @@
         "error_word": "Deine eingegebene Mnemonic Phrase, stimmt mit der aktuellen Phrase nicht überein."
     },
     "top": {
-        "title1": "Hergeleitete AVAX Wallet Adresse",
+        "title1": "Hergeleitete FLR Wallet Adresse",
         "title2": "Guthaben",
         "title3": "Subnetz",
         "title4": "Netzwerk",
         "nftcol": "NFTs",
         "nftempty": "Du hast noch keine \"non-fungible\" Tokens (NFTs) gesammelt.",
         "locked": "Gesperrt",
-        "info2": "Ich habe beim Token Sale, Coins gekauft. Wo sind meine AVAX?",
+        "info2": "Ich habe beim Token Sale, Coins gekauft. Wo sind meine FLR?",
         "info2_desc": "Diese Wallet ist mit dem Avalanche Everest Testnetzwerk verbunden. Dein Kauf erscheint nach dem Start von Avalanche Mainnet in der Wallet.",
         "hover1": "Adresse als QR Code anzeigen",
         "hover2": "Drucken",
@@ -101,7 +101,7 @@
             "collectibles": "Kollektion"
         },
         "address": {
-            "derived": "Abgeleitete AVAX Wallet-Adresse",
+            "derived": "Abgeleitete FLR Wallet-Adresse",
             "desc": "Dies ist Ihre Adresse, um Gelder zu erhalten. Ihre Adresse wird sich nach jeder Einzahlung ändern."
         }
     },
@@ -172,13 +172,13 @@
     },
     "earn": {
         "title": "Einnehmen",
-        "desc": "Das Staking deiner vorhandenen Tokens vermehrt deine AVAX.",
+        "desc": "Das Staking deiner vorhandenen Tokens vermehrt deine FLR.",
         "subtitle1": "Validieren",
         "subtitle2": "Delegieren",
         "subtitle3": "\"Cross Chain\" Transfer",
         "subtitle4": "Geschätzte Prämien",
-        "warning_1": "Du musst mindestens {0} AVAX auf der P-Chain haben, um ein Validator zu werden.",
-        "warning_2": "Du musst mindestens {0} AVAX auf der P-Chain haben, um ein Delegator zu werden.",
+        "warning_1": "Du musst mindestens {0} FLR auf der P-Chain haben, um ein Validator zu werden.",
+        "warning_2": "Du musst mindestens {0} FLR auf der P-Chain haben, um ein Delegator zu werden.",
         "validate_card": {
             "title": "Validieren",
             "desc": "Du hast einen Avalanche Knoten, mit dem Du staken möchtest.",
@@ -191,7 +191,7 @@
         },
         "transfer_card": {
             "title": "\"Cross Chain\" Transfer",
-            "desc": "Staking erfordert AVAX auf der P-Chain. Transferiere deine Tokens zwischen X und P.",
+            "desc": "Staking erfordert FLR auf der P-Chain. Transferiere deine Tokens zwischen X und P.",
             "submit": "Transfer"
         },
         "rewards_card": {
@@ -242,7 +242,7 @@
             },
             "amount": {
                 "label": "Staking Betrag",
-                "desc": "Der AVAX Betrag der fürs Staking gesperrt ist."
+                "desc": "Der FLR Betrag der fürs Staking gesperrt ist."
             },
             "fee": {
                 "label": "Delegationsgebühr",
@@ -281,7 +281,7 @@
             },
             "errs": {
                 "date": "Das Startdatum muss in der Zukunft liegen und das Enddatum muss nach dem Startdatum liegen.",
-                "amount": "Der Staking Betrag muss mindestens {0} AVAX betragen",
+                "amount": "Der Staking Betrag muss mindestens {0} FLR betragen",
                 "id": "Ungültige Node ID. Muss mit \"NodeID-\" beginnen",
                 "address": "Ungültige Prämienadresse."
             }
@@ -319,8 +319,8 @@
                 },
                 "amount": {
                     "label": "Einsatzbetrag",
-                    "desc": "Der AVAX Betrag der fürs Staking gesperrt ist.",
-                    "desc2": "Der verfügbare Delegationsbetrag für diese Node beträgt {0} AVAX"
+                    "desc": "Der FLR Betrag der fürs Staking gesperrt ist.",
+                    "desc2": "Der verfügbare Delegationsbetrag für diese Node beträgt {0} FLR"
                 },
                 "reward": {
                     "label": "Prämienadresse",
@@ -345,7 +345,7 @@
                 "max_dur": "Maximum Stakingzeitraum beträgt 1 Jahr.",
                 "no_node": "Du musst einen Validator angeben.",
                 "val_end": "Das Enddatum der Delegation darf nicht länger als das Enddatum des Validators sein.",
-                "amt": "Der Betrag der Delegation muss mindestens {0} AVAX betragen."
+                "amt": "Der Betrag der Delegation muss mindestens {0} FLR betragen."
             },
             "summary": {
                 "duration": "Stakingzeitraum",
