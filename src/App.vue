@@ -93,11 +93,11 @@ export default {
             {
                 vmid: 'og:title',
                 name: 'og:title',
-                content: 'Fastest Performing and Secure DeFi Wallet | Avalanche Wallet',
+                content: 'Fastest Performing and Secure Staking Tool | Flare',
             },
         ],
-        title: 'Fastest Performing and Secure DeFi Wallet',
-        titleTemplate: '%s | Avalanche Wallet',
+        title: 'Fastest Performing and Secure Staking Tool',
+        titleTemplate: '%s | Flare',
     },
 }
 </script>
