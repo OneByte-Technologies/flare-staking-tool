@@ -27,7 +27,7 @@ export default class ChainSelect extends Vue {
 <style scoped lang="scss">
 .chain_select {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     font-size: 13px;
     color: var(--primary-color-light);
     background-color: var(--bg-wallet);
