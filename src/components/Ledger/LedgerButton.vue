@@ -1,7 +1,7 @@
 <template>
     <button class="button_primary" @click="submit" :disabled="disabled">
         <template v-if="!isLoading">
-            Ledger
+            Ledger (Recommended)
 
             <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span>
             <ImageDayNight
