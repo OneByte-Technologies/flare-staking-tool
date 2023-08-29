@@ -65,7 +65,7 @@ import {
     Big,
     bnToBigAvaxX,
     bnToBigAvaxC,
-} from '@avalabs/avalanche-wallet-sdk'
+} from 'flare-wallet-sdk'
 
 @Component
 export default class Balances extends Vue {

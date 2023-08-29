@@ -32,9 +32,9 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { bnToBig } from '@/helpers/helper'
-import { UnixNow } from 'avalanche/dist/utils'
+import { UnixNow } from '@flarenetwork/flarejs/dist/utils'
 import { ValidatorRaw } from '@/components/misc/ValidatorList/types'
 import { WalletType } from '@/js/wallets/types'
 import { getPriceAtUnixTime } from '@/helpers/price_helper'

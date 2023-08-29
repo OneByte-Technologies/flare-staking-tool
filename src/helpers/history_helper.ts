@@ -1,7 +1,7 @@
 import { ITransactionData, UTXO } from '@/store/modules/history/types'
 import { WalletType } from '@/js/wallets/types'
-import { BN } from 'avalanche'
-import { AVMConstants } from 'avalanche/dist/apis/avm'
+import { BN } from '@flarenetwork/flarejs'
+import { AVMConstants } from '@flarenetwork/flarejs/dist/apis/avm'
 
 // Summary item returned for each transaction
 export interface BaseTxSummary {

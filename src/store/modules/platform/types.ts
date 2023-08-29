@@ -3,7 +3,7 @@ import {
     ValidatorPendingRaw,
     ValidatorRaw,
 } from '@/components/misc/ValidatorList/types'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 
 export interface PlatformState {
     validators: ValidatorRaw[]

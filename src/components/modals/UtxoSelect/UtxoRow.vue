@@ -18,11 +18,11 @@ import {
     PlatformVMConstants,
     AmountOutput,
     StakeableLockOut,
-} from 'avalanche/dist/apis/platformvm'
+} from '@flarenetwork/flarejs/dist/apis/platformvm'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
-import { UnixNow } from 'avalanche/dist/utils'
-import { BN } from 'avalanche'
+import { UnixNow } from '@flarenetwork/flarejs/dist/utils'
+import { BN } from '@flarenetwork/flarejs'
 
 @Component
 export default class UtxoRow extends Vue {

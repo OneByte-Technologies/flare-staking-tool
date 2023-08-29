@@ -16,7 +16,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { AvaNftFamily } from '@/js/AvaNftFamily'
-import { UTXO } from 'avalanche/dist/apis/avm'
+import { UTXO } from '@flarenetwork/flarejs/dist/apis/avm'
 import { getPayloadFromUTXO } from '@/helpers/helper'
 import NftPayloadView from '@/components/misc/NftPayloadView/NftPayloadView.vue'
 @Component({

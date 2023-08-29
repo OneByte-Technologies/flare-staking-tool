@@ -2,17 +2,17 @@ import {
     KeyChain as AVMKeyChain,
     KeyPair as AVMKeyPair,
     UTXOSet as AVMUTXOSet,
-} from 'avalanche/dist/apis/avm'
+} from '@flarenetwork/flarejs/dist/apis/avm'
 
-import { UTXOSet as PlatformUTXOSet } from 'avalanche/dist/apis/platformvm'
-import { getPreferredHRP } from 'avalanche/dist/utils'
+import { UTXOSet as PlatformUTXOSet } from '@flarenetwork/flarejs/dist/apis/platformvm'
+import { getPreferredHRP } from '@flarenetwork/flarejs/dist/utils'
 import { ava, avm, bintools, pChain } from '@/AVA'
 import HDKey from 'hdkey'
-import { Buffer } from 'avalanche'
+import { Buffer } from '@flarenetwork/flarejs'
 import {
     KeyChain as PlatformVMKeyChain,
     KeyPair as PlatformVMKeyPair,
-} from 'avalanche/dist/apis/platformvm'
+} from '@flarenetwork/flarejs/dist/apis/platformvm'
 import store from '@/store'
 
 import { AvaNetwork } from '@/js/AvaNetwork'

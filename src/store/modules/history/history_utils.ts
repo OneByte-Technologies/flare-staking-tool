@@ -4,7 +4,7 @@ import {
     ITransactionData,
     UTXO,
 } from '@/store/modules/history/types'
-import { BN, Buffer } from 'avalanche'
+import { BN, Buffer } from '@flarenetwork/flarejs'
 import moment from 'moment'
 
 export function isArraysOverlap(arr1: any[], arr2: any[]): boolean {

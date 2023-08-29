@@ -32,12 +32,12 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { KeyPair } from 'avalanche/dist/apis/avm'
+import { KeyPair } from '@flarenetwork/flarejs/dist/apis/avm'
 import { ava, bintools } from '@/AVA'
 import createHash from 'create-hash'
-import { getPreferredHRP } from 'avalanche/dist/utils'
+import { getPreferredHRP } from '@flarenetwork/flarejs/dist/utils'
 import { avm } from '@/AVA'
-import { Buffer } from 'avalanche'
+import { Buffer } from '@flarenetwork/flarejs'
 import { digestMessage } from '@/helpers/helper'
 
 @Component

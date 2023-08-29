@@ -74,7 +74,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { pChain } from '@/AVA'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'

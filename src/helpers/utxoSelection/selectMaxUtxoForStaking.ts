@@ -1,6 +1,6 @@
-import { UTXO, UTXOSet, Tx, AmountOutput } from 'avalanche/dist/apis/platformvm'
+import { UTXO, UTXOSet, Tx, AmountOutput } from '@flarenetwork/flarejs/dist/apis/platformvm'
 import { bintools, pChain } from '@/AVA'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { getCredentialBytes } from '@/helpers/utxoSelection/getCredentialBytes'
 import { getTxSize } from '@/helpers/utxoSelection/getTxSize'
 import { sumUtxos } from '@/helpers/utxoSelection/sumUtxos'

@@ -1,12 +1,12 @@
-import { BaseTx as AVMBaseTx, TransferableOutput } from 'avalanche/dist/apis/avm'
-import { BaseTx as PlatformBaseTx } from 'avalanche/dist/apis/platformvm'
-import { EVMBaseTx } from 'avalanche/dist/apis/evm'
-import { AddDelegatorTx, AddValidatorTx } from 'avalanche/dist/apis/platformvm'
+import { BaseTx as AVMBaseTx, TransferableOutput } from '@flarenetwork/flarejs/dist/apis/avm'
+import { BaseTx as PlatformBaseTx } from '@flarenetwork/flarejs/dist/apis/platformvm'
+import { EVMBaseTx } from '@flarenetwork/flarejs/dist/apis/evm'
+import { AddDelegatorTx, AddValidatorTx } from '@flarenetwork/flarejs/dist/apis/platformvm'
 import { bintools, ava as avalanche } from '@/AVA'
 
-import { UnsignedTx as AVMUnsignedTx } from 'avalanche/dist/apis/avm/tx'
-import { UnsignedTx as PlatformUnsignedTx } from 'avalanche/dist/apis/platformvm/tx'
-import { UnsignedTx as EVMUnsignedTx } from 'avalanche/dist/apis/evm/tx'
+import { UnsignedTx as AVMUnsignedTx } from '@flarenetwork/flarejs/dist/apis/avm/tx'
+import { UnsignedTx as PlatformUnsignedTx } from '@flarenetwork/flarejs/dist/apis/platformvm/tx'
+import { UnsignedTx as EVMUnsignedTx } from '@flarenetwork/flarejs/dist/apis/evm/tx'
 
 /**
  * Returns an array of unique addresses that are found on stake outputs of a tx.

@@ -1,4 +1,4 @@
-import { UTXO, UTXOSet, Tx, AmountOutput } from 'avalanche/dist/apis/platformvm'
+import { UTXO, UTXOSet, Tx, AmountOutput } from '@flarenetwork/flarejs/dist/apis/platformvm'
 
 /**
  * Returns the number of credentials that will be required by these utxos.

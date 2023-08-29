@@ -49,11 +49,11 @@ import {
     StakeableLockOut,
     UTXO,
     UTXOSet,
-} from 'avalanche/dist/apis/platformvm'
+} from '@flarenetwork/flarejs/dist/apis/platformvm'
 
 import UtxoRow from '@/components/modals/UtxoSelect/UtxoRow.vue'
-import { BN } from 'avalanche'
-import { UnixNow } from 'avalanche/dist/utils'
+import { BN } from '@flarenetwork/flarejs'
+import { UnixNow } from '@flarenetwork/flarejs/dist/utils'
 import { bnToBig } from '@/helpers/helper'
 
 @Component({

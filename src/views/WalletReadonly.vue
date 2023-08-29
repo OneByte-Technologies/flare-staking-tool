@@ -39,14 +39,14 @@ import {
     parseStakingTxs,
     HistoryItemType,
     isHistoryStakingTx,
-} from '@avalabs/avalanche-wallet-sdk'
-import { UTXOSet as AVMUTXOSet } from 'avalanche/dist/apis/avm'
-import { UTXOSet as PlatformUTXOSet, TransferableOutput } from 'avalanche/dist/apis/platformvm'
+} from 'flare-wallet-sdk'
+import { UTXOSet as AVMUTXOSet } from '@flarenetwork/flarejs/dist/apis/avm'
+import { UTXOSet as PlatformUTXOSet, TransferableOutput } from '@flarenetwork/flarejs/dist/apis/platformvm'
 import Balances from '@/views/wallet_readonly/Balances.vue'
 import { downloadCSVFile } from '@/store/modules/history/history_utils'
 import Addresses from '@/views/wallet_readonly/Addresses.vue'
 import Spinner from '@/components/misc/Spinner.vue'
-import { Network } from 'avalanche/dist/utils'
+import { Network } from '@flarenetwork/flarejs/dist/utils'
 import { getPriceAtUnixTime } from '@/helpers/price_helper'
 // import {ethers} from "ethers";
 @Component({

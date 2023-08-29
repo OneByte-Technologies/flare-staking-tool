@@ -15,8 +15,8 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Utxo } from '@avalabs/glacier-sdk'
-import { BN } from 'avalanche'
-import { bnToLocaleString } from '@avalabs/avalanche-wallet-sdk'
+import { BN } from '@flarenetwork/flarejs'
+import { bnToLocaleString } from 'flare-wallet-sdk'
 
 @Component
 export default class BaseTxUtxo extends Vue {

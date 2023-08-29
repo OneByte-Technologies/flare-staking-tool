@@ -1,10 +1,10 @@
-import { UTXO as AVMUTXO } from 'avalanche/dist/apis/avm'
+import { UTXO as AVMUTXO } from '@flarenetwork/flarejs/dist/apis/avm'
 import {
     AmountOutput,
     UTXO as PlatformUTXO,
     UTXOSet as PlatformUTXOSet,
-} from 'avalanche/dist/apis/platformvm'
-import { UTXO as EVMUTXO } from 'avalanche/dist/apis/evm'
+} from '@flarenetwork/flarejs/dist/apis/platformvm'
+import { UTXO as EVMUTXO } from '@flarenetwork/flarejs/dist/apis/evm'
 
 /**
  * @return Sorted array of UTXOs

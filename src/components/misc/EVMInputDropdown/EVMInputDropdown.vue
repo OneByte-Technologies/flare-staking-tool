@@ -43,7 +43,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 //@ts-ignore
 import { BigNumInput } from '@avalabs/vue_components'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import EVMAssetDropdown from '@/components/misc/EVMInputDropdown/EVMAssetDropdown.vue'
 import Erc20Token from '@/js/Erc20Token'
 import Big from 'big.js'

@@ -1,11 +1,11 @@
 import {
     UnsignedTx as UnsignedTxX,
     TransferableInput as TransferableInputX,
-} from 'avalanche/dist/apis/avm'
+} from '@flarenetwork/flarejs/dist/apis/avm'
 import {
     UnsignedTx as UnsignedTxP,
     TransferableInput as TransferableInputP,
-} from 'avalanche/dist/apis/platformvm'
+} from '@flarenetwork/flarejs/dist/apis/platformvm'
 
 /**
  * Size of serialized credentials for the given unsigned transaction in bytes.

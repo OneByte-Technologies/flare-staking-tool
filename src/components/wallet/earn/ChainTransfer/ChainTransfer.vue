@@ -121,7 +121,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import Dropdown from '@/components/misc/Dropdown.vue'
 import AvaxInput from '@/components/misc/AvaxInput.vue'
 import AvaAsset from '@/js/AvaAsset'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { avm, cChain, pChain } from '@/AVA'
 import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import Spinner from '@/components/misc/Spinner.vue'
@@ -146,7 +146,7 @@ import {
     bigToBN,
     avaxCtoX,
     bnToAvaxP,
-} from '@avalabs/avalanche-wallet-sdk'
+} from 'flare-wallet-sdk'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForExportP } from '@/helpers/utxoSelection/selectMaxUtxoForExportP'
 

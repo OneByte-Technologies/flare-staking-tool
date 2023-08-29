@@ -1,6 +1,6 @@
-import { AmountOutput as AmountOutputX, UTXO as UTXOX } from 'avalanche/dist/apis/avm'
-import { AmountOutput as AmountOutputP, UTXO as UTXOP } from 'avalanche/dist/apis/platformvm'
-import { BN } from 'avalanche'
+import { AmountOutput as AmountOutputX, UTXO as UTXOX } from '@flarenetwork/flarejs/dist/apis/avm'
+import { AmountOutput as AmountOutputP, UTXO as UTXOP } from '@flarenetwork/flarejs/dist/apis/platformvm'
+import { BN } from '@flarenetwork/flarejs'
 
 type UTXO = UTXOX | UTXOP
 type AmountOutput = AmountOutputX | AmountOutputP

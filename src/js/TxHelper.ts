@@ -1,6 +1,6 @@
 import { ava, avm, bintools, cChain, pChain } from '@/AVA'
 import { ITransaction } from '@/components/wallet/transfer/types'
-import { BN, Buffer } from 'avalanche'
+import { BN, Buffer } from '@flarenetwork/flarejs'
 import {
     AssetAmountDestination,
     BaseTx,
@@ -13,13 +13,13 @@ import {
     UTXOSet,
     UTXOSet as AVMUTXOSet,
     AVMConstants,
-} from 'avalanche/dist/apis/avm'
+} from '@flarenetwork/flarejs/dist/apis/avm'
 
-import { PayloadBase } from 'avalanche/dist/utils'
-import { OutputOwners } from 'avalanche/dist/common'
-import { PlatformVMConstants } from 'avalanche/dist/apis/platformvm'
+import { PayloadBase } from '@flarenetwork/flarejs/dist/utils'
+import { OutputOwners } from '@flarenetwork/flarejs/dist/common'
+import { PlatformVMConstants } from '@flarenetwork/flarejs/dist/apis/platformvm'
 
-import { UnsignedTx as EVMUnsignedTx, EVMConstants } from 'avalanche/dist/apis/evm'
+import { UnsignedTx as EVMUnsignedTx, EVMConstants } from '@flarenetwork/flarejs/dist/apis/evm'
 
 import { web3 } from '@/evm'
 import ERC721Token from '@/js/ERC721Token'

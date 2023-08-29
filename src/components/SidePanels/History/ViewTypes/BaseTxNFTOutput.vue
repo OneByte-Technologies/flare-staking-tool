@@ -17,7 +17,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { BaseTxAssetSummary, BaseTxNFTSummary } from '@/helpers/history_helper'
 import AvaAsset from '@/js/AvaAsset'
 import { bnToBig } from '@/helpers/helper'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { UTXO } from '@/store/modules/history/types'
 import TxHistoryNftFamilyGroup from '@/components/SidePanels/TxHistoryNftFamilyGroup.vue'
 

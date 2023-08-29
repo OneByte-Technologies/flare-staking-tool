@@ -1,4 +1,4 @@
-import { UTXO } from 'avalanche/dist/apis/platformvm'
+import { UTXO } from '@flarenetwork/flarejs/dist/apis/platformvm'
 import { bintools } from '@/AVA'
 import { sumUtxos } from '@/helpers/utxoSelection/sumUtxos'
 import { MAX_TX_SIZE_P } from './constants'

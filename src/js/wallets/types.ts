@@ -7,23 +7,23 @@ import {
     Tx as AVMTx,
     UnsignedTx as AVMUnsignedTx,
     UnsignedTx,
-} from 'avalanche/dist/apis/avm'
+} from '@flarenetwork/flarejs/dist/apis/avm'
 
 import {
     UTXOSet as PlatformUTXOSet,
     UnsignedTx as PlatformUnsignedTx,
     UTXO as PlatformUTXO,
     Tx as PlatformTx,
-} from 'avalanche/dist/apis/platformvm'
+} from '@flarenetwork/flarejs/dist/apis/platformvm'
 import {
     KeyChain as EVMKeyChain,
     UnsignedTx as EVMUnsignedTx,
     Tx as EVMTx,
-} from 'avalanche/dist/apis/evm'
+} from '@flarenetwork/flarejs/dist/apis/evm'
 
 import { ITransaction } from '@/components/wallet/transfer/types'
-import { BN, Buffer } from 'avalanche'
-import { PayloadBase } from 'avalanche/dist/utils'
+import { BN, Buffer } from '@flarenetwork/flarejs'
+import { PayloadBase } from '@flarenetwork/flarejs/dist/utils'
 import { ChainIdType } from '@/constants'
 import Erc20Token from '@/js/Erc20Token'
 
@@ -31,8 +31,8 @@ import { Transaction } from '@ethereumjs/tx'
 import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import { LedgerWallet } from '@/js/wallets/LedgerWallet'
 import { SingletonWallet } from '@/js/wallets/SingletonWallet'
-import { ExportChainsC, ExportChainsP, ExportChainsX } from '@avalabs/avalanche-wallet-sdk'
-import { UTXOSet as EVMUTXOSet } from 'avalanche/dist/apis/evm/utxos'
+import { ExportChainsC, ExportChainsP, ExportChainsX } from 'flare-wallet-sdk'
+import { UTXOSet as EVMUTXOSet } from '@flarenetwork/flarejs/dist/apis/evm/utxos'
 
 export interface IIndexKeyCache {
     [index: number]: AVMKeyPair

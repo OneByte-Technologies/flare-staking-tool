@@ -29,13 +29,13 @@
 <script lang="ts">
 import { Vue, Component, Model, Watch } from 'vue-property-decorator'
 import UtxoSelectModal from '@/components/modals/UtxoSelect/UtxoSelect.vue'
-import { AmountOutput, UTXO, UTXOSet } from 'avalanche/dist/apis/platformvm'
+import { AmountOutput, UTXO, UTXOSet } from '@flarenetwork/flarejs/dist/apis/platformvm'
 import { WalletType } from '@/js/wallets/types'
 
 import { CurrencyType } from '@/components/misc/CurrencySelect/types'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { bnToBig } from '@/helpers/helper'
-import { UnixNow } from 'avalanche/dist/utils'
+import { UnixNow } from '@flarenetwork/flarejs/dist/utils'
 @Component({
     components: {
         UtxoSelectModal,

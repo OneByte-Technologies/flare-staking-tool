@@ -1,4 +1,4 @@
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 export interface TransactionValueDict {
     [address: string]: number
 }

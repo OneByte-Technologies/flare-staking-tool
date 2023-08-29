@@ -80,8 +80,8 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { TransactionValueDict } from '@/components/SidePanels/types'
-import { PayloadBase, PayloadTypes } from 'avalanche/dist/utils'
-import { BN, Buffer } from 'avalanche'
+import { PayloadBase, PayloadTypes } from '@flarenetwork/flarejs/dist/utils'
+import { BN, Buffer } from '@flarenetwork/flarejs'
 import { WalletType } from '@/js/wallets/types'
 import { avm, pChain } from '@/AVA'
 

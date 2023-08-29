@@ -17,7 +17,7 @@
 <script lang="ts">
 import { avm, cChain, pChain } from '@/AVA'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { bnToBig } from '@/helpers/helper'
 import {
     isTransactionP,

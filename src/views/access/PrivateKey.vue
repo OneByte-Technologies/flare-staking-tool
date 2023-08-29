@@ -34,8 +34,8 @@ import { ImportKeyfileInput } from '@/store/types'
 import { SingletonWallet } from '@/js/wallets/SingletonWallet'
 import { privateToAddress } from 'ethereumjs-util'
 import { bintools } from '@/AVA'
-import { Buffer } from 'avalanche'
-import { strip0x } from '@avalabs/avalanche-wallet-sdk'
+import { Buffer } from '@flarenetwork/flarejs'
+import { strip0x } from 'flare-wallet-sdk'
 
 @Component
 export default class PrivateKey extends Vue {

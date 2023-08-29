@@ -51,7 +51,7 @@ import { IWalletNftMintDict } from '@/store/types'
 import Big from 'big.js'
 import { bnToBig } from '@/helpers/helper'
 import { avm } from '@/AVA'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 @Component({
     name: 'studio',
     components: {

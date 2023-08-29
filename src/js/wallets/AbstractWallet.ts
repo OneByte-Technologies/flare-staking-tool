@@ -1,9 +1,9 @@
 /*
 The base wallet class used for common functionality
 */
-import { BN } from 'avalanche'
-import { UTXOSet as AVMUTXOSet } from 'avalanche/dist/apis/avm'
-import { UTXOSet as PlatformUTXOSet } from 'avalanche/dist/apis/platformvm'
+import { BN } from '@flarenetwork/flarejs'
+import { UTXOSet as AVMUTXOSet } from '@flarenetwork/flarejs/dist/apis/avm'
+import { UTXOSet as PlatformUTXOSet } from '@flarenetwork/flarejs/dist/apis/platformvm'
 import {
     ExportChainsC,
     ExportChainsP,
@@ -12,15 +12,15 @@ import {
     TxHelper,
     GasHelper,
     chainIdFromAlias,
-} from '@avalabs/avalanche-wallet-sdk'
+} from 'flare-wallet-sdk'
 import { ava, avm, bintools, cChain, pChain } from '@/AVA'
-import { UTXOSet as EVMUTXOSet } from 'avalanche/dist/apis/evm/utxos'
-import { Tx as EVMTx, UnsignedTx as EVMUnsignedTx } from 'avalanche/dist/apis/evm/tx'
+import { UTXOSet as EVMUTXOSet } from '@flarenetwork/flarejs/dist/apis/evm/utxos'
+import { Tx as EVMTx, UnsignedTx as EVMUnsignedTx } from '@flarenetwork/flarejs/dist/apis/evm/tx'
 import {
     Tx as PlatformTx,
     UnsignedTx as PlatformUnsignedTx,
-} from 'avalanche/dist/apis/platformvm/tx'
-import { Tx as AVMTx, UnsignedTx as AVMUnsignedTx } from 'avalanche/dist/apis/avm/tx'
+} from '@flarenetwork/flarejs/dist/apis/platformvm/tx'
+import { Tx as AVMTx, UnsignedTx as AVMUnsignedTx } from '@flarenetwork/flarejs/dist/apis/avm/tx'
 import { AvmImportChainType, WalletType } from '@/js/wallets/types'
 import { issueC, issueP, issueX } from '@/helpers/issueTx'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
@@ -29,7 +29,7 @@ import glacier from '@/js/Glacier/Glacier'
 import { isMainnetNetworkID } from '@/store/modules/network/isMainnetNetworkID'
 import { isTestnetNetworkID } from '@/store/modules/network/isTestnetNetworkID'
 import { web3 } from '@/evm'
-import { UTXO as PlatformUTXO } from 'avalanche/dist/apis/platformvm/utxos'
+import { UTXO as PlatformUTXO } from '@flarenetwork/flarejs/dist/apis/platformvm/utxos'
 import {
     BlockchainId,
     CreatePrimaryNetworkTransactionExportRequest,

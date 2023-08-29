@@ -31,10 +31,10 @@
 <script lang="ts">
 import 'reflect-metadata'
 import { Vue, Component, Prop, Model } from 'vue-property-decorator'
-import { Big, bnToBig } from '@avalabs/avalanche-wallet-sdk'
+import { Big, bnToBig } from 'flare-wallet-sdk'
 //@ts-ignore
 import { BigNumInput } from '@avalabs/vue_components'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { priceDict } from '../../store/types'
 
 @Component({

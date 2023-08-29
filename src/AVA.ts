@@ -1,9 +1,9 @@
-import { KeyChain as AVMKeyChain, AVMAPI } from 'avalanche/dist/apis/avm'
-import { InfoAPI } from 'avalanche/dist/apis/info'
-import Avalanche from 'avalanche'
+import { KeyChain as AVMKeyChain, AVMAPI } from '@flarenetwork/flarejs/dist/apis/avm'
+import { InfoAPI } from '@flarenetwork/flarejs/dist/apis/info'
+import Avalanche from '@flarenetwork/flarejs'
 //@ts-ignore
-import BinTools from 'avalanche/dist/utils/bintools'
-import { EVMAPI } from 'avalanche/dist/apis/evm'
+import BinTools from '@flarenetwork/flarejs/dist/utils/bintools'
+import { EVMAPI } from '@flarenetwork/flarejs/dist/apis/evm'
 
 // Connect to TestNet by default
 // Doesn't really matter how we initialize, it will get changed by the network module later

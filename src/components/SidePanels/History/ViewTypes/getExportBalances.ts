@@ -6,7 +6,7 @@ import {
     isTransactionX,
     TransactionType,
 } from '@/js/Glacier/models'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { Utxo, PChainUtxo, UtxoType } from '@avalabs/glacier-sdk'
 import AvaAsset from '@/js/AvaAsset'
 export function getExportBalances(tx: TransactionType, destinationChainId: string, getAsset: any) {

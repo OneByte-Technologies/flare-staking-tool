@@ -15,7 +15,7 @@ import Big from 'big.js'
 
 import SelectMintUTXO from '@/components/wallet/studio/mint/SelectMintUtxo/SelectMintUTXO.vue'
 import MintForm from '@/components/wallet/studio/mint/MintForm.vue'
-import { UTXO } from 'avalanche/dist/apis/avm'
+import { UTXO } from '@flarenetwork/flarejs/dist/apis/avm'
 @Component({
     components: {
         SelectMintUTXO,

@@ -3,37 +3,37 @@ import { ITransaction } from '@/components/wallet/transfer/types'
 import { digestMessage } from '@/helpers/helper'
 import { WalletNameType } from '@/js/wallets/types'
 
-import { Buffer as BufferAvalanche, BN } from 'avalanche'
+import { Buffer as BufferAvalanche, BN } from '@flarenetwork/flarejs'
 import {
     KeyPair as AVMKeyPair,
     KeyChain as AVMKeyChain,
     UTXOSet as AVMUTXOSet,
     UTXO,
     UnsignedTx,
-} from 'avalanche/dist/apis/avm'
+} from '@flarenetwork/flarejs/dist/apis/avm'
 import {
     KeyPair as PlatformKeyPair,
     KeyChain as PlatformKeyChain,
     UTXOSet as PlatformUTXOSet,
     UTXOSet,
-} from 'avalanche/dist/apis/platformvm'
-import { KeyChain, KeyChain as EVMKeyChain, UTXOSet as EVMUTXOSet } from 'avalanche/dist/apis/evm'
-import { PayloadBase } from 'avalanche/dist/utils'
+} from '@flarenetwork/flarejs/dist/apis/platformvm'
+import { KeyChain, KeyChain as EVMKeyChain, UTXOSet as EVMUTXOSet } from '@flarenetwork/flarejs/dist/apis/evm'
+import { PayloadBase } from '@flarenetwork/flarejs/dist/utils'
 import { buildUnsignedTransaction } from '../TxHelper'
 import { AvaWalletCore, UnsafeWallet } from './types'
-import { UTXO as PlatformUTXO } from 'avalanche/dist/apis/platformvm/utxos'
+import { UTXO as PlatformUTXO } from '@flarenetwork/flarejs/dist/apis/platformvm/utxos'
 import { privateToAddress } from 'ethereumjs-util'
-import { Tx as AVMTx, UnsignedTx as AVMUnsignedTx } from 'avalanche/dist/apis/avm/tx'
+import { Tx as AVMTx, UnsignedTx as AVMUnsignedTx } from '@flarenetwork/flarejs/dist/apis/avm/tx'
 import {
     Tx as PlatformTx,
     UnsignedTx as PlatformUnsignedTx,
-} from 'avalanche/dist/apis/platformvm/tx'
-import { Tx as EvmTx, UnsignedTx as EVMUnsignedTx } from 'avalanche/dist/apis/evm/tx'
+} from '@flarenetwork/flarejs/dist/apis/platformvm/tx'
+import { Tx as EvmTx, UnsignedTx as EVMUnsignedTx } from '@flarenetwork/flarejs/dist/apis/evm/tx'
 import Erc20Token from '@/js/Erc20Token'
 import { AbstractWallet } from '@/js/wallets/AbstractWallet'
 import { WalletHelper } from '@/helpers/wallet_helper'
 import { avmGetAllUTXOs, platformGetAllUTXOs } from '@/helpers/utxo_helper'
-import { UTXO as AVMUTXO } from 'avalanche/dist/apis/avm/utxos'
+import { UTXO as AVMUTXO } from '@flarenetwork/flarejs/dist/apis/avm/utxos'
 import { Transaction } from '@ethereumjs/tx'
 
 class SingletonWallet extends AbstractWallet implements AvaWalletCore, UnsafeWallet {

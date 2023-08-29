@@ -27,7 +27,7 @@ import { CsvRowAvaxTransferData, ITransactionData, UTXO } from '@/store/modules/
 import { bnToBig } from '@/helpers/helper'
 const generate = require('csv-generate')
 import { downloadCSVFile } from '@/store/modules/history/history_utils'
-import { createCsvNormal, getHistoryForOwnedAddresses } from '@avalabs/avalanche-wallet-sdk'
+import { createCsvNormal, getHistoryForOwnedAddresses } from 'flare-wallet-sdk'
 
 @Component({
     components: {

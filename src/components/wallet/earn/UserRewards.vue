@@ -37,7 +37,7 @@ import { AvaWalletCore } from '../../../js/wallets/types'
 import UserRewardRow from '@/components/wallet/earn/UserRewardRow.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { EarnState } from '@/store/modules/earn/types'
 
 @Component({

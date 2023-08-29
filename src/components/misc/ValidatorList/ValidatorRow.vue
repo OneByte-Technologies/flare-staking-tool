@@ -15,7 +15,7 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import moment from 'moment'
-import { BN } from 'avalanche'
+import { BN } from '@flarenetwork/flarejs'
 import { bnToBig } from '@/helpers/helper'
 import { ValidatorListItem } from '@/store/modules/platform/types'
 
