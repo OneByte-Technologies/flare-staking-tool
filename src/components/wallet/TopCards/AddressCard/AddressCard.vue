@@ -141,21 +141,11 @@ export default class AddressCard extends Vue {
     get addressMsg(): string {
         switch (this.chainNow) {
             default:
-                return this.getAddressMsgX()
-            case 'P':
                 return this.$t('top.address.desc_p') as string
             case 'C':
                 return this.showBech
                     ? 'Used internally when moving funds to or from C-Chain'
                     : (this.$t('top.address.desc_c') as string)
-        }
-    }
-
-    getAddressMsgX() {
-        if (this.activeWallet?.type === 'singleton') {
-            return this.$t('top.address.desc_x_1') as string
-        } else {
-            return `${this.$t('top.address.desc_x_1')} ${this.$t('top.address.desc_x_2')}` as string
         }
     }
 
