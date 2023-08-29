@@ -68,8 +68,8 @@
                 </div>
                 <div class="alt_breakdown" v-else>
                     <div>
-                        <label>{{ $t('top.balance.available') }} (X)</label>
-                        <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p>
+                        <!-- <label>{{ $t('top.balance.available') }} (X)</label>
+                        <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p> -->
                         <label>{{ $t('top.balance.available') }} (P)</label>
                         <p>{{ platformUnlocked | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
