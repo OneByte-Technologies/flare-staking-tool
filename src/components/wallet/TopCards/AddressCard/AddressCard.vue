@@ -128,8 +128,6 @@ export default class AddressCard extends Vue {
     get addressLabel(): string {
         switch (this.chainNow) {
             default:
-                return this.$t('top.address.title_x') as string
-            case 'P':
                 return this.$t('top.address.title_p') as string
             case 'C':
                 return this.showBech
