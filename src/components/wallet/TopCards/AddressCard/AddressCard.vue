@@ -89,7 +89,7 @@ import { getPreferredHRP } from 'avalanche/dist/utils'
 export default class AddressCard extends Vue {
     colorLight: string = '#FFF'
     colorDark: string = '#242729'
-    chainNow: ChainIdType = 'X'
+    chainNow: ChainIdType = 'P'
     showBech = false // If true C-Chain shows the bech32 Address
     $refs!: {
         qr_modal: QRModal
