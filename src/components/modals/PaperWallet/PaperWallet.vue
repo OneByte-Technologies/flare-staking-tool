@@ -84,11 +84,11 @@ export default class PaperWallet extends Vue {
             let wallet: MnemonicWallet = this.$store.state.activeWallet
             if (!wallet) return '-'
 
-            let key = wallet.externalHelper.getKeyForIndex(0)
+            let key = wallet.getCurrentAddressPlatform()
             if (!key) {
                 return '-'
             }
-            return key.getAddressString()
+            return key
         } catch (e) {
             return '-'
         }
