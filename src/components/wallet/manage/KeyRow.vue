@@ -25,7 +25,7 @@
             :privateKey="privateKeyC"
             ref="modal_priv_key_c"
         ></PrivateKey>
-        <XpubModal :xpub="xpubXP" v-if="isHDWallet" ref="modal_xpub"></XpubModal>
+        <!-- <XpubModal :xpub="xpubXP" v-if="isHDWallet" ref="modal_xpub"></XpubModal> -->
         <div class="rows">
             <div class="header">
                 <template v-if="is_default">
@@ -86,7 +86,7 @@
                             <button v-if="walletType !== 'ledger'" @click="showPrivateKeyCModal">
                                 {{ $t('keys.view_priv_key_c') }}
                             </button>
-                            <button v-if="isHDWallet" @click="showXpub">Show XPUB</button>
+                            <!-- <button v-if="isHDWallet" @click="showXpub">Show XPUB</button> -->
                         </div>
                     </div>
                 </div>
@@ -165,7 +165,7 @@ export default class KeyRow extends Vue {
     }
 
     get walletTitle() {
-        return this.wallet.getBaseAddress()
+        return this.wallet.getCurrentAddressPlatform()
     }
 
     get assetsDict(): AssetsDict {

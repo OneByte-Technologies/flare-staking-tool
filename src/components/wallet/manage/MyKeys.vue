@@ -61,7 +61,6 @@ export default class MyKeys extends Vue {
 
     get inactiveWallets(): WalletType[] {
         let wallets = this.wallets
-
         let res = wallets.filter((wallet) => {
             if (this.activeWallet === wallet) return false
             return true

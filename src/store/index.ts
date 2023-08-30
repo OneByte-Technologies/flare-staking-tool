@@ -90,6 +90,7 @@ export default new Vuex.Store({
         // TODO rename to accessWalletMenmonic
         async accessWallet({ state, dispatch, commit }, mnemonic: string): Promise<MnemonicWallet> {
             const wallet: MnemonicWallet = await dispatch('addWalletMnemonic', mnemonic)
+            console.log(wallet)
             await dispatch('activateWallet', wallet)
 
             dispatch('onAccess')
