@@ -1,7 +1,7 @@
 <template>
     <div class="earn_page">
         <div class="header">
-            <h1>{{ $t('earn.title') }}</h1>
+            <h1>{{ $t('staking.title') }}</h1>
             <h1 class="subtitle" v-if="pageNow">
                 / {{ subtitle }}
                 <span @click="cancel"><fa icon="times"></fa></span>
@@ -9,17 +9,17 @@
         </div>
         <transition name="fade" mode="out-in">
             <div v-if="!pageNow">
-                <p>{{ $t('earn.desc') }}</p>
+                <p>{{ $t('staking.desc') }}</p>
                 <div class="options">
                     <div>
                         <h4 class="title">
-                            {{ $t('earn.validate_card.title') }}
+                            {{ $t('staking.validate_card.title') }}
                         </h4>
                         <p style="flex-grow: 1">
-                            {{ $t('earn.validate_card.desc') }}
+                            {{ $t('staking.validate_card.desc') }}
                         </p>
                         <p v-if="!canValidate" class="no_balance">
-                            {{ $t('earn.warning_1', [minStakeAmt.toLocaleString()]) }}
+                            {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
                         </p>
                         <v-btn
                             class="button_secondary"
@@ -29,18 +29,18 @@
                             small
                             :disabled="!canValidate"
                         >
-                            {{ $t('earn.validate_card.submit') }}
+                            {{ $t('staking.validate_card.submit') }}
                         </v-btn>
                     </div>
                     <div>
                         <h4 class="title">
-                            {{ $t('earn.delegate_card.title') }}
+                            {{ $t('staking.delegate_card.title') }}
                         </h4>
                         <p style="flex-grow: 1">
-                            {{ $t('earn.delegate_card.desc') }}
+                            {{ $t('staking.delegate_card.desc') }}
                         </p>
                         <p v-if="!canDelegate" class="no_balance">
-                            {{ $t('earn.warning_2', [minDelegationAmt.toLocaleString()]) }}
+                            {{ $t('staking.warning_2', [minDelegationAmt.toLocaleString()]) }}
                         </p>
                         <v-btn
                             class="button_secondary"
@@ -50,15 +50,15 @@
                             small
                             :disabled="!canDelegate"
                         >
-                            {{ $t('earn.delegate_card.submit') }}
+                            {{ $t('staking.delegate_card.submit') }}
                         </v-btn>
                     </div>
                     <div>
                         <h4 class="title">
-                            {{ $t('earn.transfer_card.title') }}
+                            {{ $t('staking.transfer_card.title') }}
                         </h4>
                         <p style="flex-grow: 1">
-                            {{ $t('earn.transfer_card.desc') }}
+                            {{ $t('staking.transfer_card.desc') }}
                         </p>
                         <v-btn
                             class="button_secondary"
@@ -67,15 +67,15 @@
                             depressed
                             small
                         >
-                            {{ $t('earn.transfer_card.submit') }}
+                            {{ $t('staking.transfer_card.submit') }}
                         </v-btn>
                     </div>
                     <div>
                         <h4 class="title">
-                            {{ $t('earn.rewards_card.title') }}
+                            {{ $t('staking.rewards_card.title') }}
                         </h4>
                         <p style="flex-grow: 1">
-                            {{ $t('earn.rewards_card.desc') }}
+                            {{ $t('staking.rewards_card.desc') }}
                         </p>
                         <v-btn
                             class="button_secondary"
@@ -84,7 +84,7 @@
                             depressed
                             small
                         >
-                            {{ $t('earn.rewards_card.submit') }}
+                            {{ $t('staking.rewards_card.submit') }}
                         </v-btn>
                     </div>
                 </div>
@@ -122,11 +122,11 @@ export default class Earn extends Vue {
 
     addValidator() {
         this.pageNow = AddValidator
-        this.subtitle = this.$t('earn.subtitle1') as string
+        this.subtitle = this.$t('staking.subtitle1') as string
     }
     addDelegator() {
         this.pageNow = AddDelegator
-        this.subtitle = this.$t('earn.subtitle2') as string
+        this.subtitle = this.$t('staking.subtitle2') as string
     }
     transfer() {
         this.$router.replace('/wallet/cross_chain')
@@ -134,7 +134,7 @@ export default class Earn extends Vue {
 
     viewRewards() {
         this.pageNow = UserRewards
-        this.subtitle = this.$t('earn.subtitle4') as string
+        this.subtitle = this.$t('staking.subtitle4') as string
     }
     cancel() {
         this.pageNow = null

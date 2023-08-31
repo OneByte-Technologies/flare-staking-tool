@@ -48,6 +48,7 @@
         "ethereumjs-util": "7.0.7",
         "ethers": "5.6.8",
         "file-loader": "^6.2.0",
+        "global": "^4.4.0",
         "hdkey": "2.0.1",
         "lodash.differenceby": "4.8.0",
         "lodash.isequal": "4.5.0",

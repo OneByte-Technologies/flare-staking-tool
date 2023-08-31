@@ -12,7 +12,7 @@
                 @change="amount_in"
             ></BigNumInput>
         </div>
-        <p class="ticker">AVAX</p>
+        <p class="ticker">FLR</p>
         <div v-if="balance" class="balance">
             <div>
                 <p>

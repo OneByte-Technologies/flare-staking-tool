@@ -2,7 +2,7 @@ const axios = require('axios')
 
 const COIN_ID = '@flarenetwork/flarejs-2'
 const COINGECKO_URL =
-    'https://api.coingecko.com/api/v3/simple/price?ids=avalanche-2&vs_currencies=usd'
+    'https://api.coingecko.com/api/v3/simple/price?ids=flare-networks&vs_currencies=usd'
 
 const coingeckoApi = axios.create({
     baseURL: 'https://api.coingecko.com/api/v3',
@@ -11,7 +11,7 @@ const coingeckoApi = axios.create({
 
 export async function getAvaxPriceUSD(): Promise<number> {
     const res = await axios.get(COINGECKO_URL)
-    return res.data['@flarenetwork/flarejs-2']['usd']
+    return res.data['flare-networks']['usd']
 }
 
 let priceHistory: [number, number][] = []

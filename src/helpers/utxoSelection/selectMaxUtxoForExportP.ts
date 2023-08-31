@@ -20,7 +20,7 @@ function getInputSizeForSigners(size: number) {
 }
 
 /**
- * Return the maximum number of UTXOs that can be consumed for this transaction, and their AVAX sum.
+ * Return the maximum number of UTXOs that can be consumed for this transaction, and their FLR sum.
  * @param utxos Available UTXOs in preferred order.
  */
 export function selectMaxUtxoForExportP(utxos: UTXO[]) {

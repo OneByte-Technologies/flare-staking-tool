@@ -18,7 +18,7 @@ export interface RootState {
     address: String | null
     volatileWallets: WalletType[] // will be forgotten when tab is closed
     warnUpdateKeyfile: boolean
-    prices: priceDict // USD value of 1 AVAX
+    prices: priceDict // USD value of 1 FLR
 }
 
 export interface ILedgerAppConfig {

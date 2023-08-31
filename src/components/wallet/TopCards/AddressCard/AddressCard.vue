@@ -89,7 +89,7 @@ import { getPreferredHRP } from '@flarenetwork/flarejs/dist/utils'
 export default class AddressCard extends Vue {
     colorLight: string = '#FFF'
     colorDark: string = '#242729'
-    chainNow: ChainIdType = 'X'
+    chainNow: ChainIdType = 'P'
     showBech = false // If true C-Chain shows the bech32 Address
     $refs!: {
         qr_modal: QRModal
@@ -128,8 +128,6 @@ export default class AddressCard extends Vue {
     get addressLabel(): string {
         switch (this.chainNow) {
             default:
-                return this.$t('top.address.title_x') as string
-            case 'P':
                 return this.$t('top.address.title_p') as string
             case 'C':
                 return this.showBech
@@ -141,21 +139,11 @@ export default class AddressCard extends Vue {
     get addressMsg(): string {
         switch (this.chainNow) {
             default:
-                return this.getAddressMsgX()
-            case 'P':
                 return this.$t('top.address.desc_p') as string
             case 'C':
                 return this.showBech
                     ? 'Used internally when moving funds to or from C-Chain'
                     : (this.$t('top.address.desc_c') as string)
-        }
-    }
-
-    getAddressMsgX() {
-        if (this.activeWallet?.type === 'singleton') {
-            return this.$t('top.address.desc_x_1') as string
-        } else {
-            return `${this.$t('top.address.desc_x_1')} ${this.$t('top.address.desc_x_2')}` as string
         }
     }
 

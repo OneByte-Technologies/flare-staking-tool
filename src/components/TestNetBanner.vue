@@ -15,7 +15,7 @@ export default class TestNetBanner extends Vue {
         if (!network) return false
         let netId = parseInt(network.networkId)
 
-        if (netId == 1) return false
+        if (netId == 14) return false
         return true
     }
 }

@@ -52,7 +52,7 @@ export default class FungibleRow extends Vue {
         if (!this.asset) return null
 
         if (this.isAvaxToken) {
-            return '/img/avax_icon_circle.png'
+            return '/img/flare_icon_circle.png'
         }
 
         return null
@@ -100,7 +100,7 @@ export default class FungibleRow extends Vue {
     get name(): string {
         let name = this.asset.name
         // TODO: Remove this hack after network change
-        if (name === 'AVA') return 'AVAX'
+        if (name === 'AVA') return 'FLR'
         return name
     }
 
@@ -108,7 +108,7 @@ export default class FungibleRow extends Vue {
         let sym = this.asset.symbol
 
         // TODO: Remove this hack after network change
-        if (sym === 'AVA') return 'AVAX'
+        if (sym === 'AVA') return 'FLR'
         return sym
     }
 

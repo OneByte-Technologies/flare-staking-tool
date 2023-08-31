@@ -209,8 +209,8 @@ export default class ExportCsvModal extends Vue {
             'Stake Duration',
             'Reward Date',
             'Reward Timestamp (UNIX)',
-            'AVAX Price at Reward Date',
-            'Reward Received (AVAX)',
+            'FLR Price at Reward Date',
+            'Reward Received (FLR)',
             'Reward Received (USD)',
         ]
 

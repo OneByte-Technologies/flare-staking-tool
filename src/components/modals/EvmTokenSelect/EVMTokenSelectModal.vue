@@ -3,10 +3,10 @@
         <div class="token_select_body">
             <div class="list">
                 <div class="token_row" @click="select('native')">
-                    <img src="/img/avax_icon_circle.png" class="col_img" />
+                    <img src="/img/flare_icon_circle.png" class="col_img" />
                     <div class="col_name">
-                        <p>AVAX</p>
-                        <p>Avalanche</p>
+                        <p>FLR</p>
+                        <p>FLare</p>
                     </div>
                     <p class="col_bal">{{ avaxBalance.toLocaleString() }}</p>
                 </div>
@@ -76,7 +76,7 @@ export default class EVMTokenSelectModal extends Vue {
     }
 
     // get symbol() {
-    //     if (this.selected === 'native') return 'AVAX'
+    //     if (this.selected === 'native') return 'FLR'
     //     else return this.selected.data.symbol
     // }
 

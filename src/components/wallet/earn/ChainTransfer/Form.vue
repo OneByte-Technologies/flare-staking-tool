@@ -42,7 +42,7 @@
         </div>
         <div class="confirmation_val" v-else>
             <label>{{ $t('earn.transfer.amount') }}</label>
-            <p>{{ formAmtText }} AVAX</p>
+            <p>{{ formAmtText }} FLR</p>
         </div>
     </div>
 </template>
@@ -56,9 +56,8 @@ import { ChainIdType } from '@/constants'
 import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import { ChainSwapFormData } from '@/components/wallet/earn/ChainTransfer/types'
 
-const chainTypes: ChainIdType[] = ['X', 'P', 'C']
+const chainTypes: ChainIdType[] = ['P', 'C']
 const chainNames = {
-    X: 'X Chain',
     C: 'C Chain',
     P: 'P Chain',
 }
@@ -69,8 +68,8 @@ const chainNames = {
     },
 })
 export default class Form extends Vue {
-    sourceChain: ChainIdType = 'X'
-    targetChain: ChainIdType = 'P'
+    sourceChain: ChainIdType = 'P'
+    targetChain: ChainIdType = 'C'
     amt: BN = new BN(0)
 
     @Prop() balance!: Big
@@ -92,7 +91,7 @@ export default class Form extends Vue {
 
     get sourceOptions(): ChainIdType[] {
         if (!this.isEVMSupported) {
-            return ['X', 'P']
+            return ['C', 'P']
         }
 
         let all = [...chainTypes]
@@ -102,8 +101,8 @@ export default class Form extends Vue {
     get destinationOptions(): ChainIdType[] {
         return {
             X: ['P', 'C'],
-            P: ['X', 'C'],
-            C: ['X', 'P'],
+            P: ['C'],
+            C: ['P'],
         }[this.sourceChain] as ChainIdType[]
     }
 

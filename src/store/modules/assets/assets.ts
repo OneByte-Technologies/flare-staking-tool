@@ -370,7 +370,7 @@ const assets_module: Module<AssetsState, RootState> = {
             const res = await avm.getAssetDescription('AVAX')
             const id = bintools.cb58Encode(res.assetID)
             state.AVA_ASSET_ID = id
-            const asset = new AvaAsset(id, res.name, res.symbol, res.denomination)
+            const asset = new AvaAsset(id, 'Flare', 'FLR', res.denomination)
             commit('addAsset', asset)
         },
 

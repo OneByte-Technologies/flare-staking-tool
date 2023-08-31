@@ -2,7 +2,7 @@
     <div class="staking_tx">
         <div class="data_row">
             <p>{{ actionText }}</p>
-            <p class="amt">{{ amtText }} AVAX</p>
+            <p class="amt">{{ amtText }} FLR</p>
         </div>
         <!--If received validator reward and validator tx-->
         <div class="data_row" v-if="isValidator && receivedValidatorReward">
@@ -10,7 +10,7 @@
                 <span class="rewarded"><fa icon="check-square"></fa></span>
                 {{ $t('transactions.reward_amount') }}
             </p>
-            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} AVAX</p>
+            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} FLR</p>
         </div>
         <!--If received validator reward and delegator tx-->
         <div class="data_row" v-if="!isValidator && receivedValidatorReward">
@@ -18,7 +18,7 @@
                 <span class="rewarded"><fa icon="check-square"></fa></span>
                 {{ $t('transactions.fee_amount') }}
             </p>
-            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} AVAX</p>
+            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} FLR</p>
         </div>
         <!--If received delegator reward and delegator tx-->
         <div class="data_row" v-if="!isValidator && receivedDelegatorReward">
@@ -26,7 +26,7 @@
                 <span class="rewarded"><fa icon="check-square"></fa></span>
                 {{ $t('transactions.reward_amount') }}
             </p>
-            <p class="amt">{{ formatRewardAmount(delegatorRewardAmount) }} AVAX</p>
+            <p class="amt">{{ formatRewardAmount(delegatorRewardAmount) }} FLR</p>
         </div>
     </div>
 </template>

@@ -16,8 +16,8 @@ function createUtxoDataX(
         utxoId: '21AD4VanDd31ttAZZkMbr8SKL5DsQNSyfQcUFHKRq6bBHxq6tb',
         asset: {
             assetId: assetId,
-            name: 'Avalanche',
-            symbol: 'AVAX',
+            name: 'Flare',
+            symbol: 'FLR',
             denomination: 9,
             type: 'secp256k1',
             amount: amount,

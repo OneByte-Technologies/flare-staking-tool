@@ -1,6 +1,6 @@
-# Avalanche (AVAX) Wallet
+# Flare (FLR) Wallet
 
-This is the frontend Vue.js application for the Avalanche (AVAX) Wallet.
+This is the frontend Vue.js application for the Flare (FLR) Wallet.
 
 ## Prerequisites
 
