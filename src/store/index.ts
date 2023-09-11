@@ -70,6 +70,16 @@ export default new Vuex.Store({
             const addresses = wallet.getDerivedAddresses()
             return addresses
         },
+        activeAddress(state: RootState): string | null {
+            if (!state.activeWallet) {
+                console.log('No active wallet found');
+                return null;
+            }
+            const address = state.activeWallet.getCurrentAddressAvm();
+            console.log('Active address:', address);
+            return address;
+        },
+       
     },
     mutations: {
         updateActiveAddress(state) {

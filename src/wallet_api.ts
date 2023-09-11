@@ -6,6 +6,7 @@ const wallet_api: AxiosInstance = axios.create({
     withCredentials: false,
     headers: {
         'Content-Type': 'application/json',
+        "Access-Control-Allow-Origin": "*",
     },
 })
 export { wallet_api }

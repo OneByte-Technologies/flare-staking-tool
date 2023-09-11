@@ -10,6 +10,7 @@ module.exports = {
          */
         https: !process.env.USE_HTTP,
         port: 5000,
+        proxy: "https://localhost:5001/"
     },
     configureWebpack: {
         optimization: {

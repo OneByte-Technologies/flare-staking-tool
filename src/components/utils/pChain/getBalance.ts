@@ -11,5 +11,5 @@ const pChain: PlatformVMAPI = ava.PChain()
 export const getBalance = async (activeAddress: string): Promise<any> => {
     const balance: object = await pChain.getBalance(activeAddress)
     console.log(balance)
-    console.log('Balance Fetched')
+    console.log('Balance Fetched', balance)
 }
