@@ -2,11 +2,11 @@
     <div>
         <template v-if="totLength > 0">
             <div>
-                <label>{{ $t('earn.rewards.total') }}</label>
+                <label>{{ $t('staking.rewards.total') }}</label>
                 <p class="amt">{{ totalRewardBig.toLocaleString(9) }} FLR</p>
             </div>
             <div v-if="validatorTxs.length > 0">
-                <h3>{{ $t('earn.rewards.validation') }}</h3>
+                <h3>{{ $t('staking.rewards.validation') }}</h3>
                 <UserRewardRow
                     v-for="v in validatorTxs"
                     :key="v.txHash"
@@ -16,7 +16,7 @@
             </div>
 
             <div v-if="delegatorTxs.length > 0">
-                <h3>{{ $t('earn.rewards.delegation') }}</h3>
+                <h3>{{ $t('staking.rewards.delegation') }}</h3>
                 <UserRewardRow
                     v-for="v in delegatorTxs"
                     :key="v.txHash"
@@ -26,7 +26,7 @@
             </div>
         </template>
         <template v-else>
-            <p style="text-align: center">{{ $t('earn.rewards.empty') }}</p>
+            <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
         </template>
     </div>
 </template>
@@ -34,11 +34,11 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { AvaWalletCore } from '../../../js/wallets/types'
-import UserRewardRow from '@/components/wallet/earn/UserRewardRow.vue'
+import UserRewardRow from '@/components/wallet/staking/UserRewardRow.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
 import { BN } from 'avalanche'
-import { EarnState } from '@/store/modules/earn/types'
+import { stakingState } from '@/store/modules/staking/types'
 
 @Component({
     components: {
@@ -56,11 +56,11 @@ export default class UserRewards extends Vue {
     }
 
     created() {
-        this.$store.dispatch('Earn/refreshRewards')
+        this.$store.dispatch('staking/refreshRewards')
 
         // Update every 5 minutes
         this.updateInterval = setInterval(() => {
-            this.$store.dispatch('Earn/refreshRewards')
+            this.$store.dispatch('staking/refreshRewards')
         }, 5 * 60 * 1000)
     }
 
@@ -70,7 +70,7 @@ export default class UserRewards extends Vue {
     }
 
     get stakingTxs() {
-        return this.$store.state.Earn.stakingTxs as EarnState['stakingTxs']
+        return this.$store.state.staking.stakingTxs as stakingState['stakingTxs']
     }
 
     get validatorTxs() {
