@@ -143,7 +143,7 @@
                                 {{ $t('earn.validate.errs.duration_warn') }}
                             </p>
                             <p class="err">{{ err }}</p>
-                            <v-btn
+                            <!-- <v-btn
                                 v-if="!isConfirm"
                                 @click="confirm"
                                 class="button_secondary"
@@ -153,29 +153,16 @@
                                 block
                             >
                                 {{ $t('earn.validate.confirm') }}
-                            </v-btn>
-                            <template v-else>
-                                <v-btn
-                                    @click="submit"
-                                    class="button_secondary"
-                                    depressed
-                                    :loading="isLoading"
-                                    block
-                                >
+                            </v-btn> -->
+                            <template>
+                                <v-btn @click="submit" class="button_secondary" depressed :loading="isLoading" block>
                                     {{ $t('earn.validate.submit') }}
-                                </v-btn>
-                                <v-btn
-                                    text
-                                    @click="cancelConfirm"
-                                    block
-                                    style="color: var(--primary-color); margin-top: 20px"
-                                >
-                                    {{ $t('earn.validate.cancel') }}
-                                </v-btn>
+                                  </v-btn>
+                               
                             </template>
                         </div>
                     </div>
-                    <div class="success_cont" v-else>
+                    <div class="success_cont">
                         <h2>{{ $t('earn.validate.success.title') }}</h2>
                         <p>{{ $t('earn.validate.success.desc') }}</p>
                         <p class="tx_id">Tx ID: {{ txId }}</p>
@@ -243,6 +230,7 @@ import { WalletType } from '@/js/wallets/types'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
+import { addValidatorTx } from '@/components/utils/pChain/addValidatorTx'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -592,6 +580,7 @@ export default class AddValidator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
+            await addValidatorTx(this.formNodeId);
             this.isLoading = false
             this.onTxSubmit(txId)
         } catch (err) {
@@ -599,11 +588,13 @@ export default class AddValidator extends Vue {
             this.onerror(err)
         }
     }
+    
 
     onTxSubmit(txId: string) {
-        this.txId = txId
+        // this.txId = txId
         this.isSuccess = true
-        this.updateTxStatus(txId)
+        // this.updateTxStatus(txId)
+        // this.$emit('validator-submitted', txId);
     }
 
     onsuccess() {
