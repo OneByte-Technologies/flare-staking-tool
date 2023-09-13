@@ -1,17 +1,17 @@
 <template>
     <div>
-        <h4>{{ $t('earn.shared.utxo_select.label') }}</h4>
+        <h4>{{ $t('staking.shared.utxo_select.label') }}</h4>
         <p class="desc">
-            {{ $t('earn.shared.utxo_select.desc') }}
+            {{ $t('staking.shared.utxo_select.desc') }}
         </p>
         <v-chip-group @change="onTypeChange" v-model="formType" mandatory>
-            <v-chip value="all" small>{{ $t('earn.shared.utxo_select.all') }}</v-chip>
-            <v-chip value="custom" small>{{ $t('earn.shared.utxo_select.custom') }}</v-chip>
+            <v-chip value="all" small>{{ $t('staking.shared.utxo_select.all') }}</v-chip>
+            <v-chip value="custom" small>{{ $t('staking.shared.utxo_select.custom') }}</v-chip>
         </v-chip-group>
 
         <div class="available">
             <div>
-                <label>{{ $t('earn.shared.utxo_select.available') }}</label>
+                <label>{{ $t('staking.shared.utxo_select.available') }}</label>
                 <p>
                     <span>{{ selectedBalanceText }} FLR</span>
                 </p>
@@ -19,7 +19,7 @@
 
             <button @click="openModal" v-if="formType === 'custom'" class="select_but">
                 <fa icon="search"></fa>
-                {{ $t('earn.shared.utxo_select.select') }}
+                {{ $t('staking.shared.utxo_select.select') }}
             </button>
         </div>
 
