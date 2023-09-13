@@ -12,7 +12,7 @@
 
                 <div v-if="!isSuccess && !isLoading">
                     <div v-if="!isImportErr" class="fees">
-                        <h4>{{ $t('earn.transfer.fee') }}</h4>
+                        <h4>{{ $t('staking.transfer.fee') }}</h4>
 
                         <p>
                             Export Fee
@@ -33,7 +33,7 @@
                         <p class="err">{{ err }}</p>
                         <template v-if="isImportErr">
                             <p>
-                                {{ $t('earn.transfer.err_desc') }}
+                                {{ $t('staking.transfer.err_desc') }}
                             </p>
                             <v-btn
                                 depressed
@@ -42,7 +42,7 @@
                                 block
                                 @click="startAgain"
                             >
-                                {{ $t('earn.transfer.success.again') }}
+                                {{ $t('staking.transfer.success.again') }}
                             </v-btn>
                         </template>
                         <template v-else>
@@ -56,7 +56,7 @@
                                 depressed
                                 :loading="isLoading"
                             >
-                                {{ $t('earn.transfer.confirm') }}
+                                {{ $t('staking.transfer.confirm') }}
                             </v-btn>
                             <template v-else>
                                 <v-btn
@@ -67,7 +67,7 @@
                                     depressed
                                     block
                                 >
-                                    {{ $t('earn.transfer.submit') }}
+                                    {{ $t('staking.transfer.submit') }}
                                 </v-btn>
                                 <v-btn
                                     v-if="!isLoading"
@@ -78,20 +78,20 @@
                                     text
                                     block
                                 >
-                                    {{ $t('earn.transfer.cancel') }}
+                                    {{ $t('staking.transfer.cancel') }}
                                 </v-btn>
                             </template>
                         </template>
                     </div>
                 </div>
                 <div v-if="isSuccess" class="complete">
-                    <h4>{{ $t('earn.transfer.success.title') }}</h4>
+                    <h4>{{ $t('staking.transfer.success.title') }}</h4>
                     <p style="color: var(--success); margin: 12px 0 !important">
                         <fa icon="check-circle"></fa>
-                        {{ $t('earn.transfer.success.message') }}
+                        {{ $t('staking.transfer.success.message') }}
                     </p>
                     <v-btn depressed class="button_secondary" small block @click="startAgain">
-                        {{ $t('earn.transfer.success.again') }}
+                        {{ $t('staking.transfer.success.again') }}
                     </v-btn>
                 </div>
             </div>
