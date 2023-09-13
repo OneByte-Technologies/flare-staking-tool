@@ -123,18 +123,17 @@
                             * {{ $t('earn.delegate.summary.warn') }}
                         </label>
                         <p class="err">{{ err }}</p>
-                        <v-btn
-                            v-if="!isConfirm"
+                        <!-- <v-btn
+                          
                             @click="confirm"
                             class="button_secondary"
                             depressed
                             :loading="isLoading"
-                            :disabled="!canSubmit"
                             block
                         >
                             {{ $t('earn.delegate.confirm') }}
-                        </v-btn>
-                        <template v-else>
+                        </v-btn> -->
+                        <template>
                             <v-btn
                                 @click="submit"
                                 class="button_secondary"
@@ -144,18 +143,18 @@
                             >
                                 {{ $t('earn.delegate.submit') }}
                             </v-btn>
-                            <v-btn
+                            <!-- <v-btn
                                 text
                                 @click="cancelConfirm"
                                 block
                                 style="color: var(--primary-color); margin-top: 20px"
                             >
                                 {{ $t('earn.delegate.cancel') }}
-                            </v-btn>
+                            </v-btn> -->
                         </template>
                     </div>
                 </div>
-                <div v-else class="success_cont">
+                <div class="success_cont">
                     <h2>{{ $t('earn.delegate.success.title') }}</h2>
                     <p>{{ $t('earn.delegate.success.desc') }}</p>
                     <p class="tx_id">Tx ID: {{ txId }}</p>
@@ -221,6 +220,7 @@ import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
+import { addDelegatorTx } from '@/components/utils/pChain/addDelegatorTx'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -308,6 +308,7 @@ export default class AddDelegator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
+            await addDelegatorTx(this.formNodeID)
             this.isSuccess = true
             this.txId = txId
             this.updateTxStatus(txId)

@@ -48,7 +48,7 @@ const nodeID: string = 'NodeID-DueWyGi3B9jtKfa9mPoecd4YSDJ1ftF69'
 const startTime: BN = UnixNow().add(new BN(60 * 1))
 const endTime: BN = startTime.add(new BN(2630000))
 
-const main = async (): Promise<any> => {
+export const addDelegatorTx = async (nodeID: string): Promise<any> => {
     const stakeAmount: any = await pChain.getMinStake()
     const avaxAssetID: Buffer = await pChain.getAVAXAssetID()
     const getBalanceResponse: any = await pChain.getBalance(pAddressStrings[0])

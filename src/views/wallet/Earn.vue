@@ -18,7 +18,7 @@
                         <p style="flex-grow: 1">
                             {{ $t('staking.validate_card.desc') }}
                         </p>
-                        <p v-if="!canValidate" class="no_balance">
+                        <p class="no_balance">
                             {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
                         </p>
                         <v-btn
@@ -27,7 +27,7 @@
                             @click="addValidator"
                             depressed
                             small
-                            :disabled="!canValidate"
+                           
                         >
                             {{ $t('staking.validate_card.submit') }}
                         </v-btn>
@@ -39,7 +39,7 @@
                         <p style="flex-grow: 1">
                             {{ $t('staking.delegate_card.desc') }}
                         </p>
-                        <p v-if="!canDelegate" class="no_balance">
+                        <p class="no_balance">
                             {{ $t('staking.warning_2', [minDelegationAmt.toLocaleString()]) }}
                         </p>
                         <v-btn
@@ -48,7 +48,7 @@
                             @click="addDelegator"
                             depressed
                             small
-                            :disabled="!canDelegate"
+                          
                         >
                             {{ $t('staking.delegate_card.submit') }}
                         </v-btn>
