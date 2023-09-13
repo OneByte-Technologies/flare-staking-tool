@@ -1,7 +1,7 @@
 <template>
     <div class="dates_form">
         <!--        <div>-->
-        <!--            <label>{{ $t('earn.validate.duration.start') }}</label>-->
+        <!--            <label>{{ $t('staking.validate.duration.start') }}</label>-->
         <!--            <datetime-->
         <!--                v-model="localStart"-->
         <!--                type="datetime"-->
