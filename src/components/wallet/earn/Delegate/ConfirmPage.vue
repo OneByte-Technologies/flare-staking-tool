@@ -1,23 +1,23 @@
 <template>
     <div class="confirmation">
         <!--        <div>-->
-        <!--            <label>{{ $t('earn.delegate.confirmation.node') }}</label>-->
+        <!--            <label>{{ $t('staking.delegate.confirmation.node') }}</label>-->
         <!--            <p style="word-break: break-all">{{ nodeID }}</p>-->
         <!--        </div>-->
         <div>
-            <label>{{ $t('earn.delegate.confirmation.amount') }}</label>
+            <label>{{ $t('staking.delegate.confirmation.amount') }}</label>
             <p>{{ amtText }} FLR</p>
         </div>
         <div>
-            <label>{{ $t('earn.delegate.confirmation.start') }}</label>
-            <p>{{ $t('earn.delegate.confirmation.start_desc') }}</p>
+            <label>{{ $t('staking.delegate.confirmation.start') }}</label>
+            <p>{{ $t('staking.delegate.confirmation.start_desc') }}</p>
         </div>
         <div>
-            <label>{{ $t('earn.delegate.confirmation.end') }}</label>
+            <label>{{ $t('staking.delegate.confirmation.end') }}</label>
             <p>{{ end.toLocaleString() }}</p>
         </div>
         <div>
-            <label>{{ $t('earn.delegate.confirmation.reward') }} ({{ walletType }})</label>
+            <label>{{ $t('staking.delegate.confirmation.reward') }} ({{ walletType }})</label>
             <p style="word-break: break-all">{{ rewardAddress }}</p>
         </div>
     </div>
