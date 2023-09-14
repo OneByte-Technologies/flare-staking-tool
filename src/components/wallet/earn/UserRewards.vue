@@ -34,11 +34,11 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { AvaWalletCore } from '../../../js/wallets/types'
-import UserRewardRow from '@/components/wallet/staking/UserRewardRow.vue'
+import UserRewardRow from '@/components/wallet/earn/UserRewardRow.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
 import { BN } from 'avalanche'
-import { stakingState } from '@/store/modules/staking/types'
+import { EarnStake } from '@/store/modules/staking/types'
 
 @Component({
     components: {
