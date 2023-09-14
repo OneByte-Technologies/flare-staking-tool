@@ -38,7 +38,7 @@ import UserRewardRow from '@/components/wallet/earn/UserRewardRow.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
 import { BN } from 'avalanche'
-import { EarnStake } from '@/store/modules/staking/types'
+import { EarnState } from '@/store/modules/earn/types'
 
 @Component({
     components: {
@@ -56,11 +56,11 @@ export default class UserRewards extends Vue {
     }
 
     created() {
-        this.$store.dispatch('staking/refreshRewards')
+        this.$store.dispatch('Earn/refreshRewards')
 
         // Update every 5 minutes
         this.updateInterval = setInterval(() => {
-            this.$store.dispatch('staking/refreshRewards')
+            this.$store.dispatch('Earn/refreshRewards')
         }, 5 * 60 * 1000)
     }
 
@@ -70,7 +70,7 @@ export default class UserRewards extends Vue {
     }
 
     get stakingTxs() {
-        return this.$store.state.staking.stakingTxs as stakingState['stakingTxs']
+        return this.$store.state.Earn.stakingTxs as EarnState['stakingTxs']
     }
 
     get validatorTxs() {
