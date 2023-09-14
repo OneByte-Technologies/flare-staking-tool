@@ -7,7 +7,7 @@ const explorer_api: AxiosInstance = axios.create({
     baseURL: api_url,
     withCredentials: false,
     headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
     },
 })
 

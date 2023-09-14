@@ -1,11 +1,8 @@
 <template>
     <div class="addr_card">
         <q-r-modal ref="qr_modal" :address="activeAddress"></q-r-modal>
-        <paper-wallet
-            ref="print_modal"
-            v-if="walletType === 'mnemonic'"
-            :wallet="activeWallet"
-        ></paper-wallet>
+        <paper-wallet ref="print_modal" v-if="walletType === 'mnemonic'" :wallet="activeWallet"
+            :wallet-address="activeAddressPVM"></paper-wallet>
         <p class="addr_info">{{ addressMsg }}</p>
         <div class="bottom">
             <div class="col_qr">
@@ -18,37 +15,16 @@
                     {{ activeAddress }}
                 </p>
                 <div class="buts">
-                    <button
-                        v-if="chainNow === 'C'"
-                        :tooltip="`View the bech32 encoded C-Chain address`"
-                        class="bech32"
-                        @click="toggleBech32"
-                        :active="showBech"
-                    >
+                    <button v-if="chainNow === 'C'" :tooltip="`View the bech32 encoded C-Chain address`" class="bech32"
+                        @click="toggleBech32" :active="showBech">
                         Bech32
                     </button>
-                    <button
-                        :tooltip="$t('top.hover1')"
-                        @click="viewQRModal"
-                        class="qr_but"
-                    ></button>
-                    <button
-                        v-if="walletType === 'mnemonic'"
-                        :tooltip="$t('top.hover2')"
-                        @click="viewPrintModal"
-                        class="print_but"
-                    ></button>
-                    <button
-                        v-if="walletType === 'ledger'"
-                        :tooltip="$t('create.verify')"
-                        @click="verifyLedgerAddress"
-                        class="ledger_but"
-                    ></button>
-                    <CopyText
-                        :tooltip="$t('top.hover3')"
-                        :value="activeAddress"
-                        class="copy_but"
-                    ></CopyText>
+                    <button :tooltip="$t('top.hover1')" @click="viewQRModal" class="qr_but"></button>
+                    <button v-if="walletType === 'mnemonic'" :tooltip="$t('top.hover2')" @click="viewPrintModal"
+                        class="print_but"></button>
+                    <button v-if="walletType === 'ledger'" :tooltip="$t('create.verify')" @click="verifyLedgerAddress"
+                        class="ledger_but"></button>
+                    <CopyText :tooltip="$t('top.hover3')" :value="activeAddress" class="copy_but"></CopyText>
                 </div>
             </div>
         </div>
@@ -161,11 +137,13 @@ export default class AddressCard extends Vue {
     get activeWallet(): WalletType | null {
         return this.$store.state.activeWallet
     }
+
     get address() {
         let wallet = this.activeWallet
         if (!wallet) {
             return '-'
         }
+        console.log('address:', wallet.getCurrentAddressAvm()) // Add console.log here
         return wallet.getCurrentAddressAvm()
     }
 
@@ -174,7 +152,7 @@ export default class AddressCard extends Vue {
         if (!wallet) {
             return '-'
         }
-
+        console.log('addressPVM:', wallet.getCurrentAddressPlatform()) // Add console.log here
         return wallet.getCurrentAddressPlatform()
     }
 
@@ -206,6 +184,10 @@ export default class AddressCard extends Vue {
                 return this.showBech ? this.addressEVMBech32 : this.addressEVM
         }
         return this.address
+    }
+    get activeAddressPVM(): string {
+        console.log('activeAddressPVM:', this.addressPVM); // Add console.log here
+        return this.addressPVM; // Use the P-chain address here
     }
 
     get activeIdx(): number {
@@ -284,6 +266,7 @@ export default class AddressCard extends Vue {
     flex-direction: column;
     padding: 0 !important;
 }
+
 .buts {
     width: 100%;
     display: flex;
@@ -291,7 +274,7 @@ export default class AddressCard extends Vue {
     color: var(--primary-color-light);
     justify-content: flex-end;
 
-    > * {
+    >* {
         font-size: 16px;
         margin-left: 14px;
         position: relative;
@@ -302,6 +285,7 @@ export default class AddressCard extends Vue {
 
         background-size: contain;
         background-position: center;
+
         &:hover {
             opacity: 1;
         }
@@ -311,12 +295,15 @@ export default class AddressCard extends Vue {
 .qr_but {
     background-image: url('/img/qr_icon.png');
 }
+
 .print_but {
     background-image: url('/img/faucet_icon.png');
 }
+
 .ledger_but {
     background-image: url('/img/ledger_icon.png');
 }
+
 .copy_but {
     color: var(--primary-color);
 }
@@ -336,6 +323,7 @@ export default class AddressCard extends Vue {
     flex-direction: column;
     justify-content: center;
 }
+
 .mainnet_but {
     background-image: url('/img/modal_icons/mainnet_addr.svg');
 }
@@ -344,9 +332,11 @@ export default class AddressCard extends Vue {
     .qr_but {
         background-image: url('/img/qr_icon_night.svg');
     }
+
     .print_but {
         background-image: url('/img/print_icon_night.svg');
     }
+
     .ledger_but {
         background-image: url('/img/ledger_night.svg');
     }
@@ -415,6 +405,7 @@ $qr_width: 110px;
 }
 
 @include main.medium-device {
+
     //.bottom{
     //    display: block;
     //}
@@ -425,6 +416,7 @@ $qr_width: 110px;
     .addr_info {
         display: none;
     }
+
     canvas {
         display: block;
         margin: 0px auto;
@@ -433,7 +425,7 @@ $qr_width: 110px;
     .buts {
         justify-content: space-evenly;
 
-        > * {
+        >* {
             margin: 0;
         }
     }

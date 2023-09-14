@@ -71,7 +71,7 @@
                         <!-- <label>{{ $t('top.balance.available') }} (X)</label>
                         <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p> -->
                         <label>{{ $t('top.balance.available') }} (P)</label>
-                        <p>{{ platformUnlocked | cleanAvaxBN }} FLR</p>
+                        <p>{{ pBalance | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
                         <p>{{ evmUnlocked | cleanAvaxBN }} FLR</p>
                     </div>
@@ -115,7 +115,8 @@ import { bnToBig } from '@/helpers/helper'
 import { priceDict } from '@/store/types'
 import { WalletType } from '@/js/wallets/types'
 import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdownModal.vue'
-
+import { getBalance } from '@/components/utils/pChain/getBalance'
+import { mapGetters } from 'vuex'
 @Component({
     components: {
         UtxosBreakdownModal,
@@ -129,6 +130,22 @@ import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdo
             return big.toLocaleString()
         },
     },
+    computed: {
+    activeAddress() {
+      return this.$store.getters.activeAddress
+    },
+
+    pChainAddress() {
+      const activeWallet = this.$store.state.activeWallet
+      if (activeWallet) {
+        const pChainAddress = activeWallet.getCurrentAddressAvm()
+        console.log('pChainAddress:', pChainAddress)
+        return pChainAddress
+      }
+      return null
+    }
+  },
+
 })
 export default class BalanceCard extends Vue {
     isBreakdown = true
@@ -137,6 +154,25 @@ export default class BalanceCard extends Vue {
         utxos_modal: UtxosBreakdownModal
     }
 
+    pBalance: number = 0;
+
+    // methods
+    pChainAddress: string | null = null
+    async fetchPBalance() {
+      if (this.pChainAddress) {
+        this.pBalance = await getBalance(this.pChainAddress)
+        console.log('pBalance:', this.pBalance)
+      } else {
+        console.error('No P-Chain address found')
+      }
+    }
+
+
+
+    // lifecycle hooks
+    mounted() {
+        this.fetchPBalance()
+    }
     updateBalance(): void {
         this.$store.dispatch('Assets/updateUTXOs')
         this.$store.dispatch('History/updateTransactionHistory')
@@ -147,6 +183,7 @@ export default class BalanceCard extends Vue {
     }
     get ava_asset(): AvaAsset | null {
         let ava = this.$store.getters['Assets/AssetAVA']
+        console.log(ava: "ava_asset")
         return ava
     }
 
@@ -372,6 +409,7 @@ export default class BalanceCard extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../../main';
+
 .balance_card {
     display: grid;
     grid-template-columns: 1fr 230px;
@@ -381,6 +419,7 @@ export default class BalanceCard extends Vue {
 .nft_card {
     border-left: 2px solid var(--bg-light);
 }
+
 .fungible_card {
     height: 100%;
     display: grid !important;
@@ -394,6 +433,7 @@ export default class BalanceCard extends Vue {
     margin-top: 8px;
     /*max-width: 460px;*/
 }
+
 .header {
     display: flex;
 
@@ -402,6 +442,7 @@ export default class BalanceCard extends Vue {
         flex-grow: 1;
     }
 }
+
 h4 {
     font-weight: normal;
 }
@@ -413,6 +454,7 @@ h4 {
 .balance_row {
     align-self: center;
 }
+
 .balance {
     font-size: 2.4em;
     white-space: normal;
@@ -443,6 +485,7 @@ h4 {
     button {
         outline: none !important;
     }
+
     img {
         object-fit: contain;
         width: 100%;
@@ -452,10 +495,12 @@ h4 {
         color: var(--primary-color) !important;
     }
 }
+
 .buts {
     width: 100%;
     text-align: right;
 }
+
 .buts button {
     font-size: 18px;
     margin: 0px 18px;
@@ -470,6 +515,7 @@ h4 {
     object-fit: contain;
     outline: none !important;
 }
+
 .buts button[tooltip]:hover:before {
     border-radius: 4px;
     /*left: 0;*/
@@ -486,18 +532,21 @@ h4 {
     padding: 4px 8px;
 }
 
-.alt_info > div {
+.alt_info>div {
     display: grid;
     grid-template-columns: repeat(4, max-content);
     column-gap: 0px;
     margin-top: 12px;
-    > div {
+
+    >div {
         position: relative;
         padding: 0 24px;
         border-right: 2px solid var(--bg-light);
+
         &:first-of-type {
             padding-left: 0;
         }
+
         &:last-of-type {
             border: none;
         }
@@ -537,6 +586,7 @@ h4 {
     .balance_usd {
         font-size: 11px;
     }
+
     .nft_col {
         display: none;
     }
@@ -568,11 +618,10 @@ h4 {
         font-size: 2em !important;
     }
 
-    .where_info {
-    }
+    .where_info {}
 
     .alt_info {
-        > div {
+        >div {
             text-align: left;
             grid-template-columns: none;
             column-gap: 0;
@@ -580,7 +629,7 @@ h4 {
 
         .alt_non_breakdown,
         .alt_breakdown {
-            > div {
+            >div {
                 padding: 8px 0;
                 border-right: none;
                 border-bottom: 1px solid var(--bg-light);
