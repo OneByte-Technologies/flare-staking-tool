@@ -1,27 +1,27 @@
 <template>
     <div class="confirmation">
         <div>
-            <label>{{ $t('earn.validate.confirmation.id') }}</label>
+            <label>{{ $t('staking.validate.confirmation.id') }}</label>
             <p style="word-break: break-all">{{ nodeID }}</p>
         </div>
         <div>
-            <label>{{ $t('earn.validate.confirmation.amount') }}</label>
+            <label>{{ $t('staking.validate.confirmation.amount') }}</label>
             <p>{{ amtText }} FLR</p>
         </div>
         <div>
-            <label>{{ $t('earn.validate.confirmation.start') }}</label>
-            <p>{{ $t('earn.validate.confirmation.start_desc') }}</p>
+            <label>{{ $t('staking.validate.confirmation.start') }}</label>
+            <p>{{ $t('staking.validate.confirmation.start_desc') }}</p>
         </div>
         <div>
-            <label>{{ $t('earn.validate.confirmation.end') }}</label>
+            <label>{{ $t('staking.validate.confirmation.end') }}</label>
             <p>{{ end.toLocaleString() }}</p>
         </div>
         <div>
-            <label>{{ $t('earn.validate.confirmation.fee') }}</label>
+            <label>{{ $t('staking.validate.confirmation.fee') }}</label>
             <p>{{ delegationFee }} %</p>
         </div>
         <div>
-            <label>{{ $t('earn.validate.confirmation.reward') }} ({{ walletType }})</label>
+            <label>{{ $t('staking.validate.confirmation.reward') }} ({{ walletType }})</label>
             <p style="word-break: break-all">{{ rewardAddress }}</p>
         </div>
     </div>
@@ -65,9 +65,9 @@ export default class ConfirmPage extends Vue {
 
     get walletType() {
         if (this.rewardDestination === 'local') {
-            return this.$t('earn.validate.confirmation.type_local')
+            return this.$t('staking.validate.confirmation.type_local')
         }
-        return this.$t('earn.validate.confirmation.type_custom')
+        return this.$t('staking.validate.confirmation.type_custom')
     }
 
     get amtText(): string {

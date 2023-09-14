@@ -31,7 +31,7 @@
         </div>
 
         <div v-if="!isConfirm">
-            <label>{{ $t('earn.transfer.amount') }}</label>
+            <label>{{ $t('staking.transfer.amount') }}</label>
 
             <AvaxInput
                 :max="maxAmt"
@@ -41,7 +41,7 @@
             ></AvaxInput>
         </div>
         <div class="confirmation_val" v-else>
-            <label>{{ $t('earn.transfer.amount') }}</label>
+            <label>{{ $t('staking.transfer.amount') }}</label>
             <p>{{ formAmtText }} FLR</p>
         </div>
     </div>
