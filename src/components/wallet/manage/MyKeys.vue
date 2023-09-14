@@ -4,6 +4,7 @@
         <key-row
             v-if="activeWallet"
             :wallet="activeWallet"
+            :walletKey="activeAddressPVM"
             class="key_row"
             :is_default="true"
         ></key-row>
@@ -28,6 +29,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import KeyRow from '@/components/wallet/manage/KeyRow.vue'
 import RememberKey from '@/components/misc/RememberKey.vue'
 import { WalletType } from '@/js/wallets/types'
+import { ChainIdType } from '@/constants'
 
 @Component({
     components: {
@@ -36,6 +38,8 @@ import { WalletType } from '@/js/wallets/types'
     },
 })
 export default class MyKeys extends Vue {
+    chainNow: ChainIdType = 'P'
+    showBech = false // If true C-Chain shows the bech32 Address
     selectWallet(wallet: WalletType) {
         console.log('keys-selectWallet:', wallet);
         this.$store.dispatch('activateWallet', wallet)
@@ -78,6 +82,57 @@ export default class MyKeys extends Vue {
     get activeWallet(): WalletType {
         console.log('keys-activeWallet:', this.$store.state.activeWallet);
         return this.$store.state.activeWallet;
+    }
+    get address() {
+        let wallet = this.activeWallet
+        if (!wallet) {
+            return '-'
+        }
+        console.log('address:', wallet.getCurrentAddressAvm()) // Add console.log here
+        return wallet.getCurrentAddressAvm()
+    }
+
+    get addressPVM() {
+        let wallet = this.activeWallet
+        if (!wallet) {
+            return '-'
+        }
+        console.log('addressPVM:', wallet.getCurrentAddressPlatform()) // Add console.log here
+        return wallet.getCurrentAddressPlatform()
+    }
+
+    get addressEVM() {
+        let wallet = this.activeWallet
+        if (!wallet) {
+            return '-'
+        }
+
+        return wallet.getEvmChecksumAddress()
+    }
+
+    get addressEVMBech32() {
+        let wallet = this.activeWallet
+        if (!wallet) {
+            return '-'
+        }
+
+        return wallet.getEvmAddressBech()
+    }
+
+    get activeAddress(): string {
+        switch (this.chainNow) {
+            case 'X':
+                return this.address
+            case 'P':
+                return this.addressPVM
+            case 'C':
+                return this.showBech ? this.addressEVMBech32 : this.addressEVM
+        }
+        return this.address
+    }
+    get activeAddressPVM(): string {
+        console.log('activeAddressPVM:', this.addressPVM); // Add console.log here
+        return this.addressPVM; // Use the P-chain address here
     }
 }
 </script>

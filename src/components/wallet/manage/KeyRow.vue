@@ -42,7 +42,7 @@
                 <div class="header_cols">
                     <div class="detail">
                         <p class="addressVal">
-                            <b>{{ walletTitle }}</b>
+                            <b>{{ walletKey }}</b>
                         </p>
                         <Tooltip :text="$t('keys.tooltip')" v-if="isVolatile">
                             <fa icon="exclamation-triangle" class="volatile_alert"></fa>
@@ -151,6 +151,7 @@ interface IKeyBalanceDict {
 export default class KeyRow extends Vue {
     @Prop() wallet!: WalletType
     @Prop({ default: false }) is_default?: boolean
+    @Prop() walletKey?: string
 
     $refs!: {
         export_wallet: ExportKeys
@@ -159,14 +160,17 @@ export default class KeyRow extends Vue {
         modal_priv_key: PrivateKey
         modal_xpub: XpubModal
     }
-
+  
     get isVolatile() {
         return this.$store.state.volatileWallets.includes(this.wallet)
     }
 
     get walletTitle() {
+        console.log('Getting wallet title', this.wallet.getBaseAddress());
         return this.wallet.getBaseAddress()
     }
+
+
 
     get assetsDict(): AssetsDict {
         return this.$store.state.Assets.assetsDict
