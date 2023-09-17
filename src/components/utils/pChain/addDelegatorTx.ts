@@ -24,6 +24,7 @@ import {
     UnixNow,
 } from '@flarenetwork/flarejs/dist/utils'
 
+// Set up Avalanche client
 const ip: string = 'coston2-api.flare.network'
 const port: number = 443
 const protocol: string = 'https'
@@ -47,12 +48,24 @@ const memo: Buffer = Buffer.from('Manually add a delegator to the primary subnet
 const nodeID: string = 'NodeID-DueWyGi3B9jtKfa9mPoecd4YSDJ1ftF69'
 const startTime: BN = UnixNow().add(new BN(60 * 1))
 const endTime: BN = startTime.add(new BN(2630000))
+const delegationCounts: { [key: string]: number } = {};
 
+// Function to add a delegator
 export const addDelegatorTx = async (nodeID: string): Promise<any> => {
+    // Get the minimum stake amount
     const stakeAmount: any = await pChain.getMinStake()
+    // Get the AVAX asset ID
     const avaxAssetID: Buffer = await pChain.getAVAXAssetID()
+    // Get the balance of the sender's address
     const getBalanceResponse: any = await pChain.getBalance(pAddressStrings[0])
     const unlocked: BN = new BN(getBalanceResponse.unlocked)
+    const senderAddress = pAddressStrings[0];
+    // Check if the sender has already made three delegations
+    if (delegationCounts[senderAddress] >= 3) {
+        console.log(`Error: You have already made three delegations.`);
+        return;
+    }
+    // Create the SECP transfer output for the remaining AVAX
     const secpTransferOutput: SECPTransferOutput = new SECPTransferOutput(
         unlocked.sub(fee).sub(stakeAmount.minValidatorStake),
         pAddresses,
@@ -65,6 +78,7 @@ export const addDelegatorTx = async (nodeID: string): Promise<any> => {
     )
     outputs.push(transferableOutput)
 
+    // Create the SECP transfer output for the stake amount
     const stakeSECPTransferOutput: SECPTransferOutput = new SECPTransferOutput(
         stakeAmount.minValidatorStake,
         pAddresses,
@@ -77,9 +91,11 @@ export const addDelegatorTx = async (nodeID: string): Promise<any> => {
     )
     stakeOuts.push(stakeTransferableOutput)
 
+    // Create the reward output owners
     const rewardOutputOwners: SECPOwnerOutput = new SECPOwnerOutput(pAddresses, locktime, threshold)
     const rewardOwners: ParseableOutput = new ParseableOutput(rewardOutputOwners)
 
+    // Get the UTXOs of the sender's address
     const platformVMUTXOResponse: any = await pChain.getUTXOs(pAddressStrings)
     const utxoSet: UTXOSet = platformVMUTXOResponse.utxos
     const utxos: UTXO[] = utxoSet.getAllUTXOs()
@@ -91,6 +107,7 @@ export const addDelegatorTx = async (nodeID: string): Promise<any> => {
             const txid: Buffer = utxo.getTxID()
             const outputidx: Buffer = utxo.getOutputIdx()
 
+            // Create the SECP transfer input for the UTXO
             const secpTransferInput: SECPTransferInput = new SECPTransferInput(amt)
             secpTransferInput.addSignatureIdx(0, pAddresses[0])
 
@@ -104,6 +121,7 @@ export const addDelegatorTx = async (nodeID: string): Promise<any> => {
         }
     })
 
+    // Create the add delegator transaction
     const addDelegatorTx: AddDelegatorTx = new AddDelegatorTx(
         networkID,
         bintools.cb58Decode(pChainBlockchainID),
@@ -121,5 +139,6 @@ export const addDelegatorTx = async (nodeID: string): Promise<any> => {
     const unsignedTx: UnsignedTx = new UnsignedTx(addDelegatorTx)
     const tx: Tx = unsignedTx.sign(pKeychain)
     const txid: string = await pChain.issueTx(tx)
+    delegationCounts[senderAddress] = (delegationCounts[senderAddress] || 0) + 1;
     console.log(`Success! TXID: ${txid}`)
 }
