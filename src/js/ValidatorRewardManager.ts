@@ -436,7 +436,7 @@ const coston2ValidatorRewardManagerABI = [
     ],
 ]
 
-// Configuration object for Coston2 network
+// Configuration Types object for Coston2 network
 interface RewardConfig {
     userAddress: string
     recipientAddress: string
