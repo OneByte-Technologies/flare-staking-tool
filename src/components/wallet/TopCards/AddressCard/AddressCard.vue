@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 <template>
     <div class="addr_card">
         <q-r-modal ref="qr_modal" :address="activeAddress"></q-r-modal>
