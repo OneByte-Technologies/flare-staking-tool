@@ -11,7 +11,7 @@ import {
     UTXO,
     AmountOutput,
     UnsignedTx,
-    AddDelegatorTx,
+    AddDelegatorTx, 
     Tx,
     SECPOwnerOutput,
     ParseableOutput,

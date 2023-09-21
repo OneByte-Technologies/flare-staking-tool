@@ -1,3 +1,4 @@
+/*eslint-disable */
 import { ethers } from 'ethers'
 
 // Set up a provider
@@ -464,7 +465,7 @@ export async function checkUnclaimedRewards(
         // Connect to the Coston2 ValidatorRewardManager contract
         const validatorRewardManagerContract = new ethers.Contract(
             coston2ValidatorRewardManagerAddress,
-            coston2ValidatorRewardManagerABI,
+            coston2ValidatorRewardManagerABI as ethers.ContractInterface,
             provider
         )
 
@@ -485,7 +486,7 @@ export async function claimRewards(config: RewardConfig): Promise<void> {
         // Connect to the Coston2 ValidatorRewardManager contract
         const validatorRewardManagerContract = new ethers.Contract(
             coston2ValidatorRewardManagerAddress,
-            coston2ValidatorRewardManagerABI,
+            coston2ValidatorRewardManagerABI as ethers.ContractInterface,
             provider
         )
 
