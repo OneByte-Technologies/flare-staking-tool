@@ -1,3 +1,4 @@
+/* eslint-disable */
 import axios, { AxiosInstance } from 'axios'
 import { ITransactionData } from './store/modules/history/types'
 

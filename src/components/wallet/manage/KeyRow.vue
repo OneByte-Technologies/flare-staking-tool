@@ -160,7 +160,7 @@ export default class KeyRow extends Vue {
         modal_priv_key: PrivateKey
         modal_xpub: XpubModal
     }
-  
+
     get isVolatile() {
         return this.$store.state.volatileWallets.includes(this.wallet)
     }
@@ -168,8 +168,6 @@ export default class KeyRow extends Vue {
     get walletTitle() {
         return this.wallet.getBaseAddress()
     }
-
-
 
     get assetsDict(): AssetsDict {
         return this.$store.state.Assets.assetsDict

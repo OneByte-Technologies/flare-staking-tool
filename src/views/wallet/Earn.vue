@@ -4,7 +4,9 @@
             <h1>{{ $t('staking.title') }}</h1>
             <h1 class="subtitle" v-if="pageNow">
                 / {{ subtitle }}
-                <span @click="cancel"><fa icon="times"></fa></span>
+                <span @click="cancel">
+                    <fa icon="times"></fa>
+                </span>
             </h1>
         </div>
         <transition name="fade" mode="out-in">
@@ -27,7 +29,6 @@
                             @click="addValidator"
                             depressed
                             small
-                           
                         >
                             {{ $t('staking.validate_card.submit') }}
                         </v-btn>
@@ -48,7 +49,6 @@
                             @click="addDelegator"
                             depressed
                             small
-                          
                         >
                             {{ $t('staking.delegate_card.submit') }}
                         </v-btn>
@@ -195,14 +195,17 @@ export default class Earn extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../main';
+
 .earn_page {
     display: grid;
     grid-template-rows: max-content 1fr;
 }
+
 .header {
     h1 {
         font-weight: normal;
     }
+
     display: flex;
     /*justify-content: space-between;*/
     /*align-items: center;*/
@@ -224,6 +227,7 @@ export default class Earn extends Vue {
         }
     }
 }
+
 .options {
     margin: 30px 0;
     display: grid;

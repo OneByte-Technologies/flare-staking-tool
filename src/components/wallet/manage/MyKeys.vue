@@ -41,7 +41,7 @@ export default class MyKeys extends Vue {
     chainNow: ChainIdType = 'P'
     showBech = false // If true C-Chain shows the bech32 Address
     selectWallet(wallet: WalletType) {
-        console.log('keys-selectWallet:', wallet);
+        console.log('keys-selectWallet:', wallet)
         this.$store.dispatch('activateWallet', wallet)
         this.$store.dispatch('History/updateTransactionHistory')
     }
@@ -80,8 +80,8 @@ export default class MyKeys extends Vue {
     }
 
     get activeWallet(): WalletType {
-        console.log('keys-activeWallet:', this.$store.state.activeWallet);
-        return this.$store.state.activeWallet;
+        console.log('keys-activeWallet:', this.$store.state.activeWallet)
+        return this.$store.state.activeWallet
     }
     get address() {
         let wallet = this.activeWallet
@@ -131,13 +131,13 @@ export default class MyKeys extends Vue {
         return this.address
     }
     get activeAddressPVM(): string {
-        console.log('activeAddressPVM:', this.addressPVM); // Add console.log here
-        return this.addressPVM; // Use the P-chain address here
+        console.log('activeAddressPVM:', this.addressPVM) // Add console.log here
+        return this.addressPVM // Use the P-chain address here
     }
 }
 </script>
 <style scoped lang="scss">
-@use "../../../main";
+@use '../../../main';
 
 .default_key {
 }

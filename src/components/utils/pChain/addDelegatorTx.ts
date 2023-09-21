@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Avalanche, BinTools, BN, Buffer } from '@flarenetwork/flarejs/dist'
 import {
     PlatformVMAPI,
@@ -10,7 +11,7 @@ import {
     UTXO,
     AmountOutput,
     UnsignedTx,
-    AddDelegatorTx,
+    AddDelegatorTx, 
     Tx,
     SECPOwnerOutput,
     ParseableOutput,

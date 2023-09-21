@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Avalanche } from '@flarenetwork/flarejs/dist'
 import { PlatformVMAPI } from '@flarenetwork/flarejs/dist/apis/platformvm'
 
