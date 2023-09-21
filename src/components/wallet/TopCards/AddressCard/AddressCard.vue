@@ -2,8 +2,12 @@
 <template>
     <div class="addr_card">
         <q-r-modal ref="qr_modal" :address="activeAddress"></q-r-modal>
-        <paper-wallet ref="print_modal" v-if="walletType === 'mnemonic'" :wallet="activeWallet"
-            :wallet-address="activeAddressPVM"></paper-wallet>
+        <paper-wallet
+            ref="print_modal"
+            v-if="walletType === 'mnemonic'"
+            :wallet="activeWallet"
+            :wallet-address="activeAddressPVM"
+        ></paper-wallet>
         <p class="addr_info">{{ addressMsg }}</p>
         <div class="bottom">
             <div class="col_qr">
@@ -16,16 +20,37 @@
                     {{ activeAddress }}
                 </p>
                 <div class="buts">
-                    <button v-if="chainNow === 'C'" :tooltip="`View the bech32 encoded C-Chain address`" class="bech32"
-                        @click="toggleBech32" :active="showBech">
+                    <button
+                        v-if="chainNow === 'C'"
+                        :tooltip="`View the bech32 encoded C-Chain address`"
+                        class="bech32"
+                        @click="toggleBech32"
+                        :active="showBech"
+                    >
                         Bech32
                     </button>
-                    <button :tooltip="$t('top.hover1')" @click="viewQRModal" class="qr_but"></button>
-                    <button v-if="walletType === 'mnemonic'" :tooltip="$t('top.hover2')" @click="viewPrintModal"
-                        class="print_but"></button>
-                    <button v-if="walletType === 'ledger'" :tooltip="$t('create.verify')" @click="verifyLedgerAddress"
-                        class="ledger_but"></button>
-                    <CopyText :tooltip="$t('top.hover3')" :value="activeAddress" class="copy_but"></CopyText>
+                    <button
+                        :tooltip="$t('top.hover1')"
+                        @click="viewQRModal"
+                        class="qr_but"
+                    ></button>
+                    <button
+                        v-if="walletType === 'mnemonic'"
+                        :tooltip="$t('top.hover2')"
+                        @click="viewPrintModal"
+                        class="print_but"
+                    ></button>
+                    <button
+                        v-if="walletType === 'ledger'"
+                        :tooltip="$t('create.verify')"
+                        @click="verifyLedgerAddress"
+                        class="ledger_but"
+                    ></button>
+                    <CopyText
+                        :tooltip="$t('top.hover3')"
+                        :value="activeAddress"
+                        class="copy_but"
+                    ></CopyText>
                 </div>
             </div>
         </div>
@@ -187,8 +212,8 @@ export default class AddressCard extends Vue {
         return this.address
     }
     get activeAddressPVM(): string {
-        console.log('activeAddressPVM:', this.addressPVM); // Add console.log here
-        return this.addressPVM; // Use the P-chain address here
+        console.log('activeAddressPVM:', this.addressPVM) // Add console.log here
+        return this.addressPVM // Use the P-chain address here
     }
 
     get activeIdx(): number {
@@ -275,7 +300,7 @@ export default class AddressCard extends Vue {
     color: var(--primary-color-light);
     justify-content: flex-end;
 
-    >* {
+    > * {
         font-size: 16px;
         margin-left: 14px;
         position: relative;
@@ -406,7 +431,6 @@ $qr_width: 110px;
 }
 
 @include main.medium-device {
-
     //.bottom{
     //    display: block;
     //}
@@ -426,7 +450,7 @@ $qr_width: 110px;
     .buts {
         justify-content: space-evenly;
 
-        >* {
+        > * {
             margin: 0;
         }
     }
