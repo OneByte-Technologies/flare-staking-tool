@@ -1,4 +1,4 @@
- import { TokenListToken } from '@/store/modules/assets/types'
+import { TokenListToken } from '@/store/modules/assets/types'
 import { web3 } from '@/evm'
 import { BN } from 'avalanche'
 import { bnToBig } from '@/helpers/helper'
@@ -9,7 +9,7 @@ import ERC20Abi from '@openzeppelin/contracts/build/contracts/ERC20.json'
 
 class Erc20Token {
     data: TokenListToken
-    contract: any 
+    contract: any
     balanceRaw: string
     balanceBN: BN
     balanceBig: Big
