@@ -12,16 +12,16 @@
             <transition-group name="fade" mode="out-in">
                 <div class="ins_col" key="form" v-show="!isConfirm">
                     <div style="margin-bottom: 30px">
-                        <h4>{{ $t('earn.delegate.form.period.label') }}</h4>
+                        <h4>{{ $t('staking.delegate.form.period.label') }}</h4>
                         <p class="desc">
-                            {{ $t('earn.delegate.form.period.desc') }}
+                            {{ $t('staking.delegate.form.period.desc') }}
                         </p>
                         <DateForm @change_end="setEnd" :max-end-date="endMaxDate"></DateForm>
                     </div>
                     <div style="margin: 30px 0; margin-bottom: 50px">
-                        <h4>{{ $t('earn.delegate.form.amount.label') }}</h4>
+                        <h4>{{ $t('staking.delegate.form.amount.label') }}</h4>
                         <p class="desc">
-                            {{ $t('earn.delegate.form.amount.desc') }}
+                            {{ $t('staking.delegate.form.amount.desc') }}
                         </p>
                         <p v-if="showMaxTxSizeWarning" class="desc amount_warning">
                             The maximum amount that fits into this transaction is
@@ -35,23 +35,23 @@
                         ></AvaxInput>
                     </div>
                     <div class="reward_in" style="margin: 30px 0" :type="rewardDestination">
-                        <h4>{{ $t('earn.delegate.form.reward.label') }}</h4>
+                        <h4>{{ $t('staking.delegate.form.reward.label') }}</h4>
                         <p class="desc">
-                            {{ $t('earn.delegate.form.reward.desc') }}
+                            {{ $t('staking.delegate.form.reward.desc') }}
                         </p>
                         <div class="reward_tabs">
                             <button
                                 @click="rewardSelect('local')"
                                 :selected="rewardDestination === 'local'"
                             >
-                                {{ $t('earn.delegate.form.reward.chip_1') }}
+                                {{ $t('staking.delegate.form.reward.chip_1') }}
                             </button>
                             <span>or</span>
                             <button
                                 @click="rewardSelect('custom')"
                                 :selected="rewardDestination === 'custom'"
                             >
-                                {{ $t('earn.delegate.form.reward.chip_2') }}
+                                {{ $t('staking.delegate.form.reward.chip_2') }}
                             </button>
                         </div>
                         <QrInput
@@ -63,12 +63,12 @@
                     <Expandable>
                         <template v-slot:triggerOn>
                             <p>
-                                {{ $t('earn.shared.advanced.toggle_on') }}
+                                {{ $t('staking.shared.advanced.toggle_on') }}
                             </p>
                         </template>
                         <template v-slot:triggerOff>
                             <p>
-                                {{ $t('earn.shared.advanced.toggle_off') }}
+                                {{ $t('staking.shared.advanced.toggle_off') }}
                             </p>
                         </template>
                         <template v-slot:content>
@@ -96,11 +96,11 @@
                         currency="currency_sel"
                     ></CurrencySelect>
                     <div>
-                        <label>{{ $t('earn.delegate.summary.duration') }} *</label>
+                        <label>{{ $t('staking.delegate.summary.duration') }} *</label>
                         <p>{{ stakingDurationText }}</p>
                     </div>
                     <div>
-                        <label>{{ $t('earn.delegate.summary.reward') }}</label>
+                        <label>{{ $t('staking.delegate.summary.reward') }}</label>
                         <p v-if="currency_type === 'FLR'">
                             {{ estimatedReward.toLocaleString(2) }} FLR
                         </p>
@@ -109,7 +109,7 @@
                         </p>
                     </div>
                     <div>
-                        <label>{{ $t('earn.delegate.summary.fee') }}</label>
+                        <label>{{ $t('staking.delegate.summary.fee') }}</label>
                         <p v-if="currency_type === 'FLR'">
                             {{ totalFeeBig.toLocaleString(2) }} FLR
                         </p>
@@ -120,7 +120,7 @@
 
                     <div>
                         <label style="margin: 8px 0 !important">
-                            * {{ $t('earn.delegate.summary.warn') }}
+                            * {{ $t('staking.delegate.summary.warn') }}
                         </label>
                         <p class="err">{{ err }}</p>
                         <!-- <v-btn
@@ -129,8 +129,9 @@
                             class="button_secondary"
                             depressed
                             :loading="isLoading"
-                            block
-                        >
+                            block> {{ $t('staking.delegate.confirm') }}
+                        </v-btn>
+                        <template v-else>
                             {{ $t('earn.delegate.confirm') }}
                         </v-btn> -->
                         <template>
@@ -141,14 +142,21 @@
                                 :loading="isLoading"
                                 block
                             >
-                                {{ $t('earn.delegate.submit') }}
+                                {{ $t('staking.delegate.submit') }}
                             </v-btn>
                             <!-- <v-btn
                                 text
                                 @click="cancelConfirm"
                                 block
-                                style="color: var(--primary-color); margin-top: 20px"
-                            >
+                                style="color: var(--primary-color); margin-top: 20px">
+                                {{ $t('staking.delegate.cancel') }}
+                            </v-btn>
+                        </template>
+                    </div>
+                </div>
+                <div v-else class="success_cont">
+                    <h2>{{ $t('staking.delegate.success.title') }}</h2>
+                    <p>{{ $t('staking.delegate.success.desc') }}</p>
                                 {{ $t('earn.delegate.cancel') }}
                             </v-btn> -->
                         </template>
@@ -160,7 +168,7 @@
                     <p class="tx_id">Tx ID: {{ txId }}</p>
                     <div class="tx_status">
                         <div>
-                            <label>{{ $t('earn.delegate.success.status') }}</label>
+                            <label>{{ $t('staking.delegate.success.status') }}</label>
                             <p v-if="!txStatus">Waiting..</p>
                             <p v-else>{{ txStatus }}</p>
                         </div>
@@ -175,7 +183,7 @@
                         </div>
                     </div>
                     <div class="reason_cont" v-if="txReason">
-                        <label>{{ $t('earn.delegate.success.reason') }}</label>
+                        <label>{{ $t('staking.delegate.success.reason') }}</label>
                         <p>{{ txReason }}</p>
                     </div>
                     <v-btn @click="cancel" block class="button_secondary" depressed v-if="txStatus">
@@ -362,10 +370,10 @@ export default class AddDelegator extends Vue {
         let msg: string = e.message
 
         if (msg.includes('startTime')) {
-            this.err = this.$t('earn.delegate.errs.start_end') as string
+            this.err = this.$t('staking.delegate.errs.start_end') as string
             // this.err = "Start date must be in the future and end date must be after start date."
         } else if (msg.includes('address format')) {
-            this.err = this.$t('earn.delegate.errs.invalid_addr') as string
+            this.err = this.$t('staking.delegate.errs.invalid_addr') as string
             // this.err = "Invalid address format. Your address must start with \"P-\"";
         } else {
             this.err = e.message
@@ -415,7 +423,7 @@ export default class AddDelegator extends Vue {
         this.err = ''
 
         if (!this.selected) {
-            this.err = this.$t('earn.delegate.errs.no_node') as string
+            this.err = this.$t('staking.delegate.errs.no_node') as string
             // this.err = "You must specify a validator."
             return false
         }
@@ -426,31 +434,31 @@ export default class AddDelegator extends Vue {
         let diffTime = endTime - startTime
 
         if (startTime <= now) {
-            this.err = this.$t('earn.delegate.errs.start_now') as string
+            this.err = this.$t('staking.delegate.errs.start_now') as string
             return false
         }
 
         // TODO: UPDATE THIS WITH REAL VALUE
         if (diffTime < DAY_MS * 14) {
-            this.err = this.$t('earn.delegate.errs.min_dur') as string
+            this.err = this.$t('staking.delegate.errs.min_dur') as string
             return false
         }
 
         if (diffTime > DAY_MS * 365) {
-            this.err = this.$t('earn.delegate.errs.max_dur') as string
+            this.err = this.$t('staking.delegate.errs.max_dur') as string
             return false
         }
 
         let validatorEndtime = this.selected.endTime.getTime()
 
         if (endTime > validatorEndtime) {
-            this.err = this.$t('earn.delegate.errs.val_end') as string
+            this.err = this.$t('staking.delegate.errs.val_end') as string
             return false
         }
 
         // Reward address check
         if (this.rewardDestination != 'local' && !this.rewardIn) {
-            this.err = this.$t('earn.delegate.errs.no_addr') as string
+            this.err = this.$t('staking.delegate.errs.no_addr') as string
             return false
         }
 
@@ -458,7 +466,7 @@ export default class AddDelegator extends Vue {
         try {
             bintools.stringToAddress(this.rewardIn)
         } catch (e) {
-            this.err = this.$t('earn.delegate.errs.invalid_addr') as string
+            this.err = this.$t('staking.delegate.errs.invalid_addr') as string
             // this.err = "Invalid reward address."
             return false
         }
@@ -466,7 +474,7 @@ export default class AddDelegator extends Vue {
         // Stake amount check
         if (this.stakeAmt.lt(this.minStake)) {
             let big = bnToBig(this.minStake, 9)
-            this.err = this.$t('earn.delegate.errs.amt', [big.toLocaleString()]) as string
+            this.err = this.$t('staking.delegate.errs.amt', [big.toLocaleString()]) as string
             return false
         }
 

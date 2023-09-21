@@ -2,18 +2,18 @@
     <div class="node_selection">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
-                <p>{{ $t('earn.delegate.list.prompt') }}:</p>
+                <p>{{ $t('staking.delegate.list.prompt') }}:</p>
                 <input
                     class="search"
                     type="text"
-                    :placeholder="$t('earn.delegate.list.search')"
+                    :placeholder="$t('staking.delegate.list.search')"
                     v-model="search"
                 />
             </div>
 
             <div class="rigt_but">
                 <button @click="openFilters">
-                    {{ $t('earn.delegate.filter.title') }}
+                    {{ $t('staking.delegate.filter.title') }}
                     <fa icon="filter"></fa>
                 </button>
             </div>

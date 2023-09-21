@@ -2,11 +2,11 @@
     <div>
         <template v-if="totLength > 0">
             <div>
-                <label>{{ $t('earn.rewards.total') }}</label>
+                <label>{{ $t('staking.rewards.total') }}</label>
                 <p class="amt">{{ totalRewardBig.toLocaleString(9) }} FLR</p>
             </div>
             <div v-if="validatorTxs.length > 0">
-                <h3>{{ $t('earn.rewards.validation') }}</h3>
+                <h3>{{ $t('staking.rewards.validation') }}</h3>
                 <UserRewardRow
                     v-for="v in validatorTxs"
                     :key="v.txHash"
@@ -16,7 +16,7 @@
             </div>
 
             <div v-if="delegatorTxs.length > 0">
-                <h3>{{ $t('earn.rewards.delegation') }}</h3>
+                <h3>{{ $t('staking.rewards.delegation') }}</h3>
                 <UserRewardRow
                     v-for="v in delegatorTxs"
                     :key="v.txHash"
@@ -26,7 +26,7 @@
             </div>
         </template>
         <template v-else>
-            <p style="text-align: center">{{ $t('earn.rewards.empty') }}</p>
+            <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
         </template>
     </div>
 </template>
