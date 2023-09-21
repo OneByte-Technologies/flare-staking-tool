@@ -71,9 +71,9 @@
                         <!-- <label>{{ $t('top.balance.available') }} (X)</label>
                         <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p> -->
                         <label>{{ $t('top.balance.available') }} (P)</label>
-                        <p>{{ pBalance | cleanAvaxBN }} FLR</p>
+                        <p>{{ pBalance }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
-                        <p>{{ evmUnlocked | cleanAvaxBN }} FLR</p>
+                        <p>{{ cBalance }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.balance.locked') }} (X)</label>
@@ -115,7 +115,7 @@ import { bnToBig } from '@/helpers/helper'
 import { priceDict } from '@/store/types'
 import { WalletType } from '@/js/wallets/types'
 import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdownModal.vue'
-import { getBalance } from '@/components/utils/pChain/getBalance'
+import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
 import { mapGetters } from 'vuex'
 @Component({
     components: {
@@ -159,19 +159,52 @@ export default class BalanceCard extends Vue {
     // methods
     pChainAddress: string | null = null
     async fetchPBalance() {
-      if (this.pChainAddress) {
-        this.pBalance = await getBalance(this.pChainAddress)
-        console.log('pBalance:', this.pBalance)
-      } else {
-        console.error('No P-Chain address found')
-      }
+        const activeWallet = this.$store.state.activeWallet
+        const pChainCustomAddr = activeWallet.getCurrentAddressPlatform()
+        const pChainAddress: string = 'P-costwo' + pChainCustomAddr.slice(8)
+        console.log(pChainAddress)
+        if (pChainAddress) {
+            this.pBalance = await getPBalance(pChainAddress)
+            console.log('pBalance:', this.pBalance)
+            return this.pBalance
+        } else {
+            console.error('No P-Chain address found')
+        }
     }
 
+    cBalance: string = ''
+    cChainBal: BN = new BN(0)
+
+    async fetchCBalance() {
+        // this.cChainBal = new BN(this.cBalance)
+        try {
+            const activeWallet = this.$store.state.activeWallet
+            const cChainAddress: string = activeWallet.getEvmChecksumAddress()
+            const url: string = 'https://coston2-api.flare.network/ext/C/rpc'
+            const provider = new ethers.providers.JsonRpcProvider(url)
+            const result = await provider.getBalance(cChainAddress)
+            const balHex = result._hex.toString()
+            const balBN = parseInt(result._hex)
+            this.cBalance = ethers.utils.formatEther(balHex)
+            console.log('cBalance', this.cBalance)
+            return this.cBalance
+        } catch (err) {
+            console.error('Promise rejected with error:', err)
+        }
+    }
 
 
     // lifecycle hooks
     mounted() {
-        this.fetchPBalance()
+        setInterval(() => {
+            this.fetchPBalance()
+        }, 10000)
+        setInterval(() => {
+            this.fetchCBalance()
+        }, 10000)
+        setInterval(() => {
+            this.totalBal()
+        }, 10000)
     }
     updateBalance(): void {
         this.$store.dispatch('Assets/updateUTXOs')
