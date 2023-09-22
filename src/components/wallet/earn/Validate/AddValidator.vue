@@ -181,10 +181,15 @@
                                 {{ $t('earn.validate.confirm') }}
                             </v-btn> -->
                             <template>
-                                <v-btn @click="submit" class="button_secondary" depressed :loading="isLoading" block>
+                                <v-btn
+                                    @click="submit"
+                                    class="button_secondary"
+                                    depressed
+                                    :loading="isLoading"
+                                    block
+                                >
                                     {{ $t('earn.validate.submit') }}
-                                  </v-btn>
-                               
+                                </v-btn>
                             </template>
                         </div>
                     </div>
@@ -310,6 +315,7 @@ export default class AddValidator extends Vue {
     currency_type = 'FLR'
 
     maxTxSizeAmount = new BN(0)
+    bnToAvaxP: any
 
     mounted() {
         this.rewardSelect('local')
@@ -606,7 +612,7 @@ export default class AddValidator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
-            await addValidatorTx(this.formNodeId);
+            await addValidatorTx(this.formNodeId)
             this.isLoading = false
             this.onTxSubmit(txId)
         } catch (err) {
@@ -614,8 +620,6 @@ export default class AddValidator extends Vue {
             this.onerror(err)
         }
     }
-    
-
     onTxSubmit(txId: string) {
         // this.txId = txId
         this.isSuccess = true
@@ -695,10 +699,6 @@ export default class AddValidator extends Vue {
 </script>
 <style scoped lang="scss">
 @use "../../../../main";
-.cols {
-    /*display: grid;*/
-    /*grid-template-columns: 1fr 1fr;*/
-}
 
 form {
     display: grid;

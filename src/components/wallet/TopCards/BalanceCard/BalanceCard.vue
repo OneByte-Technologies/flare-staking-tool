@@ -131,21 +131,20 @@ import { mapGetters } from 'vuex'
         },
     },
     computed: {
-    activeAddress() {
-      return this.$store.getters.activeAddress
+        activeAddress() {
+            return this.$store.getters.activeAddress
+        },
+
+        pChainAddress() {
+            const activeWallet = this.$store.state.activeWallet
+            if (activeWallet) {
+                const pChainAddress = activeWallet.getCurrentAddressAvm()
+                console.log('pChainAddress:', pChainAddress)
+                return pChainAddress
+            }
+            return null
+        },
     },
-
-    pChainAddress() {
-      const activeWallet = this.$store.state.activeWallet
-      if (activeWallet) {
-        const pChainAddress = activeWallet.getCurrentAddressAvm()
-        console.log('pChainAddress:', pChainAddress)
-        return pChainAddress
-      }
-      return null
-    }
-  },
-
 })
 export default class BalanceCard extends Vue {
     isBreakdown = true
@@ -154,20 +153,18 @@ export default class BalanceCard extends Vue {
         utxos_modal: UtxosBreakdownModal
     }
 
-    pBalance: number = 0;
+    pBalance: number = 0
 
     // methods
     pChainAddress: string | null = null
     async fetchPBalance() {
-      if (this.pChainAddress) {
-        this.pBalance = await getBalance(this.pChainAddress)
-        console.log('pBalance:', this.pBalance)
-      } else {
-        console.error('No P-Chain address found')
-      }
+        if (this.pChainAddress) {
+            this.pBalance = await getBalance(this.pChainAddress)
+            console.log('pBalance:', this.pBalance)
+        } else {
+            console.error('No P-Chain address found')
+        }
     }
-
-
 
     // lifecycle hooks
     mounted() {
@@ -183,7 +180,6 @@ export default class BalanceCard extends Vue {
     }
     get ava_asset(): AvaAsset | null {
         let ava = this.$store.getters['Assets/AssetAVA']
-        console.log(ava: "ava_asset")
         return ava
     }
 
@@ -532,13 +528,13 @@ h4 {
     padding: 4px 8px;
 }
 
-.alt_info>div {
+.alt_info > div {
     display: grid;
     grid-template-columns: repeat(4, max-content);
     column-gap: 0px;
     margin-top: 12px;
 
-    >div {
+    > div {
         position: relative;
         padding: 0 24px;
         border-right: 2px solid var(--bg-light);
@@ -618,10 +614,11 @@ h4 {
         font-size: 2em !important;
     }
 
-    .where_info {}
+    .where_info {
+    }
 
     .alt_info {
-        >div {
+        > div {
             text-align: left;
             grid-template-columns: none;
             column-gap: 0;
@@ -629,7 +626,7 @@ h4 {
 
         .alt_non_breakdown,
         .alt_breakdown {
-            >div {
+            > div {
                 padding: 8px 0;
                 border-right: none;
                 border-bottom: 1px solid var(--bg-light);

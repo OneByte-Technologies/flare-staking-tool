@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Avalanche, BinTools, BN, Buffer } from '@flarenetwork/flarejs/dist'
 import {
     PlatformVMAPI,
