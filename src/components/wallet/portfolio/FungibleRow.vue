@@ -24,7 +24,7 @@
                 &nbsp;USD
             </span>
         </p>
-        <p class="balance_col" v-else>0</p>
+        <p class="balance_col" v-else>{{ totBal }}</p>
     </div>
 </template>
 <script lang="ts">
@@ -37,6 +37,8 @@ import { BN } from 'avalanche'
 import { bnToBig } from '../../../helpers/helper'
 import { priceDict } from '../../../store/types'
 import { WalletType } from '@/js/wallets/types'
+import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
+import { ethers } from 'ethers'
 
 import Big from 'big.js'
 
@@ -47,6 +49,75 @@ import Big from 'big.js'
 })
 export default class FungibleRow extends Vue {
     @Prop() asset!: AvaAsset
+
+    pBalance: number = 0
+
+    // methods
+    pChainAddress: string | null = null
+    async fetchPBalance() {
+        const activeWallet = this.$store.state.activeWallet
+        const pChainCustomAddr = activeWallet.getCurrentAddressPlatform()
+        const pChainAddress: string = 'P-costwo' + pChainCustomAddr.slice(8)
+        console.log(pChainAddress)
+        if (pChainAddress) {
+            this.pBalance = await getPBalance(pChainAddress)
+            console.log('pBalance:', this.pBalance)
+            return this.pBalance
+        } else {
+            console.error('No P-Chain address found')
+        }
+    }
+
+    cBalance: string = ''
+    cChainBal: BN = new BN(0)
+
+    async fetchCBalance() {
+        // this.cChainBal = new BN(this.cBalance)
+        try {
+            const activeWallet = this.$store.state.activeWallet
+            const cChainAddress: string = activeWallet.getEvmChecksumAddress()
+            const url: string = 'https://coston2-api.flare.network/ext/C/rpc'
+            const provider = new ethers.providers.JsonRpcProvider(url)
+            const result = await provider.getBalance(cChainAddress)
+            const balHex = result._hex.toString()
+            const balBN = parseInt(result._hex)
+            this.cBalance = ethers.utils.formatEther(balHex)
+            console.log('cBalance', this.cBalance)
+            return this.cBalance
+        } catch (err) {
+            console.error('Promise rejected with error:', err)
+        }
+    }
+
+    balanceDollar: string = ''
+    totBal = 0
+
+    totalBal() {
+        const cChainBal = parseFloat(this.cBalance.toString())
+        console.log('cChainBal', cChainBal)
+        const pChainBal = parseFloat(this.pBalance.toString())
+        console.log('pChainBal', pChainBal)
+        const usdPerFlr = parseFloat(this.priceDict.usd.toString())
+        console.log('usdPerFlr', usdPerFlr)
+        this.totBal = pChainBal + cChainBal
+        console.log('totBal', this.totBal)
+        const totalUsd = this.totBal * usdPerFlr
+        console.log('totalUsd', totalUsd)
+        this.balanceDollar = totalUsd.toString()
+        console.log(this.balanceDollar)
+    }
+    // lifecycle hooks
+    mounted() {
+        setInterval(() => {
+            this.fetchPBalance()
+        }, 10000)
+        setInterval(() => {
+            this.fetchCBalance()
+        }, 10000)
+        setInterval(() => {
+            this.totalBal()
+        }, 5000)
+    }
 
     get iconUrl(): string | null {
         if (!this.asset) return null
@@ -148,6 +219,7 @@ export default class FungibleRow extends Vue {
     .balance_col {
         font-size: 18px;
         text-align: right;
+
         .fiat {
             font-size: 12px;
             color: var(--primary-color-light);
@@ -164,9 +236,11 @@ export default class FungibleRow extends Vue {
     .send_col {
         text-align: center;
         opacity: 0.4;
+
         &:hover {
             opacity: 1;
         }
+
         img {
             width: 18px;
             object-fit: contain;
@@ -175,6 +249,7 @@ export default class FungibleRow extends Vue {
 }
 
 $icon_w: 40px;
+
 .icon {
     position: relative;
     align-self: center;
@@ -223,8 +298,10 @@ $icon_w: 40px;
         span {
             font-size: 15px;
         }
+
         font-size: 15px;
     }
+
     .send_col {
         img {
             width: 14px;
@@ -236,12 +313,14 @@ $icon_w: 40px;
     }
 
     $icon_w: 30px;
+
     .icon {
         width: $icon_w;
         height: $icon_w;
         border-radius: $icon_w;
     }
 }
+
 @include main.mobile-device {
     .name_col {
         display: none;

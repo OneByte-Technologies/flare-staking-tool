@@ -8,19 +8,19 @@
         </div>
         <p class="err" v-else-if="err">{{ err }}</p>
         <template v-if="!isLoading">
-            <v-btn block class="button_secondary" depressed @click="atomicImportX('P')" small>
+            <!-- <v-btn block class="button_secondary" depressed @click="atomicImportX('P')" small>
                 Import X (From P)
             </v-btn>
             <v-btn block class="button_secondary" depressed @click="atomicImportX('C')" small>
                 Import X (From C)
-            </v-btn>
-            <v-btn block class="button_secondary" depressed @click="atomicImportP('X')" small>
+            </v-btn> -->
+            <!-- <v-btn block class="button_secondary" depressed @click="atomicImportP('X')" small>
                 Import P (From X)
-            </v-btn>
+            </v-btn> -->
             <v-btn block class="button_secondary" depressed @click="atomicImportP('C')" small>
                 Import P (From C)
             </v-btn>
-            <v-btn
+            <!-- <v-btn
                 v-if="isEVMSupported"
                 block
                 class="button_secondary"
@@ -29,7 +29,7 @@
                 small
             >
                 Import C (from X)
-            </v-btn>
+            </v-btn> -->
             <v-btn block class="button_secondary" depressed @click="atomicImportC('P')" small>
                 Import C (from P)
             </v-btn>

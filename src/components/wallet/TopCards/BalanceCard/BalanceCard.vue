@@ -26,7 +26,7 @@
             </div>
             <div class="balance_row">
                 <p class="balance" data-cy="wallet_balance" v-if="!balanceTextRight">
-                    {{ balanceTextLeft }} FLR
+                    {{ totBal }} FLR
                 </p>
                 <p class="balance" data-cy="wallet_balance" v-else>
                     {{ balanceTextLeft }}
@@ -35,7 +35,7 @@
                 </p>
                 <div style="display: flex; flex-direction: row">
                     <p class="balance_usd">
-                        <b>$ {{ totalBalanceUSDText }}</b>
+                        <b>$ {{ balanceDollar }}</b>
                         USD
                     </p>
                     <p class="balance_usd" style="background-color: transparent">
@@ -51,7 +51,7 @@
                 <div class="alt_non_breakdown" v-if="!isBreakdown">
                     <div>
                         <label>{{ $t('top.balance.available') }}</label>
-                        <p>{{ unlockedText }} FLR</p>
+                        <p>{{ totBal }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.locked') }}</label>
@@ -193,6 +193,23 @@ export default class BalanceCard extends Vue {
         }
     }
 
+    balanceDollar: string = ''
+    totBal = 0
+
+    totalBal() {
+        const cChainBal = parseFloat(this.cBalance.toString())
+        console.log('cChainBal', cChainBal)
+        const pChainBal = parseFloat(this.pBalance.toString())
+        console.log('pChainBal', pChainBal)
+        const usdPerFlr = parseFloat(this.priceDict.usd.toString())
+        console.log('usdPerFlr', usdPerFlr)
+        this.totBal = pChainBal + cChainBal
+        console.log('totBal', this.totBal)
+        const totalUsd = this.totBal * usdPerFlr
+        console.log('totalUsd', totalUsd)
+        this.balanceDollar = totalUsd.toString()
+        console.log(this.balanceDollar)
+    }
     // lifecycle hooks
     mounted() {
         setInterval(() => {
@@ -202,9 +219,10 @@ export default class BalanceCard extends Vue {
             this.fetchCBalance()
         }, 10000)
         setInterval(() => {
-            // this.totalBal()
-        }, 10000)
+            this.totalBal()
+        }, 5000)
     }
+
     updateBalance(): void {
         this.$store.dispatch('Assets/updateUTXOs')
         this.$store.dispatch('History/updateTransactionHistory')

@@ -60,6 +60,7 @@ const chainTypes: ChainIdType[] = ['P', 'C']
 const chainNames = {
     C: 'C Chain',
     P: 'P Chain',
+    X: 'X Chain',
 }
 
 @Component({
@@ -75,7 +76,6 @@ export default class Form extends Vue {
     @Prop() balance!: Big
     @Prop() maxAmt!: BN
     @Prop() isConfirm!: boolean
-
     clear() {
         this.amt = new BN(0)
         this.onChange()
@@ -161,6 +161,7 @@ export default class Form extends Vue {
 
     padding-bottom: 14px;
 }
+
 label {
     color: var(--primary-color);
     font-size: 15px;
@@ -193,9 +194,11 @@ select {
 .balance {
     font-size: 13px;
     color: var(--primary-color-light);
+
     span {
         float: right;
     }
+
     margin-top: 4px !important;
 }
 
