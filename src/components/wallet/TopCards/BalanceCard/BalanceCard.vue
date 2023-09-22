@@ -26,7 +26,7 @@
             </div>
             <div class="balance_row">
                 <p class="balance" data-cy="wallet_balance" v-if="!balanceTextRight">
-                    {{ balanceTextLeft }} FLR
+                    {{ totBal }} FLR
                 </p>
                 <p class="balance" data-cy="wallet_balance" v-else>
                     {{ balanceTextLeft }}
@@ -35,7 +35,7 @@
                 </p>
                 <div style="display: flex; flex-direction: row">
                     <p class="balance_usd">
-                        <b>$ {{ totalBalanceUSDText }}</b>
+                        <b>$ {{ balanceDollar }}</b>
                         USD
                     </p>
                     <p class="balance_usd" style="background-color: transparent">
@@ -51,7 +51,7 @@
                 <div class="alt_non_breakdown" v-if="!isBreakdown">
                     <div>
                         <label>{{ $t('top.balance.available') }}</label>
-                        <p>{{ unlockedText }} FLR</p>
+                        <p>{{ totBal }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.locked') }}</label>
@@ -71,23 +71,23 @@
                         <!-- <label>{{ $t('top.balance.available') }} (X)</label>
                         <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p> -->
                         <label>{{ $t('top.balance.available') }} (P)</label>
-                        <p>{{ pBalance | cleanAvaxBN }} FLR</p>
+                        <p>{{ pBalance }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
-                        <p>{{ evmUnlocked | cleanAvaxBN }} FLR</p>
+                        <p>{{ cBalance }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.balance.locked') }} (X)</label>
-                        <p>{{ avmLocked | cleanAvaxBN }} FLR</p>
+                        <p>{{ avmLocked }} FLR</p>
                         <label>{{ $t('top.balance.locked') }} (P)</label>
-                        <p>{{ platformLocked | cleanAvaxBN }} FLR</p>
+                        <p>{{ Number(platformLocked) }} FLR</p>
                         <label>{{ $t('top.balance.locked_stake') }} (P)</label>
-                        <p>{{ platformLockedStakeable | cleanAvaxBN }} FLR</p>
+                        <p>{{ Number(platformLockedStakeable) }} FLR</p>
                     </div>
                     <div v-if="hasMultisig">
                         <label>Multisig (X)</label>
-                        <p>{{ avmMultisig | cleanAvaxBN }} FLR</p>
+                        <p>{{ avmMultisig }} FLR</p>
                         <label>Multisig (P)</label>
-                        <p>{{ platformMultisig | cleanAvaxBN }} FLR</p>
+                        <p>{{ platformMultisig }} FLR</p>
                     </div>
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
@@ -115,7 +115,8 @@ import { bnToBig } from '@/helpers/helper'
 import { priceDict } from '@/store/types'
 import { WalletType } from '@/js/wallets/types'
 import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdownModal.vue'
-import { getBalance } from '@/components/utils/pChain/getBalance'
+import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
+import { ethers } from 'ethers'
 import { mapGetters } from 'vuex'
 @Component({
     components: {
@@ -158,6 +159,14 @@ export default class BalanceCard extends Vue {
     // methods
     pChainAddress: string | null = null
     async fetchPBalance() {
+        const activeWallet = this.$store.state.activeWallet
+        const pChainCustomAddr = activeWallet.getCurrentAddressPlatform()
+        const pChainAddress: string = 'P-costwo' + pChainCustomAddr.slice(8)
+        console.log(pChainAddress)
+        if (pChainAddress) {
+            this.pBalance = await getPBalance(pChainAddress)
+            console.log('pBalance:', this.pBalance)
+            return this.pBalance
         if (this.pChainAddress) {
             this.pBalance = await getBalance(this.pChainAddress)
             console.log('pBalance:', this.pBalance)
@@ -165,11 +174,58 @@ export default class BalanceCard extends Vue {
             console.error('No P-Chain address found')
         }
     }
+    
+    cBalance: string = ''
+    cChainBal: BN = new BN(0)
 
+    async fetchCBalance() {
+        // this.cChainBal = new BN(this.cBalance)
+        try {
+            const activeWallet = this.$store.state.activeWallet
+            const cChainAddress: string = activeWallet.getEvmChecksumAddress()
+            const url: string = 'https://coston2-api.flare.network/ext/C/rpc'
+            const provider = new ethers.providers.JsonRpcProvider(url)
+            const result = await provider.getBalance(cChainAddress)
+            const balHex = result._hex.toString()
+            const balBN = parseInt(result._hex)
+            this.cBalance = ethers.utils.formatEther(balHex)
+            console.log('cBalance', this.cBalance)
+            return this.cBalance
+        } catch (err) {
+            console.error('Promise rejected with error:', err)
+        }
+    }
+
+    balanceDollar: string = ''
+    totBal = 0
+
+    totalBal() {
+        const cChainBal = parseFloat(this.cBalance.toString())
+        console.log('cChainBal', cChainBal)
+        const pChainBal = parseFloat(this.pBalance.toString())
+        console.log('pChainBal', pChainBal)
+        const usdPerFlr = parseFloat(this.priceDict.usd.toString())
+        console.log('usdPerFlr', usdPerFlr)
+        this.totBal = pChainBal + cChainBal
+        console.log('totBal', this.totBal)
+        const totalUsd = this.totBal * usdPerFlr
+        console.log('totalUsd', totalUsd)
+        this.balanceDollar = totalUsd.toString()
+        console.log(this.balanceDollar)
+    }
     // lifecycle hooks
     mounted() {
-        this.fetchPBalance()
+        setInterval(() => {
+            this.fetchPBalance()
+        }, 10000)
+        setInterval(() => {
+            this.fetchCBalance()
+        }, 10000)
+        setInterval(() => {
+            this.totalBal()
+        }, 5000)
     }
+
     updateBalance(): void {
         this.$store.dispatch('Assets/updateUTXOs')
         this.$store.dispatch('History/updateTransactionHistory')
@@ -201,6 +257,7 @@ export default class BalanceCard extends Vue {
         if (!this.wallet) return new BN(0)
         // convert from ^18 to ^9
         let bal = this.wallet.ethBalance
+        console.log(this.wallet.ethBalance, 'ethBalance')
         return bal.div(new BN(Math.pow(10, 9).toString()))
     }
 
@@ -233,7 +290,7 @@ export default class BalanceCard extends Vue {
     }
 
     get totalBalanceUSDText(): string {
-        if (this.isUpdateBalance) return '--'
+        if (this.isUpdateBalance) return '00'
         return this.totalBalanceUSD.toLocaleString(2)
     }
     // should be unlocked (X+P), locked (X+P) and staked and lockedStakeable
@@ -248,7 +305,8 @@ export default class BalanceCard extends Vue {
 
     get balanceTextLeft(): string {
         if (this.isUpdateBalance) return '--'
-        let text = this.balanceText
+        let text = Big(this.pBalance.toString()).plus(Big(this.cBalance.toString())).toString()
+        console.log(text, 'balanceText')
         if (text.includes('.')) {
             let left = text.split('.')[0]
             return left

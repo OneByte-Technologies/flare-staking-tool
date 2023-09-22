@@ -28,6 +28,8 @@ import { WalletType } from '@/js/wallets/types'
 
 import { bnToBig } from '@/helpers/helper'
 import NumberCounter from '@/components/misc/NumberCounter.vue'
+import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
+import { ethers } from 'ethers'
 
 const chainTypes: ChainIdType[] = ['X', 'P', 'C']
 const chainNames = {
@@ -50,6 +52,62 @@ export default class ChainCard extends Vue {
     onChange(ev: any) {
         let val: ChainIdType = ev.target.value
         this.$emit('change', val)
+    }
+    pBalance: number = 0
+    cBalance: string = ''
+    balanceDollar: string = ''
+    totBal: number = 0
+
+    // ... other properties and methods ...
+
+    async fetchPBalance() {
+        const activeWallet = this.$store.state.activeWallet
+        const pChainCustomAddr = activeWallet.getCurrentAddressPlatform()
+        const pChainAddress: string = 'P-costwo' + pChainCustomAddr.slice(8)
+        console.log(pChainAddress)
+        if (pChainAddress) {
+            this.pBalance = await getPBalance(pChainAddress)
+            console.log('pBalance:', this.pBalance)
+            this.totalBal() // Calculate the total balance
+        } else {
+            console.error('No P-Chain address found')
+        }
+    }
+
+    async fetchCBalance() {
+        try {
+            const activeWallet = this.$store.state.activeWallet
+            const cChainAddress: string = activeWallet.getEvmChecksumAddress()
+            const url: string = 'https://coston2-api.flare.network/ext/C/rpc'
+            const provider = new ethers.providers.JsonRpcProvider(url)
+            const result = await provider.getBalance(cChainAddress)
+            const balHex = result._hex.toString()
+            const balBN = parseInt(result._hex)
+            this.cBalance = ethers.utils.formatEther(balHex)
+            console.log('cBalance', this.cBalance)
+            this.totalBal() // Calculate the total balance
+        } catch (err) {
+            console.error('Promise rejected with error:', err)
+        }
+    }
+
+    totalBal() {
+        const cChainBal = parseFloat(this.cBalance.toString())
+        console.log('cChainBalchain', cChainBal)
+        const pChainBal = parseFloat(this.pBalance.toString())
+        console.log('pChainBal', pChainBal)
+        const usdPerFlr = parseFloat(this.priceDict.usd.toString())
+        console.log('usdPerFlr', usdPerFlr)
+        this.totBal = pChainBal + cChainBal
+        console.log('totBal', this.totBal)
+        const totalUsd = this.totBal * usdPerFlr
+        console.log('totalUsd', totalUsd)
+        this.balanceDollar = totalUsd.toString()
+        console.log(this.balanceDollar)
+    }
+
+    get priceDict(): { usd: number } {
+        return this.$store.state.prices
     }
 
     get chainNames() {
@@ -81,12 +139,14 @@ export default class ChainCard extends Vue {
     }
 
     get balance() {
-        if (this.chain === 'X') {
-            return this.avmUnlocked
-        } else if (this.chain === 'P') {
-            return this.platformUnlocked
+        if (this.chain === 'P') {
+            const pChainBal = parseFloat(this.pBalance.toString())
+            return new BN(pChainBal)
+        } else if (this.chain === 'C') {
+            const cChainBal = parseFloat(this.cBalance.toString()) * Math.pow(10, 9)
+            return new BN(cChainBal)
         } else {
-            return this.evmUnlocked
+            return this.avmUnlocked
         }
     }
 
@@ -97,7 +157,17 @@ export default class ChainCard extends Vue {
         return this.balanceBig.toLocaleString()
     }
 
-    mounted() {}
+    mounted() {
+        setInterval(() => {
+            this.fetchPBalance()
+        }, 1000)
+        setInterval(() => {
+            this.fetchCBalance()
+        }, 1000)
+        setInterval(() => {
+            this.totalBal()
+        }, 5000)
+    }
 }
 </script>
 <style scoped lang="scss">

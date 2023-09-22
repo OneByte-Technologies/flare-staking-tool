@@ -11,7 +11,7 @@ import {
     UTXO,
     AmountOutput,
     UnsignedTx,
-    AddDelegatorTx,
+    AddDelegatorTx, 
     Tx,
     SECPOwnerOutput,
     ParseableOutput,
@@ -48,12 +48,18 @@ const memo: Buffer = Buffer.from('Manually add a delegator to the primary subnet
 const nodeID: string = 'NodeID-DueWyGi3B9jtKfa9mPoecd4YSDJ1ftF69'
 const startTime: BN = UnixNow().add(new BN(60 * 1))
 const endTime: BN = startTime.add(new BN(2630000))
+const delegationCounts: { [key: string]: number } = {};
 
 export const addDelegatorTx = async (nodeID: string): Promise<any> => {
     const stakeAmount: any = await pChain.getMinStake()
     const avaxAssetID: Buffer = await pChain.getAVAXAssetID()
     const getBalanceResponse: any = await pChain.getBalance(pAddressStrings[0])
     const unlocked: BN = new BN(getBalanceResponse.unlocked)
+    const senderAddress = pAddressStrings[0];
+    if (delegationCounts[senderAddress] >= 3) {
+        console.log(`Error: You have already made three delegations.`);
+        return;
+    }
     const secpTransferOutput: SECPTransferOutput = new SECPTransferOutput(
         unlocked.sub(fee).sub(stakeAmount.minValidatorStake),
         pAddresses,
@@ -122,5 +128,6 @@ export const addDelegatorTx = async (nodeID: string): Promise<any> => {
     const unsignedTx: UnsignedTx = new UnsignedTx(addDelegatorTx)
     const tx: Tx = unsignedTx.sign(pKeychain)
     const txid: string = await pChain.issueTx(tx)
+    delegationCounts[senderAddress] = (delegationCounts[senderAddress] || 0) + 1;
     console.log(`Success! TXID: ${txid}`)
 }

@@ -149,6 +149,8 @@ import {
 } from '@avalabs/avalanche-wallet-sdk'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForExportP } from '@/helpers/utxoSelection/selectMaxUtxoForExportP'
+import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
+import { ethers } from 'ethers'
 
 const IMPORT_DELAY = 5000 // in ms
 const BALANCE_DELAY = 2000 // in ms
@@ -207,6 +209,69 @@ export default class ChainTransfer extends Vue {
         this.updateBaseFee()
     }
 
+    pBalance: number = 0
+    cBalance: string = ''
+    balanceDollar: string = ''
+    totBal: number = 0
+
+    // ... other properties and methods ...
+
+    async fetchPBalance() {
+        const activeWallet = this.$store.state.activeWallet
+        const pChainCustomAddr = activeWallet.getCurrentAddressPlatform()
+        const pChainAddress: string = 'P-costwo' + pChainCustomAddr.slice(8)
+        console.log(pChainAddress)
+        if (pChainAddress) {
+            this.pBalance = await getPBalance(pChainAddress)
+            console.log('pBalance:', this.pBalance)
+            this.totalBal() // Calculate the total balance
+        } else {
+            console.error('No P-Chain address found')
+        }
+    }
+
+    async fetchCBalance() {
+        try {
+            const activeWallet = this.$store.state.activeWallet
+            const cChainAddress: string = activeWallet.getEvmChecksumAddress()
+            const url: string = 'https://coston2-api.flare.network/ext/C/rpc'
+            const provider = new ethers.providers.JsonRpcProvider(url)
+            const result = await provider.getBalance(cChainAddress)
+            const balHex = result._hex.toString()
+            const balBN = parseInt(result._hex)
+            this.cBalance = ethers.utils.formatEther(balHex)
+            console.log('cBalancetrans', this.cBalance)
+            this.totalBal() // Calculate the total balance
+        } catch (err) {
+            console.error('Promise rejected with error:', err)
+        }
+    }
+
+    totalBal() {
+        const cChainBal = parseFloat(this.cBalance.toString())
+        console.log('cChainBalchaintra', cChainBal)
+        const pChainBal = parseFloat(this.pBalance.toString())
+        console.log('pChainBaltra', pChainBal)
+        const usdPerFlr = parseFloat(this.priceDict.usd.toString())
+        console.log('usdPerFlr', usdPerFlr)
+        this.totBal = pChainBal + cChainBal
+        console.log('totBal', this.totBal)
+        const totalUsd = this.totBal * usdPerFlr
+        console.log('totalUsd', totalUsd)
+        this.balanceDollar = totalUsd.toString()
+        console.log(this.balanceDollar)
+    }
+    mounted() {
+        setInterval(() => {
+            this.fetchPBalance()
+        }, 1000)
+        setInterval(() => {
+            this.fetchCBalance()
+        }, 1000)
+        setInterval(() => {
+            this.totalBal()
+        }, 5000)
+    }
     get ava_asset(): AvaAsset | null {
         let ava = this.$store.getters['Assets/AssetAVA']
         return ava
@@ -232,18 +297,45 @@ export default class ChainTransfer extends Vue {
 
     get balanceBN(): BN {
         if (this.sourceChain === 'P') {
-            return this.platformUnlocked
+            const pChainBal = parseFloat(this.pBalance.toString())
+            console.log('Using P balance for source P', pChainBal)
+            const balance = new BN(pChainBal) // Use P balance for source P
+            console.log('balanceBNp', balance)
+            return balance
         } else if (this.sourceChain === 'C') {
-            return this.evmUnlocked
+            const cChainBal = parseFloat(this.cBalance.toString()) * Math.pow(10, 9)
+            console.log('Using C balance for source C', cChainBal, this.sourceChain)
+            const balance = new BN(cChainBal) // Use C balance for source C
+            console.log('balanceBNc', balance)
+            return balance
         } else {
-            return this.avmUnlocked
+            console.log('Using AVM balance for other sources')
+            const balance = this.avmUnlocked // Use AVM balance for other sources
+            console.log('balanceBN', balance)
+            return balance
         }
     }
 
     get balanceBig(): Big {
-        return bnToBig(this.balanceBN, 9)
+        console.log('Converting balanceBN to balanceBig')
+        const balance = bnToBig(this.balanceBN, 9)
+        console.log('balanceBig', balance)
+        return balance
     }
 
+    get balance(): BN {
+        if (this.sourceChain === 'P') {
+            return new BN(this.pBalance) // Use P balance for source P
+        } else if (this.sourceChain === 'C') {
+            return new BN(this.cBalance) // Use C balance for source C
+        } else {
+            return this.avmUnlocked // Use AVM balance for other sources
+        }
+    }
+
+    get priceDict(): { usd: number } {
+        return this.$store.state.prices
+    }
     get formAmtText() {
         return bnToAvaxX(this.formAmt)
     }
@@ -612,7 +704,7 @@ export default class ChainTransfer extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../../../../main";
+@use '../../../../main';
 
 .cols {
     display: grid;
@@ -627,6 +719,7 @@ export default class ChainTransfer extends Vue {
     row-gap: 2px;
     padding-top: 14px;
     height: max-content;
+
     //height: 100%;
     > div {
         //height: max-content;
@@ -641,11 +734,13 @@ export default class ChainTransfer extends Vue {
     max-width: 100%;
     width: 360px;
     padding-bottom: 14px;
+
     //justify-self: center;
     > div {
         margin: 14px 0;
     }
 }
+
 .dropdown {
     background-color: var(--bg-light);
 }
@@ -655,6 +750,7 @@ export default class ChainTransfer extends Vue {
     text-align: center;
     justify-content: center;
 }
+
 .chains {
     position: relative;
     //text-align: center;
@@ -692,6 +788,7 @@ h2 {
     font-weight: lighter;
     font-size: 2em;
 }
+
 .import_err {
     max-width: 320px;
     //margin: 10vh auto;
@@ -774,6 +871,7 @@ h2 {
 
 .complete {
     margin-top: 30px;
+
     > div {
         background-color: var(--bg-light);
         padding: 14px;
@@ -797,6 +895,7 @@ h2 {
         grid-template-columns: none;
         //column-gap: 2vw;
     }
+
     .right_col {
         //grid-template-columns: 1fr 1fr;
         //row-gap: 14px;
@@ -815,6 +914,7 @@ h2 {
     .form {
         width: 100%;
     }
+
     .chains {
         row-gap: 4px;
         grid-template-columns: none;
