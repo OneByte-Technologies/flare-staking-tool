@@ -80,6 +80,7 @@ import ChainSelect from '@/components/wallet/TopCards/AddressCard/ChainSelect.vu
 import { ChainIdType } from '@/constants'
 import { ava } from '@/AVA'
 import { getPreferredHRP } from 'avalanche/dist/utils'
+import { isMainnetNetworkID } from '@/store/modules/network/isMainnetNetworkID'
 @Component({
     components: {
         CopyText,
