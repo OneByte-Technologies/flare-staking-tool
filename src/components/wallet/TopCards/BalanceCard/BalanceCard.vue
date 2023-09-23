@@ -154,10 +154,8 @@ export default class BalanceCard extends Vue {
         utxos_modal: UtxosBreakdownModal
     }
 
-    pBalance: number = 0
+    pBalance: BN = new BN(0)
 
-    // methods
-    pChainAddress: string | null = null
     async fetchPBalance() {
         const activeWallet = this.$store.state.activeWallet
         const pChainCustomAddr = activeWallet.getCurrentAddressPlatform()
@@ -167,19 +165,15 @@ export default class BalanceCard extends Vue {
             this.pBalance = await getPBalance(pChainAddress)
             console.log('pBalance:', this.pBalance)
             return this.pBalance
-        if (this.pChainAddress) {
-            this.pBalance = await getBalance(this.pChainAddress)
-            console.log('pBalance:', this.pBalance)
         } else {
             console.error('No P-Chain address found')
         }
     }
-    
+
     cBalance: string = ''
     cChainBal: BN = new BN(0)
 
     async fetchCBalance() {
-        // this.cChainBal = new BN(this.cBalance)
         try {
             const activeWallet = this.$store.state.activeWallet
             const cChainAddress: string = activeWallet.getEvmChecksumAddress()
@@ -223,7 +217,7 @@ export default class BalanceCard extends Vue {
     //     }, 10000)
     //     setInterval(() => {
     //         this.totalBal()
-    //     }, 5000)
+    //     }, 8000)
     // }
 
     updateBalance(): void {
