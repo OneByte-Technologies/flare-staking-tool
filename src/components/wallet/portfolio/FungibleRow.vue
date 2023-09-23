@@ -107,17 +107,17 @@ export default class FungibleRow extends Vue {
         console.log(this.balanceDollar)
     }
     // lifecycle hooks
-    mounted() {
-        setInterval(() => {
-            this.fetchPBalance()
-        }, 10000)
-        setInterval(() => {
-            this.fetchCBalance()
-        }, 10000)
-        setInterval(() => {
-            this.totalBal()
-        }, 5000)
-    }
+    // mounted() {
+    //     setInterval(() => {
+    //         this.fetchPBalance()
+    //     }, 10000)
+    //     setInterval(() => {
+    //         this.fetchCBalance()
+    //     }, 10000)
+    //     setInterval(() => {
+    //         this.totalBal()
+    //     }, 5000)
+    // }
 
     get iconUrl(): string | null {
         if (!this.asset) return null
