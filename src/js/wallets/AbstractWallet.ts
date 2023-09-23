@@ -274,18 +274,32 @@ abstract class AbstractWallet {
     async exportFromCChain(amt: BN, destinationChain: ExportChainsC, exportFee: BN) {
         // Add import fee
         // X and P have the same fee
+        console.log('######1')
         const importFee = avm.getTxFee()
         const amtFee = amt.add(importFee)
 
         const hexAddr = this.getEvmAddress()
         const bechAddr = this.getEvmAddressBech()
+        console.log('######2')
 
         const fromAddresses = [hexAddr]
 
-        const destinationAddr =
-            destinationChain === 'X'
-                ? this.getCurrentAddressAvm()
-                : this.getCurrentAddressPlatform()
+        const hrp = ava.getHRP()
+        console.log('hrp', hrp)
+        const destinationAddr = this.getCurrentAddressPlatform()
+        // const destinationAddr = bintools.addressToString(
+        //     hrp,
+        //     'P',
+        //     bintools.stringToBuffer(this.getCurrentAddressPlatform().slice(8))
+        // )
+        console.log('Addr', this.getCurrentAddressPlatform())
+        console.log('Dest Addr', destinationAddr)
+
+        // const destinationAddr =
+        //     destinationChain === 'X'
+        //         ? this.getCurrentAddressAvm()
+        //         : this.getCurrentAddressPlatform()
+        // console.log('Address', destinationAddr)
 
         const exportTx = await TxHelper.buildEvmExportTransaction(
             fromAddresses,
@@ -295,7 +309,7 @@ abstract class AbstractWallet {
             destinationChain,
             exportFee
         )
-
+        console.log('#####3')
         const tx = await this.signC(exportTx)
         return this.issueC(tx)
     }
@@ -330,6 +344,10 @@ abstract class AbstractWallet {
 
     async platformGetAtomicUTXOs(sourceChain: ExportChainsP) {
         const addrs = this.getAllAddressesP()
+        console.log('**&&^^Addrs', addrs)
+        addrs[0] = 'P-costwo' + addrs[0].slice(8)
+        console.log('**&&^^Addrs**&&^^', addrs)
+
         return await UtxoHelper.platformGetAtomicUTXOs(addrs, sourceChain)
     }
 
@@ -342,15 +360,20 @@ abstract class AbstractWallet {
 
         const sourceChainId = chainIdFromAlias(sourceChain)
         // Owner addresses, the addresses we exported to
-        const pToAddr = this.getCurrentAddressPlatform()
 
-        const hrp = ava.getHRP()
+        const hrp = 'costwo'
+        const pToAddr = 'P-costwo' + this.getCurrentAddressPlatform().slice(8)
+        console.log('******pToAddr', pToAddr)
+
         const utxoAddrs = utxoSet
             .getAddresses()
             .map((addr) => bintools.addressToString(hrp, 'P', addr))
 
         const fromAddrs = utxoAddrs
         const ownerAddrs = utxoAddrs
+
+        console.log('?????fromAddrs', fromAddrs)
+        console.log('******ownerAddr', ownerAddrs)
 
         const unsignedTx = await pChain.buildImportTx(
             utxoSet,
@@ -366,7 +389,6 @@ abstract class AbstractWallet {
         // Pass in string because AJS fails to verify Tx type
         return this.issueP(tx)
     }
-
     async importToXChain(sourceChain: AvmImportChainType) {
         const utxoSet = await this.avmGetAtomicUTXOs(sourceChain)
 
