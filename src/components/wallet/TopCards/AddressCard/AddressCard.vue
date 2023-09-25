@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 <template>
     <div class="addr_card">
         <q-r-modal ref="qr_modal" :address="activeAddress"></q-r-modal>
@@ -179,14 +179,8 @@ export default class AddressCard extends Vue {
         if (!wallet) {
             return '-'
         }
-        let networkId = ava.getNetworkID()
-        if (isMainnetNetworkID(networkId)) {
-            const platformAddr = 'P-flare' + wallet.getCurrentAddressPlatform().slice(8)
-            return platformAddr
-        } else {
-            const platformAddr = 'P-costwo' + wallet.getCurrentAddressPlatform().slice(8)
-            return platformAddr
-        }
+
+        return wallet.getCurrentAddressPlatform()
     }
 
     get addressEVM() {
@@ -209,8 +203,6 @@ export default class AddressCard extends Vue {
 
     get activeAddress(): string {
         switch (this.chainNow) {
-            case 'X':
-                return this.address
             case 'P':
                 return this.addressPVM
             case 'C':

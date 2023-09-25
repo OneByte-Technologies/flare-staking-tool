@@ -1,18 +1,27 @@
 export interface ValidatorRaw {
-    connection: boolean
+    connected: boolean
+    delegationFee: string
+    delegators: Array<Delegators>
     endTime: string
     nodeID: string
+    potentialReward: string
+    rewardOwner: ValidatorRewardOwner //object in console
     stakeAmount: string
     startTime: string
-    uptime: string
-    delegatorWeight: string
-    delegatorCount: string
-    delegationFee: string
-    potentialReward: string
-    rewardOwner: ValidatorRewardOwner
     txID: string
+    uptime: string
 }
 
+export interface Delegators {
+    endTime: string
+    nodeID: string
+    potentialReward: string
+    rewardOwner: Object
+    stakeAmount: string
+    startTime: string
+    txID: string
+}
+//RewardOwner type ??
 export interface DelegatorPendingRaw {
     startTime: string
     endTime: string

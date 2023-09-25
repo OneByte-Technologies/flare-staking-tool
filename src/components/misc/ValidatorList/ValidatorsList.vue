@@ -11,15 +11,15 @@
             <table>
                 <thead>
                     <tr class="header_tr">
-                        <th>{{ $t('earn.delegate.list.id') }}</th>
+                        <th>{{ $t('staking.delegate.list.id') }}</th>
                         <th style="text-align: right">
-                            {{ $t('earn.delegate.list.val_stake') }}
+                            {{ $t('staking.delegate.list.val_stake') }}
                         </th>
                         <th style="text-align: right">
-                            {{ $t('earn.delegate.list.aval_stake') }}
+                            {{ $t('staking.delegate.list.aval_stake') }}
                             <Tooltip
                                 style="display: inline-block"
-                                :text="$t('earn.delegate.list.aval_stake_tip')"
+                                :text="$t('staking.delegate.list.aval_stake_tip')"
                             >
                                 <fa icon="question-circle"></fa>
                             </Tooltip>
@@ -27,8 +27,8 @@
                         <th>
                             <Tooltip text="Number of Delegators"><fa icon="users"></fa></Tooltip>
                         </th>
-                        <th>{{ $t('earn.delegate.list.end') }}</th>
-                        <th>{{ $t('earn.delegate.list.fee') }}</th>
+                        <th>{{ $t('staking.delegate.list.end') }}</th>
+                        <th>{{ $t('staking.delegate.list.fee') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -43,8 +43,8 @@
             </table>
         </div>
         <div v-if="validators.length === 0" class="empty_list">
-            <h4>{{ $t('earn.delegate.list.empty.title') }}</h4>
-            <p>{{ $t('earn.delegate.list.empty.desc') }}</p>
+            <h4>{{ $t('staking.delegate.list.empty.title') }}</h4>
+            <p>{{ $t('staking.delegate.list.empty.desc') }}</p>
         </div>
     </div>
 </template>
@@ -84,6 +84,8 @@ export default class ValidatorsList extends Vue {
 
     get validators(): ValidatorListItem[] {
         let list: ValidatorListItem[] = this.$store.getters['Platform/validatorListEarn']
+
+        console.log('NODEID', list)
 
         if (this.search) {
             list = list.filter((v) => {

@@ -111,21 +111,21 @@ abstract class AbstractWallet {
 
     async getEthBalance() {
         const netID = ava.getNetworkID()
-        const isMainnet = isMainnetNetworkID(netID)
-        const isFuji = isTestnetNetworkID(netID)
+        const isFlare = isMainnetNetworkID(netID)
+        const isC2 = isTestnetNetworkID(netID)
 
-        let bal
+        // TO-DO : find glacier API alternative /*IMPORTANT*/
         // Can't use glacier if not mainnet/fuji
-        if (!isMainnet && !isFuji) {
-            bal = new BN(await web3.eth.getBalance(this.getEvmAddress()))
-        } else {
-            const chainId = isMainnet ? '43114' : '43113'
-            const res = await glacier.evm.getNativeBalance({
-                chainId: chainId,
-                address: '0x' + this.getEvmAddress(),
-            })
-            bal = new BN(res.nativeTokenBalance.balance)
-        }
+        // if (!isFlare && !isC2) {
+        const bal = new BN(await web3.eth.getBalance(this.getEvmAddress()))
+        // } else {
+        //     const chainId = isFlare ? '14' : '114'
+        //     const res = await glacier.evm.getNativeBalance({
+        //         chainId: chainId,
+        //         address: '0x' + this.getEvmAddress(),
+        //     })
+        //     bal = new BN(res.nativeTokenBalance.balance)
+        // }
 
         this.ethBalance = bal
         return bal
@@ -330,6 +330,7 @@ abstract class AbstractWallet {
 
     async platformGetAtomicUTXOs(sourceChain: ExportChainsP) {
         const addrs = this.getAllAddressesP()
+
         return await UtxoHelper.platformGetAtomicUTXOs(addrs, sourceChain)
     }
 
@@ -351,7 +352,6 @@ abstract class AbstractWallet {
 
         const fromAddrs = utxoAddrs
         const ownerAddrs = utxoAddrs
-
         const unsignedTx = await pChain.buildImportTx(
             utxoSet,
             ownerAddrs,
