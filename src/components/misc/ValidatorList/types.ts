@@ -5,7 +5,7 @@ export interface ValidatorRaw {
     endTime: string
     nodeID: string
     potentialReward: string
-    rewardOwner: ValidatorRewardOwner //object in console
+    rewardOwner: ValidatorRewardOwner
     stakeAmount: string
     startTime: string
     txID: string
