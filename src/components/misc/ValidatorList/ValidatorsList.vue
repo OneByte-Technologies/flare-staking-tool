@@ -85,8 +85,6 @@ export default class ValidatorsList extends Vue {
     get validators(): ValidatorListItem[] {
         let list: ValidatorListItem[] = this.$store.getters['Platform/validatorListEarn']
 
-        console.log('NODEID', list)
-
         if (this.search) {
             list = list.filter((v) => {
                 return v.nodeID.includes(this.search)
