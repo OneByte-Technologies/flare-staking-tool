@@ -21,7 +21,7 @@ export interface Delegators {
     startTime: string
     txID: string
 }
-//RewardOwner type ??
+
 export interface DelegatorPendingRaw {
     startTime: string
     endTime: string
