@@ -291,7 +291,7 @@
         "save_account": {
             "title": "Save Account",
             "desc": "Encode your wallet with a password and store securely on this browser.",
-            "submit":  "Save",
+            "submit": "Save",
             "placeholder_1": "Account Name",
             "placeholder_2": "Password",
             "placeholder_3": "Confirm Password"
@@ -332,7 +332,7 @@
         "remove_success_msg": "Private key and assets removed from the wallet.",
         "password_validation": "Password must be at least 9 characters long.",
         "password_validation2": "Password do not match.",
-        "account_name_required" : "Account Name Required."
+        "account_name_required": "Account Name Required."
     },
     "portfolio": {
         "assets": "Assets",
@@ -361,24 +361,32 @@
         "desc": "You can earn more FLR by staking your existing tokens.",
         "subtitle1": "Validate",
         "subtitle2": "Delegate",
-        "subtitle3": "Cross Chain Transfer",
+        "subtitle3": "Cross Chain",
         "subtitle4": "Estimated Rewards",
+        "subtitle5": "Address Binder",
         "warning_1": "You must have at least {0} FLR on the P chain to become a validator.",
         "warning_2": "You must have at least {0} FLR on the P chain to become a delegator.",
-        "validate_card": {
-            "title": "Validate",
-            "desc": "You have an Flare node that you want to stake with.",
-            "submit": "Add Validator"
+        "warning_3": "Register to unlock Staking options",
+        "warning_4": "You are already registered",
+        "address_binder_card": {
+            "title": "Address Binder",
+            "desc": "Ready to up your Staking game? Secure your spot by registering your Wallet address!",
+            "submit": "Register"
+        },
+        "transfer_card": {
+            "title": "Cross Chain Transfer",
+            "desc": "Staking requires FLR on the P chain. Transfer tokens from C and P.",
+            "submit": "Transfer"
         },
         "delegate_card": {
             "title": "Delegate",
             "desc": "You do not own an Flare node, but you want to stake using another node.",
             "submit": "Add Delegator"
         },
-        "transfer_card": {
-            "title": "Cross Chain Transfer",
-            "desc": "Staking requires FLR on the P chain. Transfer tokens between X and P.",
-            "submit": "Transfer"
+        "validate_card": {
+            "title": "Validate",
+            "desc": "You have an Flare node that you want to stake with.",
+            "submit": "Add Validator"
         },
         "rewards_card": {
             "title": "Claim Rewards",
