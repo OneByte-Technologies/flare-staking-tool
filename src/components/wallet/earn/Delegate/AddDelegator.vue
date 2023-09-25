@@ -25,7 +25,7 @@
                         </p>
                         <p v-if="showMaxTxSizeWarning" class="desc amount_warning">
                             The maximum amount that fits into this transaction is
-                            <b>{{ maxTxSizeString }} AVAX</b>
+                            <b>{{ maxTxSizeString }} FLR</b>
                         </p>
                         <AvaxInput
                             v-model="stakeAmt"
@@ -63,12 +63,12 @@
                     <Expandable>
                         <template v-slot:triggerOn>
                             <p>
-                                {{ $t('earn.shared.advanced.toggle_on') }}
+                                {{ $t('staking.shared.advanced.toggle_on') }}
                             </p>
                         </template>
                         <template v-slot:triggerOff>
                             <p>
-                                {{ $t('earn.shared.advanced.toggle_off') }}
+                                {{ $t('staking.shared.advanced.toggle_off') }}
                             </p>
                         </template>
                         <template v-slot:content>
@@ -101,8 +101,8 @@
                     </div>
                     <div>
                         <label>{{ $t('staking.delegate.summary.reward') }}</label>
-                        <p v-if="currency_type === 'AVAX'">
-                            {{ estimatedReward.toLocaleString(2) }} AVAX
+                        <p v-if="currency_type === 'FLR'">
+                            {{ estimatedReward.toLocaleString(2) }} FLR
                         </p>
                         <p v-if="currency_type === 'USD'">
                             ${{ estimatedRewardUSD.toLocaleString(2) }} USD
@@ -110,8 +110,8 @@
                     </div>
                     <div>
                         <label>{{ $t('staking.delegate.summary.fee') }}</label>
-                        <p v-if="currency_type === 'AVAX'">
-                            {{ totalFeeBig.toLocaleString(2) }} AVAX
+                        <p v-if="currency_type === 'FLR'">
+                            {{ totalFeeBig.toLocaleString(2) }} FLR
                         </p>
                         <p v-if="currency_type === 'USD'">
                             ${{ totalFeeUsdBig.toLocaleString(2) }} USD
@@ -221,6 +221,7 @@ import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
+import { addDelegatorTx } from '@/components/utils/pChain/addDelegatorTx'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -266,7 +267,7 @@ export default class AddDelegator extends Vue {
     formEnd: Date = new Date()
     formRewardAddr = ''
 
-    currency_type = 'AVAX'
+    currency_type = 'FLR'
 
     maxTxSizeAmount: BN | null = null
 
@@ -308,6 +309,7 @@ export default class AddDelegator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
+            await addDelegatorTx(this.formNodeID)
             this.isSuccess = true
             this.txId = txId
             this.updateTxStatus(txId)

@@ -109,9 +109,6 @@ const network_module: Module<NetworkState, RootState> = {
             ava.setRequestConfig('withCredentials', net.withCredentials)
             ava.setAddress(net.ip, net.port, net.protocol)
             ava.setNetworkID(net.networkId)
-            console.log(ava.getHRP(), '??????????HRP1')
-            ava.setHRP('costwo')
-            console.log(ava.getHRP(), '????????????HRP2')
 
             // Reset transaction history
             commit('History/clear', null, { root: true })

@@ -166,6 +166,7 @@ export default class Earn extends Vue {
     }
 
     async addressBinder() {
+        // this.pageNow = AddressBinder
         const wallet = this.$store.state.activeWallet
         const network: string = ava.getHRP()
         const cAddress = wallet.getEvmChecksumAddress()
@@ -357,7 +358,3 @@ span {
     }
 }
 </style>
-
-{ "nodeID": "NodeID-6KntKaxrLbczXHjt2WFbCSy49YLJHjW2y", "validatorStake": "038d7ea4c68000",
-"delegatedStake": "00", "remainingStake": "071afd498d0000", "numDelegators": null, "startTime":
-"2023-09-20T10:18:56.000Z", "endTime": "2023-11-21T09:45:11.000Z", "uptime": 0.0019, "fee": 10 }

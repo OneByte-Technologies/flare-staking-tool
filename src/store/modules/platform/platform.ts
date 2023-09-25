@@ -82,7 +82,7 @@ const platform_module: Module<PlatformState, RootState> = {
                 const dif = endTime - now
 
                 // If End time is less than 2 weeks + 1 hour, remove from list they are no use
-                const threshold = DAY_MS * 14 + 10 * MINUTE_MS //????????????
+                const threshold = DAY_MS * 14 + 10 * MINUTE_MS
                 if (dif <= threshold) {
                     return false
                 }
