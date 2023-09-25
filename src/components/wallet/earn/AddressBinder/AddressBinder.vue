@@ -6,24 +6,31 @@
                     <div v-show="!isConfirm" key="form" class="ins_col">
                         <div style="margin-bottom: 30px">
                             <h4>P chain address</h4>
+                            <p class="desc">
+                                {{ pChainAddress }}
+                            </p>
                             <input
                                 type="text"
                                 v-model="pChainAddress"
                                 style="width: 100%"
-                                placeholder="p chain address"
+                                placeholder="P chain address"
                             />
                         </div>
                         <div style="margin: 30px 0">
                             <h4>C chain address</h4>
+                            <p class="desc">{{ cChainAddressBinder }}</p>
                             <input
                                 type="text"
                                 v-model="cChainAddress"
                                 style="width: 100%"
-                                placeholder="c chain address"
+                                placeholder="C chain address"
                             />
                         </div>
                         <div style="margin: 30px 0">
                             <h4>Public Key</h4>
+                            <p class="desc">
+                                {{ publicKey }}
+                            </p>
                             <input
                                 type="text"
                                 v-model="publickey"
@@ -41,20 +48,30 @@
     </div>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            pChain: '',
-            cChain: '',
-            publicKey: '',
+<script lang="ts">
+import { WalletType, WalletNameType } from '@/js/wallets/types'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+
+@Component
+export default class AddressBinder extends Vue {
+    // ...
+    pChainAddress: string = 'function to be written'
+    publicKey: string = 'function to be written'
+    cChainAddress: string = ''
+
+    get activeWallet(): WalletType | null {
+        return this.$store.state.activeWallet
+    }
+
+    get cChainAddressBinder() {
+        let wallet = this.activeWallet
+        if (!wallet) {
+            this.cChainAddress = '-'
+        } else {
+            this.cChainAddress = wallet.getEvmChecksumAddress()
         }
-    },
-    methods: {
-        bindAddress() {
-            // logic to bind address
-        },
-    },
+        return this.cChainAddress
+    }
 }
 </script>
 <style scoped lang="scss">
