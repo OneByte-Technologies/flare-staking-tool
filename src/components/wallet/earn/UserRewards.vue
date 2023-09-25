@@ -39,6 +39,7 @@ import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
 import { BN } from 'avalanche'
 import { EarnState } from '@/store/modules/earn/types'
+import { checkUnclaimedRewards, claimRewards, RewardConfig } from '@/js/ValidatorRewardManager'
 
 @Component({
     components: {
@@ -68,7 +69,24 @@ export default class UserRewards extends Vue {
         // Clear interval if exists
         this.updateInterval && clearInterval(this.updateInterval)
     }
-
+    async claimRewards(config: RewardConfig): Promise<void> {
+        try {
+            await claimRewards(config)
+            console.log('Rewards claimed successfully on Coston2!')
+        } catch (error) {
+            console.error('Error claiming rewards on Coston2:', error)
+            throw error
+        }
+    }
+    async checkUnclaimedRewards(config: RewardConfig): Promise<void> {
+        try {
+            const rewardsInfo = await checkUnclaimedRewards(config)
+            console.log('Unclaimed rewards:', rewardsInfo)
+        } catch (error) {
+            console.error('Error checking unclaimed rewards on Coston2:', error)
+            throw error
+        }
+    }
     get stakingTxs() {
         return this.$store.state.Earn.stakingTxs as EarnState['stakingTxs']
     }

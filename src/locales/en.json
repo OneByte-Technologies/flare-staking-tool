@@ -381,9 +381,9 @@
             "submit": "Transfer"
         },
         "rewards_card": {
-            "title": "Estimated Rewards",
-            "desc": "View staking rewards you will receive.",
-            "submit": "View Rewards"
+            "title": "Claim Rewards",
+            "desc": "View claim rewards.",
+            "submit": "Claim Rewards"
         },
         "transfer": {
             "source": "Source Chain",

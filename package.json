@@ -57,6 +57,7 @@
         "qrcode": "1.4.4",
         "randomstring": "1.2.1",
         "reflect-metadata": "0.1.13",
+        "serve": "^14.2.1",
         "sockette": "2.0.6",
         "uniqid": "5.2.0",
         "uuid": "3.4.0",

@@ -109,7 +109,7 @@ export default class WalletReadonly extends Vue {
     async downloadRewardsHistory() {
         try {
             this.isStakeDownloading = true
-            // const hist = await this.wallet.getHistory()
+            // const hist = await this.wallet.getHistory()x
             const hist = await this.wallet.getHistoryP()
             let parsed: HistoryItemType[] = []
 

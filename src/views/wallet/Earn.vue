@@ -84,6 +84,15 @@
                             depressed
                             small
                         >
+                            View Reward
+                        </v-btn>
+                        <v-btn
+                            class="button_secondary"
+                            data-cy="rewards"
+                            @click="claimRewards"
+                            depressed
+                            small
+                        >
                             {{ $t('staking.rewards_card.submit') }}
                         </v-btn>
                     </div>
@@ -106,6 +115,7 @@ import { BN } from 'avalanche/dist'
 import UserRewards from '@/components/wallet/earn/UserRewards.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
+import { checkUnclaimedRewards, claimRewards } from '@/js/ValidatorRewardManager'
 
 @Component({
     name: 'earn',
@@ -131,10 +141,25 @@ export default class Earn extends Vue {
     transfer() {
         this.$router.replace('/wallet/cross_chain')
     }
+    async viewRewards() {}
 
-    viewRewards() {
-        this.pageNow = UserRewards
-        this.subtitle = this.$t('staking.subtitle4') as string
+    async claimRewards() {
+        const config = {
+            userAddress: '',
+            recipientAddress: '',
+            wrap: false,
+        }
+
+        // replace with the actual config
+        try {
+            await claimRewards(config)
+            console.log('Rewards claimed successfully on Coston2!')
+
+            const rewardsInfo = await checkUnclaimedRewards(config)
+            console.log('Unclaimed rewards:', rewardsInfo)
+        } catch (error) {
+            console.error('Error in rewards operation on Coston2:', error)
+        }
     }
     cancel() {
         this.pageNow = null

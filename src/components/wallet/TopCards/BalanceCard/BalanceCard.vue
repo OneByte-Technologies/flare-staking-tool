@@ -198,17 +198,11 @@ export default class BalanceCard extends Vue {
 
     totalBal() {
         const cChainBal = parseFloat(this.cBalance.toString())
-        console.log('cChainBal', cChainBal)
         const pChainBal = parseFloat(this.pBalance.toString())
-        console.log('pChainBal', pChainBal)
         const usdPerFlr = parseFloat(this.priceDict.usd.toString())
-        console.log('usdPerFlr', usdPerFlr)
         this.totBal = pChainBal + cChainBal
-        console.log('totBal', this.totBal)
         const totalUsd = this.totBal * usdPerFlr
-        console.log('totalUsd', totalUsd)
         this.balanceDollar = totalUsd.toString()
-        console.log(this.balanceDollar)
     }
     // lifecycle hooks
     mounted() {
