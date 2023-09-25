@@ -15,22 +15,48 @@
                 <div class="options">
                     <div>
                         <h4 class="title">
-                            {{ $t('staking.validate_card.title') }}
+                            {{ $t('staking.address_binder_card.title') }}
                         </h4>
                         <p style="flex-grow: 1">
-                            {{ $t('staking.validate_card.desc') }}
+                            {{ $t('staking.address_binder_card.desc') }}
                         </p>
-                        <p class="no_balance">
-                            {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
-                        </p>
+                        <div>
+                            <div v-if="!registered">
+                                <p class="no_balance">
+                                    {{ $t('staking.warning_3') }}
+                                </p>
+                            </div>
+                            <div v-else>
+                                <p class="no_balance">
+                                    {{ $t('staking.warning_4') }}
+                                </p>
+                            </div>
+                        </div>
                         <v-btn
                             class="button_secondary"
-                            data-cy="validate"
-                            @click="addValidator"
+                            data-cy="addressBinder"
+                            @click="addressBinder"
                             depressed
                             small
                         >
-                            {{ $t('staking.validate_card.submit') }}
+                            {{ $t('staking.address_binder_card.submit') }}
+                        </v-btn>
+                    </div>
+                    <div>
+                        <h4 class="title">
+                            {{ $t('staking.transfer_card.title') }}
+                        </h4>
+                        <p style="flex-grow: 1">
+                            {{ $t('staking.transfer_card.desc') }}
+                        </p>
+                        <v-btn
+                            class="button_secondary"
+                            data-cy="swap"
+                            @click="transfer"
+                            depressed
+                            small
+                        >
+                            {{ $t('staking.transfer_card.submit') }}
                         </v-btn>
                     </div>
                     <div>
@@ -55,19 +81,22 @@
                     </div>
                     <div>
                         <h4 class="title">
-                            {{ $t('staking.transfer_card.title') }}
+                            {{ $t('staking.validate_card.title') }}
                         </h4>
                         <p style="flex-grow: 1">
-                            {{ $t('staking.transfer_card.desc') }}
+                            {{ $t('staking.validate_card.desc') }}
+                        </p>
+                        <p class="no_balance">
+                            {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
                         </p>
                         <v-btn
                             class="button_secondary"
-                            data-cy="swap"
-                            @click="transfer"
+                            data-cy="validate"
+                            @click="addValidator"
                             depressed
                             small
                         >
-                            {{ $t('staking.transfer_card.submit') }}
+                            {{ $t('staking.validate_card.submit') }}
                         </v-btn>
                     </div>
                     <div>
@@ -102,10 +131,15 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import AddValidator from '@/components/wallet/earn/Validate/AddValidator.vue'
 import AddDelegator from '@/components/wallet/earn/Delegate/AddDelegator.vue'
+import Register from '@/components/wallet/earn/Register.vue'
 import { BN } from 'avalanche/dist'
 import UserRewards from '@/components/wallet/earn/UserRewards.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
+// import { isAddressRegistered, registerAddress } from '@/views/wallet/FlareContract'
+import { ava } from '@/AVA'
+import { ClaimRewardsInterface, RegisterAddressInterface, UnsignedTxJson } from './Interfaces'
+import { issueC } from '@/helpers/issueTx'
 
 @Component({
     name: 'earn',
@@ -119,6 +153,30 @@ export default class Earn extends Vue {
     pageNow: any = null
     subtitle: string = ''
     intervalID: any = null
+    registered: boolean = false
+
+    async isRegistered(): Promise<Boolean> {
+        const wallet = this.$store.state.activeWallet
+        const cHexAddr = wallet.getEvmChecksumAddress()
+        const network: string = ava.getHRP()
+        console.log('Network ??????', network)
+        console.log(cHexAddr, 'cHexAddr')
+        // this.registered = await isAddressRegistered(cHexAddr, network)
+        return this.registered
+    }
+
+    async addressBinder() {
+        // this.pageNow = AddressBinder
+        const wallet = this.$store.state.activeWallet
+        const network: string = ava.getHRP()
+        const cAddress = wallet.getEvmChecksumAddress()
+        const pAddress = wallet.getCurrentAddressPlatform()
+        const publicKey: string = ''
+        // const registerParams: RegisterAddressInterface = { publicKey, pAddress, cAddress, network, wallet1, dPath, pvtKey, txId }
+        // const unsignedTx: object = registerAddress(registerParams)
+        //issueC() + signC() ??
+        console.log('Address Binding Completed')
+    }
 
     addValidator() {
         this.pageNow = AddValidator

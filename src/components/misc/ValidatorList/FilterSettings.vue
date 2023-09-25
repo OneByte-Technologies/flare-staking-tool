@@ -1,10 +1,10 @@
 <template>
     <div class="filter_settings">
         <div class="modal_body">
-            <h3>{{ $t('earn.delegate.filter.title2') }}</h3>
+            <h3>{{ $t('staking.delegate.filter.title2') }}</h3>
             <div class="inputs">
                 <div class="uptime">
-                    <label>{{ $t('earn.delegate.filter.label1') }}</label>
+                    <label>{{ $t('staking.delegate.filter.label1') }}</label>
                     <div class="input_row hover_border">
                         <input
                             type="number"
@@ -18,7 +18,7 @@
                     </div>
                 </div>
                 <div class="duration">
-                    <label>{{ $t('earn.delegate.filter.label2') }}</label>
+                    <label>{{ $t('staking.delegate.filter.label2') }}</label>
                     <div class="input_row slider_row">
                         <input
                             type="range"
@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="fee">
-                    <label>{{ $t('earn.delegate.filter.label3') }}</label>
+                    <label>{{ $t('staking.delegate.filter.label3') }}</label>
                     <div class="input_row hover_border">
                         <input
                             type="number"
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="uptime">
-                    <label>{{ $t('earn.delegate.filter.label4') }}</label>
+                    <label>{{ $t('staking.delegate.filter.label4') }}</label>
                     <div class="input_row hover_border">
                         <input
                             type="number"
@@ -64,7 +64,7 @@
             </div>
 
             <div class="preview">
-                <p>{{ $t('earn.delegate.filter.preview', [count]) }}</p>
+                <p>{{ $t('staking.delegate.filter.preview', [count]) }}</p>
             </div>
 
             <div class="checkout">
@@ -75,7 +75,7 @@
                     @click="apply"
                     small
                 >
-                    {{ $t('earn.delegate.filter.apply') }}
+                    {{ $t('staking.delegate.filter.apply') }}
                 </v-btn>
                 <v-btn
                     text
@@ -86,10 +86,10 @@
                     small
                     block
                 >
-                    {{ $t('earn.delegate.filter.clear') }}
+                    {{ $t('staking.delegate.filter.clear') }}
                 </v-btn>
                 <button @click="close" class="button_form_cancel">
-                    {{ $t('earn.delegate.filter.cancel') }}
+                    {{ $t('staking.delegate.filter.cancel') }}
                 </button>
             </div>
         </div>

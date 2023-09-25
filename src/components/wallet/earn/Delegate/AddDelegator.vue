@@ -123,18 +123,18 @@
                             * {{ $t('staking.delegate.summary.warn') }}
                         </label>
                         <p class="err">{{ err }}</p>
-                        <!-- <v-btn
-                          
+                        <v-btn
+                            v-if="!isConfirm"
                             @click="confirm"
                             class="button_secondary"
                             depressed
                             :loading="isLoading"
-                            block> {{ $t('staking.delegate.confirm') }}
+                            :disabled="!canSubmit"
+                            block
+                        >
+                            {{ $t('staking.delegate.confirm') }}
                         </v-btn>
                         <template v-else>
-                            {{ $t('earn.delegate.confirm') }}
-                        </v-btn> -->
-                        <template>
                             <v-btn
                                 @click="submit"
                                 class="button_secondary"
@@ -144,11 +144,12 @@
                             >
                                 {{ $t('staking.delegate.submit') }}
                             </v-btn>
-                            <!-- <v-btn
+                            <v-btn
                                 text
                                 @click="cancelConfirm"
                                 block
-                                style="color: var(--primary-color); margin-top: 20px">
+                                style="color: var(--primary-color); margin-top: 20px"
+                            >
                                 {{ $t('staking.delegate.cancel') }}
                             </v-btn>
                         </template>
@@ -157,14 +158,6 @@
                 <div v-else class="success_cont">
                     <h2>{{ $t('staking.delegate.success.title') }}</h2>
                     <p>{{ $t('staking.delegate.success.desc') }}</p>
-                                {{ $t('earn.delegate.cancel') }}
-                            </v-btn> -->
-                        </template>
-                    </div>
-                </div>
-                <div class="success_cont">
-                    <h2>{{ $t('earn.delegate.success.title') }}</h2>
-                    <p>{{ $t('earn.delegate.success.desc') }}</p>
                     <p class="tx_id">Tx ID: {{ txId }}</p>
                     <div class="tx_status">
                         <div>

@@ -178,7 +178,7 @@
                     <div class="success_cont" v-else>
                         <h2>{{ $t('staking.validate.success.title') }}</h2>
                         <p>{{ $t('staking.validate.success.desc') }}</p>
-                                {{ $t('earn.validate.confirm') }}
+                                {{ $t('staking.validate.confirm') }}
                             </v-btn> -->
                             <template>
                                 <v-btn
@@ -188,14 +188,14 @@
                                     :loading="isLoading"
                                     block
                                 >
-                                    {{ $t('earn.validate.submit') }}
+                                    {{ $t('staking.validate.submit') }}
                                 </v-btn>
                             </template>
                         </div>
                     </div>
                     <div class="success_cont">
-                        <h2>{{ $t('earn.validate.success.title') }}</h2>
-                        <p>{{ $t('earn.validate.success.desc') }}</p>
+                        <h2>{{ $t('staking.validate.success.title') }}</h2>
+                        <p>{{ $t('staking.validate.success.desc') }}</p>
                         <p class="tx_id">Tx ID: {{ txId }}</p>
                         <div class="tx_status">
                             <div>

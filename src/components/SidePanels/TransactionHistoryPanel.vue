@@ -30,6 +30,7 @@ import Spinner from '@/components/misc/Spinner.vue'
 import TxHistoryRow from '@/components/SidePanels/TxHistoryRow.vue'
 import { AvaNetwork } from '@/js/AvaNetwork'
 import { TransactionType } from '@/js/Glacier/models'
+import { ava } from '@/AVA'
 
 @Component({
     components: {
@@ -69,7 +70,11 @@ export default class TransactionHistoryPanel extends Vue {
 
     get explorerUrl(): string {
         let addr = this.$store.state.address.split('-')[1]
-        return `https://explorer.avax.network/address/${addr}`
+        if (ava.getNetworkID() === 114) {
+            return `https://coston2-explorer.flare.network/address/${addr}`
+        } else {
+            return `https://flare-explorer.flare.network/address/${addr}`
+        }
     }
 }
 </script>

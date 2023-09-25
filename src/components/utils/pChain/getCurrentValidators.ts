@@ -8,11 +8,10 @@ const networkID: number = 114
 const ava: Avalanche = new Avalanche(ip, port, protocol, networkID)
 const pChain: PlatformVMAPI = ava.PChain()
 
-const main = async (): Promise<any> => {
+export const getCurrentValidators = async (): Promise<any> => {
     const subnetID: string = '11111111111111111111111111111111LpoYY'
     const nodeIDs: string[] = []
     const currentValidators: object = await pChain.getCurrentValidators(subnetID)
     console.log(currentValidators)
 }
-
-main()
+getCurrentValidators()
