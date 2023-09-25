@@ -80,6 +80,7 @@ import ChainSelect from '@/components/wallet/TopCards/AddressCard/ChainSelect.vu
 import { ChainIdType } from '@/constants'
 import { ava } from '@/AVA'
 import { getPreferredHRP } from 'avalanche/dist/utils'
+import { isMainnetNetworkID } from '@/store/modules/network/isMainnetNetworkID'
 @Component({
     components: {
         CopyText,
@@ -178,8 +179,14 @@ export default class AddressCard extends Vue {
         if (!wallet) {
             return '-'
         }
-        console.log('addressPVM:', wallet.getCurrentAddressPlatform()) // Add console.log here
-        return wallet.getCurrentAddressPlatform()
+        let networkId = ava.getNetworkID()
+        if (isMainnetNetworkID(networkId)) {
+            const platformAddr = 'P-flare' + wallet.getCurrentAddressPlatform().slice(8)
+            return platformAddr
+        } else {
+            const platformAddr = 'P-costwo' + wallet.getCurrentAddressPlatform().slice(8)
+            return platformAddr
+        }
     }
 
     get addressEVM() {

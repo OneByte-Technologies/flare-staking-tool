@@ -167,11 +167,14 @@ export default class BalanceCard extends Vue {
             this.pBalance = await getPBalance(pChainAddress)
             console.log('pBalance:', this.pBalance)
             return this.pBalance
+        if (this.pChainAddress) {
+            this.pBalance = await getBalance(this.pChainAddress)
+            console.log('pBalance:', this.pBalance)
         } else {
             console.error('No P-Chain address found')
         }
     }
-
+    
     cBalance: string = ''
     cChainBal: BN = new BN(0)
 
