@@ -77,23 +77,17 @@
                         <p style="flex-grow: 1">
                             {{ $t('staking.rewards_card.desc') }}
                         </p>
-                        <v-btn
-                            class="button_secondary"
-                            data-cy="rewards"
-                            @click="viewRewards"
-                            depressed
-                            small
-                        >
-                            View Reward
+                        <v-btn class="button_secondary" @click="viewRewards" depressed small>
+                            View Estimated Rewards
                         </v-btn>
                         <v-btn
                             class="button_secondary"
-                            data-cy="rewards"
+                            v-if="unclaimedRewards.gt(0)"
                             @click="claimRewards"
                             depressed
                             small
                         >
-                            {{ $t('staking.rewards_card.submit') }}
+                            Claim Rewards
                         </v-btn>
                     </div>
                 </div>
@@ -116,6 +110,7 @@ import UserRewards from '@/components/wallet/earn/UserRewards.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
 import { checkUnclaimedRewards, claimRewards } from '@/js/ValidatorRewardManager'
+import { ethers } from 'ethers'
 
 @Component({
     name: 'earn',
@@ -141,24 +136,37 @@ export default class Earn extends Vue {
     transfer() {
         this.$router.replace('/wallet/cross_chain')
     }
-    async viewRewards() {}
+    unclaimedRewards: ethers.BigNumber = ethers.BigNumber.from(0)
+
+    async viewRewards() {
+        const config = {
+            userAddress: '', // replace with the actual user address
+            recipientAddress: '', // replace with the actual recipient address
+            wrap: false, // replace with the actual wrap value
+        }
+
+        try {
+            const rewardsInfo = await checkUnclaimedRewards(config)
+            this.unclaimedRewards = rewardsInfo.totalReward.sub(rewardsInfo.claimedReward)
+            console.log('Unclaimed rewards:', this.unclaimedRewards.toString())
+        } catch (error) {
+            console.error('Error checking unclaimed rewards on Coston2:', error)
+        }
+    }
 
     async claimRewards() {
         const config = {
-            userAddress: '',
-            recipientAddress: '',
-            wrap: false,
+            userAddress: '', // replace with the actual user address
+            recipientAddress: '', // replace with the actual recipient address
+            wrap: false, // replace with the actual wrap value
         }
 
-        // replace with the actual config
         try {
             await claimRewards(config)
             console.log('Rewards claimed successfully on Coston2!')
-
-            const rewardsInfo = await checkUnclaimedRewards(config)
-            console.log('Unclaimed rewards:', rewardsInfo)
+            this.unclaimedRewards = ethers.BigNumber.from(0)
         } catch (error) {
-            console.error('Error in rewards operation on Coston2:', error)
+            console.error('Error claiming rewards on Coston2:', error)
         }
     }
     cancel() {
