@@ -113,16 +113,6 @@
                             <p style="flex-grow: 1">
                                 {{ $t('staking.rewards_card.desc') }}
                             </p>
-                            <v-btn
-                                v-if="registered"
-                                class="button_secondary"
-                                data-cy="rewards"
-                                @click="viewRewards"
-                                depressed
-                                small
-                            >
-                                {{ $t('staking.rewards_card.submit') }}
-                            </v-btn>
                             <div v-if="registered">
                                 <v-btn
                                     v-if="registered"
@@ -221,21 +211,9 @@ export default class Earn extends Vue {
         this.$router.replace('/wallet/cross_chain')
     }
 
-    async viewRewards() {
+    viewRewards() {
         this.pageNow = UserRewards
         this.subtitle = this.$t('staking.subtitle4') as string
-        const wallet = this.$store.state.activeWallet
-        const cAddress = wallet.getEvmChecksumAddress()
-        const rpcUrl: string = this.getIp()
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress: string = defaultContractAddresses.ValidatorRewardManager.costwo
-        const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        const rewards = await contract.getStateOfRewards(cAddress)
-        const totalRewardNumber: BN = rewards[0]
-        const claimedRewardNumber: BN = rewards[1]
-        const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
-        console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
     }
 
     cancel() {
