@@ -108,6 +108,9 @@ const platform_module: Module<PlatformState, RootState> = {
                     for (let y = 0; y < v.delegators.length; y++) {
                         const delegator: Delegators = v.delegators[y]
                         console.log('DELEGATORS///', delegator)
+
+                        const rewardOwner = v.delegators[y].rewardOwner
+                        console.log('////////RewardOwner', rewardOwner)
                         delegatedAmt = delegatedAmt.add(new BN(delegator.stakeAmount))
                     }
                 }
@@ -157,6 +160,44 @@ const platform_module: Module<PlatformState, RootState> = {
             })
 
             return res
+        },
+
+        delegatorCount(state, getters) {
+            const now = Date.now()
+            let validators = state.validators
+            validators = validators.filter((v) => {
+                const endTime = parseInt(v.endTime) * 1000
+                const dif = endTime - now
+
+                // If End time is less than 2 weeks + 1 hour, remove from list they are no use
+                const threshold = DAY_MS * 14 + 10 * MINUTE_MS
+                if (dif <= threshold) {
+                    return false
+                }
+
+                return true
+            })
+            for (let i = 0; i < validators.length; i++) {
+                const v = validators[i]
+
+                const nodeID = v.nodeID
+
+                // const delegatorsPending: DelegatorPendingRaw[] = delegatorPendingMap[nodeID] || []
+
+                let delegatedAmt = new BN(0)
+                if (v.delegators && v.delegators.length > 0) {
+                    for (let y = 0; y < v.delegators.length; y++) {
+                        const delegator: Delegators = v.delegators[y]
+                        console.log('DELEGATORS///', delegator)
+
+                        const rewardOwner = v.delegators[y].rewardOwner
+                        console.log('////////RewardOwner', rewardOwner)
+                        delegatedAmt = delegatedAmt.add(new BN(delegator.stakeAmount))
+                    }
+                }
+            }
+
+            return true
         },
 
         nodeDelegatorPendingMap(state): ValidatorDelegatorPendingDict {

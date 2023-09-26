@@ -22,6 +22,7 @@
                 </router-link>
             </template>
             <network-menu></network-menu>
+            <Web3Modal></Web3Modal>
             <LanguageSelect class="lang_web"></LanguageSelect>
 
             <button @click="togglePopup">
@@ -97,6 +98,7 @@ import DayNightToggle from '@/components/misc/DayNightToggle.vue'
 import NetworkMenu from './NetworkSettings/NetworkMenu.vue'
 import ConfirmLogout from '@/components/modals/ConfirmLogout.vue'
 import AccountMenu from '@/components/wallet/sidebar/AccountMenu.vue'
+// import Web3Modal from '@/components/Web3Modal.vue'
 @Component({
     components: {
         AccountMenu,
