@@ -221,7 +221,6 @@ import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
-import { addDelegatorTx } from '@/components/utils/pChain/addDelegatorTx'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -309,7 +308,6 @@ export default class AddDelegator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
-            await addDelegatorTx(this.formNodeID)
             this.isSuccess = true
             this.txId = txId
             this.updateTxStatus(txId)

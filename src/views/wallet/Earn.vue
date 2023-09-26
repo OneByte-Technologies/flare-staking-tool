@@ -33,6 +33,7 @@
                             </div>
                         </div>
                         <v-btn
+                            v-if="!registered"
                             class="button_secondary"
                             data-cy="addressBinder"
                             @click="addressBinder"
@@ -136,10 +137,14 @@ import { BN } from 'avalanche/dist'
 import UserRewards from '@/components/wallet/earn/UserRewards.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
-// import { isAddressRegistered, registerAddress } from '@/views/wallet/FlareContract'
 import { ava } from '@/AVA'
-import { ClaimRewardsInterface, RegisterAddressInterface, UnsignedTxJson } from './Interfaces'
-import { issueC } from '@/helpers/issueTx'
+import {
+    defaultContractAddresses,
+    getAddressBinderABI,
+    getValidatorRewardManagerABI,
+} from './FlareContractConstants'
+import AddressBinder from '@/views/wallet/AddressBinder.vue'
+import { ethers } from 'ethers'
 
 @Component({
     name: 'earn',
@@ -153,29 +158,33 @@ export default class Earn extends Vue {
     pageNow: any = null
     subtitle: string = ''
     intervalID: any = null
-    registered: boolean = false
+    registered: Boolean = false
 
     async isRegistered(): Promise<Boolean> {
         const wallet = this.$store.state.activeWallet
         const cHexAddr = wallet.getEvmChecksumAddress()
-        const network: string = ava.getHRP()
-        console.log('Network ??????', network)
-        console.log(cHexAddr, 'cHexAddr')
-        // this.registered = await isAddressRegistered(cHexAddr, network)
-        return this.registered
-    }
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const contractAddress: string = defaultContractAddresses.AddressBinder.flare
+        const abi = getAddressBinderABI() as ethers.ContractInterface
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const result = await contract.cAddressToPAddress(cHexAddr)
 
-    async addressBinder() {
-        // this.pageNow = AddressBinder
-        const wallet = this.$store.state.activeWallet
-        const network: string = ava.getHRP()
-        const cAddress = wallet.getEvmChecksumAddress()
-        const pAddress = wallet.getCurrentAddressPlatform()
-        const publicKey: string = ''
-        // const registerParams: RegisterAddressInterface = { publicKey, pAddress, cAddress, network, wallet1, dPath, pvtKey, txId }
-        // const unsignedTx: object = registerAddress(registerParams)
-        //issueC() + signC() ??
-        console.log('Address Binding Completed')
+        if (result !== '0x0000000000000000000000000000000000000000') {
+            console.log('Success. You are registered')
+            this.registered = true
+            return this.registered
+        } else {
+            console.log('Please Register')
+            this.registered = false
+            return this.registered
+        }
+    }
+    res = this.isRegistered()
+
+    addressBinder() {
+        this.pageNow = AddressBinder
+        this.subtitle = this.$t('staking.subtitle5') as string
     }
 
     addValidator() {
@@ -190,10 +199,63 @@ export default class Earn extends Vue {
         this.$router.replace('/wallet/cross_chain')
     }
 
-    viewRewards() {
+    async viewRewards() {
+        //complete
         this.pageNow = UserRewards
         this.subtitle = this.$t('staking.subtitle4') as string
+        const wallet = this.$store.state.activeWallet
+        const cAddress = wallet.getEvmChecksumAddress()
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const contractAddress: string = defaultContractAddresses.ValidatorRewardManager.costwo
+        const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const rewards = await contract.getStateOfRewards(cAddress)
+        const totalRewardNumber: BN = rewards[0]
+        const claimedRewardNumber: BN = rewards[1]
+        const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
+        console.log('Rewards', rewards)
+        const nonce = await provider.getTransactionCount(cAddress)
+        let gasEstimate
+        try {
+            gasEstimate = await contract.estimateGas.claim(
+                cAddress,
+                cAddress,
+                unclaimedRewards.toString(),
+                false,
+                {
+                    from: cAddress,
+                }
+            )
+        } catch {
+            console.log('Incorrect arguments passed')
+        }
+        const gasPrice = await provider.getGasPrice()
+        console.log('gas Price', gasPrice, 'gas Estimate', gasEstimate)
+        const populatedTx = await contract.populateTransaction.claim(
+            cAddress,
+            cAddress,
+            unclaimedRewards,
+            false
+        )
+        console.log('Populated Tx', populatedTx)
+        const chainId = ava.getNetworkID()
+        const unsignedTx = {
+            ...populatedTx,
+            nonce,
+            chainId: chainId,
+            gasPrice,
+            gasLimit: gasEstimate,
+        }
+        console.log('unsignedtx', unsignedTx)
+        // const txId = wallet.signC(unsignedTx)
+        const ethersWallet = new ethers.Wallet(wallet.ethKey)
+        const signedTx = await ethersWallet.signTransaction(unsignedTx)
+        const txId = await contract.provider.sendTransaction(signedTx)
+        console.log('txId', txId)
+        // return unclaimedRewards
     }
+
     cancel() {
         this.pageNow = null
         this.subtitle = ''
@@ -205,6 +267,17 @@ export default class Earn extends Vue {
 
     destroyed() {
         clearInterval(this.intervalID)
+    }
+
+    getIp() {
+        let ip = ''
+        if (ava.getHRP() === 'costwo') {
+            ip = 'coston2'
+        } else if (ava.getHRP() === 'flare') {
+            ip = 'flare'
+        }
+        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        return rpcUrl
     }
 
     get platformUnlocked(): BN {
@@ -234,7 +307,7 @@ export default class Earn extends Vue {
 
     get canValidate(): boolean {
         let bn = this.$store.state.Platform.minStake
-        if (this.totBal.lt(bn)) {
+        if (this.totBal.lt(bn) && !this.isRegistered) {
             return false
         }
         return true
@@ -248,6 +321,10 @@ export default class Earn extends Vue {
     get minDelegationAmt(): Big {
         let bn = this.$store.state.Platform.minStakeDelegation
         return bnToBig(bn, 9)
+    }
+
+    get register(): Promise<Boolean> {
+        return this.isRegistered()
     }
 }
 </script>

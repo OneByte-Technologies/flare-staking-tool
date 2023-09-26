@@ -442,6 +442,11 @@
                 "toggle_off": "Hide Advanced"
             }
         },
+        "addressBinder": {
+            "label_1": "P-Chain Address",
+            "labe;_2": "C-Chain Address",
+            "label_3": "Public Key"
+        },
         "validate": {
             "label_1": "Node ID",
             "duration": {

@@ -25,14 +25,13 @@
         </v-btn>
         <div v-if="addressX" class="result">
             <label>{{ $t('advanced.verify.label3') }}</label>
-            <p class="address">{{ addressX }}</p>
             <p class="address">{{ addressP }}</p>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { KeyPair } from 'avalanche/dist/apis/avm'
+import { KeyPair } from 'avalanche/dist/apis/platformvm'
 import { ava, bintools } from '@/AVA'
 import createHash from 'create-hash'
 import { getPreferredHRP } from 'avalanche/dist/utils'
@@ -65,13 +64,12 @@ export default class VerifyMessage extends Vue {
         let networkId = ava.getNetworkID()
 
         let hrp = getPreferredHRP(networkId)
-        let keypair = new KeyPair(hrp, 'X')
+        let keypair = new KeyPair(hrp, 'P')
 
         let signedBuff = bintools.cb58Decode(this.signature)
 
         let pubKey = keypair.recover(digestBuff, signedBuff)
         const addressBuff = KeyPair.addressFromPublicKey(pubKey)
-        this.addressX = bintools.addressToString(hrp, 'X', addressBuff)
         this.addressP = bintools.addressToString(hrp, 'P', addressBuff)
     }
 
