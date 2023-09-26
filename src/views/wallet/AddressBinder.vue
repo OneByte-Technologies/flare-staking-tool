@@ -5,10 +5,12 @@
                 <transition-group name="fade" mode="out-in">
                     <div v-show="!isConfirm" key="form" class="ins_col">
                         <div style="margin-bottom: 30px">
-                            <h4>This is your original P chain address:</h4>
-                            <p class="summary-desc">{{ pChainAddress }}</p>
+                            <h4>This is your foriginal Pchain address:</h4>
+                            <p style="padding-bottom: 30px; color: #6e7479">
+                                {{ pChainAddress }}
+                            </p>
                             <h4>This is your encoded P chain Address</h4>
-                            <p class="summary-desc">{{ pAddress }}</p>
+                            <p style="padding-bottom: 10px; color: #6e7479">{{ pAddress }}</p>
                             <input
                                 type="text"
                                 v-model="pAddress"
@@ -18,7 +20,9 @@
                         </div>
                         <div style="margin: 30px 0">
                             <h4>This is your C chain address</h4>
-                            <p class="summary-desc">{{ cChainAddressBinder }}</p>
+                            <p style="padding-bottom: 10px; color: #6e7479">
+                                {{ cChainAddressBinder }}
+                            </p>
                             <input
                                 type="text"
                                 v-model="cChainAddress"
@@ -31,7 +35,16 @@
                         </div>
                         <div style="margin: 30px 0">
                             <h4>This is your Public Key</h4>
-                            <p class="summary-desc">{{ pubKey }}</p>
+                            <p
+                                style="
+                                    padding-bottom: 10px;
+                                    color: #6e7479;
+                                    word-break: break-all;
+                                    font-size: 10px;
+                                "
+                            >
+                                {{ pubKey }}
+                            </p>
                             <input
                                 type="text"
                                 v-model="pubKey"
@@ -39,13 +52,14 @@
                                 placeholder="publickey"
                             />
                         </div>
-                        <v-btn
-                            v-if="!success"
-                            @click="bindAddress"
-                            block
-                            class="button_secondary"
-                            depressed
-                        >
+                        <div v-if="success" class="complete">
+                            <h4>{{ $t('staking.transfer.success.titleAddressBind') }}</h4>
+                            <p style="color: var(--success); margin: 12px 0 !important">
+                                <fa icon="check-circle"></fa>
+                                {{ $t('staking.transfer.success.messageAddressBind') }}
+                            </p>
+                        </div>
+                        <v-btn v-else @click="bindAddress" block class="button_secondary" depressed>
                             Bind address
                         </v-btn>
                     </div>
@@ -232,11 +246,20 @@ input {
     margin-bottom: 8px !important;
     color: var(--primary-color-light);
 }
+
 .summary-desc {
     word-break: break-all;
     font-size: 10px;
     color: #fff;
     font-style: italic;
+}
+
+.summary-descP {
+    word-break: break-all;
+    font-size: 10px;
+    color: #fff;
+    font-style: italic;
+    padding-bottom: 1rem;
 }
 
 .summary-warn {

@@ -91,7 +91,7 @@
                             <p style="flex-grow: 1">
                                 {{ $t('staking.validate_card.desc') }}
                             </p>
-                            <p class="no_balance">
+                            <p style="padding-top: 24px" class="no_balance">
                                 {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
                             </p>
                             <v-btn

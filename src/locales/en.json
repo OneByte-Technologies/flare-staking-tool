@@ -409,9 +409,11 @@
             "err_submit": "Trigger Import",
             "success": {
                 "title": "Transfer Completed",
+                "titleAddressBind": "Address Binder Completed",
                 "export": "Export Transaction ID:",
                 "import": "Import Transaction ID:",
                 "message": "You have successfully transferred between chains.",
+                "messageAddressBind": "You have successfully done address binding.",
                 "again": "Start Again",
                 "back": "Back to Earn"
             }
