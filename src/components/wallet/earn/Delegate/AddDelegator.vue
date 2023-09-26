@@ -259,6 +259,7 @@ export default class AddDelegator extends Vue {
     txId = ''
     txStatus = ''
     txReason: null | string = null
+    delegationCounts: { [key: string]: number } = { ['']: 0 }
 
     formNodeID = ''
     formUtxos: UTXO[] = []

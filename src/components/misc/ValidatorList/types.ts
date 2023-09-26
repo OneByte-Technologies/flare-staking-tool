@@ -16,10 +16,16 @@ export interface Delegators {
     endTime: string
     nodeID: string
     potentialReward: string
-    rewardOwner: Object
+    rewardOwner: RewardOwner
     stakeAmount: string
     startTime: string
     txID: string
+}
+
+export interface RewardOwner {
+    address: Array<string>
+    lockTime: string
+    threshold: string
 }
 
 export interface DelegatorPendingRaw {

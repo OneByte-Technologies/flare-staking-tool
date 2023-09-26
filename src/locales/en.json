@@ -389,9 +389,10 @@
             "submit": "Add Validator"
         },
         "rewards_card": {
-            "title": "Estimated Rewards",
+            "title": "View Rewards",
             "desc": "View staking rewards you will receive.",
-            "submit": "View Rewards"
+            "submit": "View Rewards",
+            "submit2": "Claim Rewards"
         },
         "transfer": {
             "source": "Source Chain",
@@ -445,10 +446,20 @@
         "addressBinder": {
             "label_1": "P-Chain Address",
             "labe;_2": "C-Chain Address",
-            "label_3": "Public Key"
+            "label_3": "Public Key",
+            "summary": {
+                "pAddrBech32": "This is your original P chain address",
+                "pAddrBech32_toolTip": "in Bech32 Format",
+                "pAddrSubmit": "This is the P chain address required in the input field",
+                "pAddrSubmit_toolTip": "Which Format ?",
+                "cAddr": "This is your C chain address",
+                "pubKey": "This is your public Key",
+                "warn": "You need funds on C chain to register your address"
+            }
         },
         "validate": {
             "label_1": "Node ID",
+            "warning": "Please register first",
             "duration": {
                 "label": "Staking End Date",
                 "desc": "Your FLR tokens will be locked until this date.",

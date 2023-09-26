@@ -5,28 +5,33 @@
                 <transition-group name="fade" mode="out-in">
                     <div v-show="!isConfirm" key="form" class="ins_col">
                         <div style="margin-bottom: 30px">
-                            <h4>P chain address</h4>
-                            <p class="desc">Your P Chain Address is: {{ pAddress }}</p>
+                            <h4>This is your original P chain address:</h4>
+                            <p class="summary-desc">{{ pChainAddress }}</p>
+                            <h4>This is your encoded P chain Address</h4>
+                            <p class="summary-desc">{{ pAddress }}</p>
                             <input
                                 type="text"
                                 v-model="pAddress"
                                 style="width: 100%"
-                                placeholder="P Chain Address"
+                                placeholder="P chain address"
                             />
                         </div>
                         <div style="margin: 30px 0">
-                            <h4>C chain address</h4>
-                            <p class="desc">Your C Chain Address is: {{ cChainAddr }}</p>
+                            <h4>This is your C chain address</h4>
+                            <p class="summary-desc">{{ cChainAddressBinder }}</p>
                             <input
                                 type="text"
                                 v-model="cChainAddress"
                                 style="width: 100%"
-                                placeholder="C Chain Address"
+                                placeholder="C chain address"
                             />
+                            <p class="summary-warn">
+                                {{ $t('staking.addressBinder.summary.warn') }}
+                            </p>
                         </div>
                         <div style="margin: 30px 0">
-                            <h4>Public Key</h4>
-                            <p class="desc">Your Public Key is :{{ pubKey }}</p>
+                            <h4>This is your Public Key</h4>
+                            <p class="summary-desc">{{ pubKey }}</p>
                             <input
                                 type="text"
                                 v-model="pubKey"
@@ -34,7 +39,13 @@
                                 placeholder="publickey"
                             />
                         </div>
-                        <v-btn @click="bindAddress" block class="button_secondary" depressed>
+                        <v-btn
+                            v-if="!success"
+                            @click="bindAddress"
+                            block
+                            class="button_secondary"
+                            depressed
+                        >
                             Bind address
                         </v-btn>
                     </div>
@@ -54,9 +65,12 @@ import { bech32 } from 'bech32'
 import { cChain } from '@/AVA'
 import { KeyChain } from 'avalanche/dist/apis/evm'
 import { ava } from '@/AVA'
+import Tooltip from '@/components/misc/Tooltip.vue'
 
 @Component({})
 export default class AddressBinder extends Vue {
+    success: boolean = false
+    registered: boolean = false
     // ...
     pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
     wallet = this.$store.state.activeWallet
@@ -71,6 +85,7 @@ export default class AddressBinder extends Vue {
 
     async bindAddress() {
         const cAddress = this.wallet.getEvmChecksumAddress()
+        this.cChainAddress = cAddress
         const rpcUrl: string = this.getIp()
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
         const contractAddress: string = defaultContractAddresses.AddressBinder.costwo //change to dynamic
@@ -84,6 +99,7 @@ export default class AddressBinder extends Vue {
             cAddress,
             { from: cAddress }
         )
+        console.log('P-chain Address acc to tx', this.pAddress)
         console.log('Gas Estimate', gasEstimate)
         const gasPrice = await provider.getGasPrice()
         console.log('Gas Price', gasPrice)
@@ -105,20 +121,42 @@ export default class AddressBinder extends Vue {
         const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
         const txId = await contract.provider.sendTransaction(signedTx)
         console.log('txId', txId)
+        const checkAddress: string = defaultContractAddresses.AddressBinder.flare
+        const abi2 = getAddressBinderABI() as ethers.ContractInterface
+        const contract2 = new ethers.Contract(contractAddress, abi, provider)
+        const result = await contract.cAddressToPAddress(cAddress)
+
+        if (result !== '0x0000000000000000000000000000000000000000') {
+            console.log('Success. You are registered')
+            this.registered = true
+            this.onSuccess()
+        } else {
+            console.log('Please Register')
+            this.registered = false
+            this.onFail()
+        }
+    }
+
+    onSuccess() {
+        this.success = true
+        this.$store.dispatch('Notifications/add', {
+            type: 'success',
+            title: 'Binding Complete',
+            message: 'You have registered',
+        })
+    }
+
+    onFail() {
+        this.success = false
+        this.$store.dispatch('Notifications/add', {
+            type: 'Fail',
+            title: 'Binding Error',
+            message: 'Please register again',
+        })
     }
 
     get activeWallet(): WalletType | null {
         return this.$store.state.activeWallet
-    }
-
-    get cChainAddr() {
-        let wallet = this.activeWallet
-        if (!wallet) {
-            this.cChainAddress = '-'
-        } else {
-            this.cChainAddress = wallet.getEvmChecksumAddress()
-        }
-        return this.cChainAddress
     }
 
     privateKeyC(): string | null {
@@ -145,7 +183,15 @@ export default class AddressBinder extends Vue {
         return rpcUrl
     }
 
-    getPAddress() {}
+    get cChainAddressBinder() {
+        let wallet = this.activeWallet
+        if (!wallet) {
+            this.cChainAddress = '-'
+        } else {
+            this.cChainAddress = wallet.getEvmChecksumAddress()
+        }
+        return this.cChainAddress
+    }
 }
 </script>
 <style scoped lang="scss">
@@ -186,9 +232,16 @@ input {
     margin-bottom: 8px !important;
     color: var(--primary-color-light);
 }
+.summary-desc {
+    word-break: break-all;
+    font-size: 10px;
+    color: #fff;
+    font-style: italic;
+}
 
-h4 {
-    font-weight: bold;
+.summary-warn {
+    color: red;
+    font-style: italic;
 }
 
 label {
