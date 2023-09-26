@@ -27,29 +27,41 @@
         </template> -->
     <template>
         <div>
-            <div>
-                <label>
-                    {{ $t('staking.rewards.total') }}
-                </label>
-                <p>
-                    {{ totalRewardNumber.toString() }}
-                </p>
-            </div>
-            <div>
-                <label>
-                    {{ $t('staking.rewards.claimed') }}
-                </label>
-                <p>
-                    {{ claimedRewardNumber.toString() }}
-                </p>
-            </div>
-            <div>
-                <label>
-                    {{ $t('staking.rewards.unclaimed') }}
-                </label>
-                <p>
-                    {{ unclaimedRewards.toString() }}
-                </p>
+            <div class="box">
+                <div>
+                    <label>
+                        {{ $t('staking.rewards.total') }}
+                    </label>
+                    <p>
+                        {{ totalRewardNumber.toString() }}
+                    </p>
+                </div>
+                <div>
+                    <label>
+                        {{ $t('staking.rewards.claimed') }}
+                    </label>
+                    <p>
+                        {{ claimedRewardNumber.toString() }}
+                    </p>
+                </div>
+                <div>
+                    <label>
+                        {{ $t('staking.rewards.unclaimed') }}
+                    </label>
+                    <p>
+                        {{ unclaimedRewards.toString() }}
+                    </p>
+                </div>
+                <div v-if="!isRewards">
+                    <v-btn @click="viewRewards">
+                        {{ $t('staking.rewards_card.submit') }}
+                    </v-btn>
+                </div>
+                <div v-if="isRewards">
+                    <v-btn @click="claimRewards">
+                        {{ $t('staking.rewards_card.submit2') }}
+                    </v-btn>
+                </div>
             </div>
         </div>
     </template>
@@ -96,6 +108,24 @@ export default class UserRewards extends Vue {
     claimedRewardNumber: BN = new BN(0)
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
 
+    async viewRewards() {
+        const wallet = this.$store.state.activeWallet
+        const cAddress = wallet.getEvmChecksumAddress()
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const contractAddress: string = defaultContractAddresses.ValidatorRewardManager.costwo
+        const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const rewards = await contract.getStateOfRewards(cAddress)
+        const totalRewardNumber: BN = rewards[0]
+        this.totalRewardNumber = totalRewardNumber
+        const claimedRewardNumber: BN = rewards[1]
+        this.claimedRewardNumber = claimedRewardNumber
+        const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
+        this.unclaimedRewards = unclaimedRewards
+        console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
+    }
+
     get userAddresses() {
         let wallet: AvaWalletCore = this.$store.state.activeWallet
         if (!wallet) return []
@@ -105,6 +135,7 @@ export default class UserRewards extends Vue {
 
     created() {
         this.$store.dispatch('Earn/refreshRewards')
+        this.$store.dispatch('Earn/rewardCheck')
 
         // Update every 5 minutes
         this.updateInterval = setInterval(() => {
@@ -125,14 +156,6 @@ export default class UserRewards extends Vue {
         const contractAddress: string = defaultContractAddresses.ValidatorRewardManager.costwo
         const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
-        const rewards = await contract.getStateOfRewards(cAddress)
-        const totalRewardNumber: BN = rewards[0]
-        this.totalRewardNumber = totalRewardNumber
-        const claimedRewardNumber: BN = rewards[1]
-        this.claimedRewardNumber = claimedRewardNumber
-        const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
-        this.unclaimedRewards = unclaimedRewards
-        this.rewardsAmt = unclaimedRewards
         console.log(
             'Rewardsamt?????????',
             this.rewardsAmt,
@@ -146,7 +169,7 @@ export default class UserRewards extends Vue {
             gasEstimate = await contract.estimateGas.claim(
                 cAddress,
                 cAddress,
-                unclaimedRewards.toString(),
+                this.unclaimedRewards.toString(),
                 false,
                 {
                     from: cAddress,
@@ -160,7 +183,7 @@ export default class UserRewards extends Vue {
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
             cAddress,
-            unclaimedRewards,
+            this.unclaimedRewards,
             false
         )
         console.log('Populated Tx', populatedTx)
@@ -232,6 +255,11 @@ export default class UserRewards extends Vue {
 <style scoped lang="scss">
 .user_rewards {
     padding-bottom: 5vh;
+}
+
+.box {
+    border: 1px solid white;
+    padding: 10px;
 }
 
 .reward_row {
