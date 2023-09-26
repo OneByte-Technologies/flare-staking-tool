@@ -25,8 +25,23 @@
                 ></UserRewardRow>
             </div>
         </template> -->
-    <template>
+
+    <div style="max-width: 490px">
         <div>
+            <h4 style="text-align: center">
+                {{ $t('staking.rewards.total') }}
+            </h4>
+            <p>
+                {{ totalRewardNumber.toString() }}
+            </p>
+        </div>
+        <div>
+            <h4 style="text-align: center">
+                {{ $t('staking.rewards.claimed') }}
+            </h4>
+            <p>
+                {{ claimedRewardNumber.toString() }}
+            </p
             <div class="box">
                 <div>
                     <label>
@@ -64,11 +79,20 @@
                 </div>
             </div>
         </div>
-    </template>
+        <div>
+            <h4 style="text-align: center">
+                {{ $t('staking.rewards.unclaimed') }}
+            </h4>
+            <p>
+                {{ unclaimedRewards.toString() }}
+            </p>
+        </div>
+    </div>
+
     <!-- <template v-else>
             <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
         </template> -->
-    <template v-if="!rewardExist">
+    <!-- <template>
         <div :class="{ 'disabled-card-parent': !isRewards }">
             <div :class="{ 'disabled-card': !isRewards }">
                 <v-btn class="button_secondary" @click="claimRewards">
@@ -76,7 +100,7 @@
                 </v-btn>
             </div>
         </div>
-    </template>
+    </template> -->
     <!--</div>-->
 </template>
 <script lang="ts">
