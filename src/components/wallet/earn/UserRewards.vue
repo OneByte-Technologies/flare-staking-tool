@@ -28,6 +28,20 @@
 
     <div style="max-width: 490px">
         <div>
+            <h4 style="text-align: center">
+                {{ $t('staking.rewards.total') }}
+            </h4>
+            <p>
+                {{ totalRewardNumber.toString() }}
+            </p>
+        </div>
+        <div>
+            <h4 style="text-align: center">
+                {{ $t('staking.rewards.claimed') }}
+            </h4>
+            <p>
+                {{ claimedRewardNumber.toString() }}
+            </p>
             <div class="box">
                 <div>
                     <h4 style="text-align: center">
