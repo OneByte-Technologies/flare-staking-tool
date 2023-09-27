@@ -108,7 +108,12 @@
 import { WalletType, WalletNameType } from '@/js/wallets/types'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { issueC } from '@/helpers/issueTx'
-import { defaultContractAddresses, getAddressBinderABI } from './FlareContractConstants'
+import {
+    defaultContractAddresses,
+    getAddressBinderABI,
+    getFlareContractRegistryABI,
+    addressBinderContractName,
+} from './FlareContractConstants'
 import { ethers } from 'ethers'
 import { bech32 } from 'bech32'
 import { cChain } from '@/AVA'
@@ -138,6 +143,61 @@ export default class AddressBinder extends Vue {
         )
 
     async bindAddress() {
+        this.isDisabled = true
+        this.$store.dispatch('Notifications/add', {
+            type: 'In Progress',
+            title: 'Ongoing Registration',
+            message: 'Please wait for a moment',
+        })
+        const cAddress = this.wallet.getEvmChecksumAddress()
+        this.cChainAddress = cAddress
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const contractAddress = await this.getContractAddress(
+            ava.getHRP(),
+            addressBinderContractName
+        )
+        const abi = getAddressBinderABI() as ethers.ContractInterface
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const nonce = await provider.getTransactionCount(cAddress)
+
+        const gasEstimate = await contract.estimateGas.registerAddresses(
+            this.pubKey,
+            this.pAddress,
+            cAddress,
+            { from: cAddress }
+        )
+        console.log('P-chain Address acc to tx', this.pAddress)
+        console.log('Gas Estimate', gasEstimate)
+        const gasPrice = await provider.getGasPrice()
+        console.log('Gas Price', gasPrice)
+        const populatedTx = await contract.populateTransaction.registerAddresses(
+            this.pubKey,
+            this.pAddress,
+            cAddress
+        )
+        console.log('populated tx', populatedTx)
+        const chainId = ava.getNetworkID()
+        const unsignedTx = {
+            ...populatedTx,
+            nonce,
+            chainId: chainId,
+            gasPrice,
+            gasLimit: gasEstimate,
+        }
+        console.log('unsignedtx', unsignedTx)
+        const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
+        const txId = await contract.provider.sendTransaction(signedTx)
+        const result = await contract.cAddressToPAddress(cAddress)
+
+        if (result !== '0x0000000000000000000000000000000000000000') {
+            console.log('Success. You are registered')
+            this.registered = true
+            this.onSuccess()
+        } else {
+            console.log('Please Register')
+            this.registered = false
+            this.onFail()
         this.isAddressBindingPending = true
         this.bindingError = ''
         this.bindindDetailedError = ''
@@ -250,11 +310,6 @@ export default class AddressBinder extends Vue {
         // } else return null
     }
 
-    get ethBalance() {
-        const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey)
-        return ethersWallet.getBalance()
-    }
-
     walletType(): WalletNameType {
         return this.wallet.type
     }
@@ -278,6 +333,28 @@ export default class AddressBinder extends Vue {
             this.cChainAddress = wallet.getEvmChecksumAddress()
         }
         return this.cChainAddress
+    }
+
+    async getContractAddress(network: string, contractName: string): Promise<string> {
+        const rpcUrl = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+
+        const abi = getFlareContractRegistryABI() as ethers.ContractInterface
+        if (network != 'flare' && network != 'costwo') throw new Error('Invalid network passed')
+        const contract = new ethers.Contract(
+            defaultContractAddresses.flareContractRegistryAddress[network],
+            abi,
+            provider
+        )
+
+        const result = await contract.getContractAddressByName(contractName)
+
+        if (result !== '0x0000000000000000000000000000000000000000') return result
+
+        const defaultAddress = defaultContractAddresses[contractName]?.[network]
+        if (defaultAddress) return defaultAddress
+
+        throw new Error('Contract Address not found')
     }
 }
 </script>

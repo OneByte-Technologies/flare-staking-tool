@@ -127,11 +127,11 @@ class HdHelper {
         const network: AvaNetwork = store.state.Network.selectedNetwork
         const explorerUrl = network.explorerUrl
 
-        if (explorerUrl) {
-            this.hdIndex = await this.findAvailableIndexExplorer()
-        } else {
-            this.hdIndex = await this.findAvailableIndexNode()
-        }
+        // if (explorerUrl) {
+        //     this.hdIndex = await this.findAvailableIndexExplorer()
+        // } else {
+        //     this.hdIndex = await this.findAvailableIndexNode()
+        // }
 
         if (!this.isPublic) {
             this.updateKeychain()
