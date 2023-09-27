@@ -3,14 +3,16 @@
         <div class="cols">
             <form @submit.prevent="">
                 <transition-group name="fade" mode="out-in">
-                    <div v-show="!isConfirm" key="form" class="ins_col">
-                        <div style="margin-bottom: 30px">
-                            <h4>This is your original P chain address:</h4>
-                            <p style="padding-bottom: 30px; color: #6e7479">
+                    <div key="form" class="ins_col">
+                        <div class="address-container" style="margin-top: 0px">
+                            <h4 class="light-heading">This is your original P Chain Address</h4>
+                            <p class="address-style" style="padding-bottom: 0px">
                                 {{ pChainAddress }}
                             </p>
-                            <h4>This is your encoded P chain Address</h4>
-                            <p style="padding-bottom: 10px; color: #6e7479">{{ pAddress }}</p>
+                        </div>
+                        <div class="address-container">
+                            <h4 class="light-heading">This is your encoded P Chain Address</h4>
+                            <p class="address-style">{{ pAddress }}</p>
                             <input
                                 type="text"
                                 v-model="pAddress"
@@ -18,9 +20,9 @@
                                 placeholder="P chain address"
                             />
                         </div>
-                        <div style="margin: 30px 0">
-                            <h4>This is your C chain address</h4>
-                            <p style="padding-bottom: 10px; color: #6e7479">
+                        <div class="address-container">
+                            <h4 class="light-heading">This is your C Chain Address</h4>
+                            <p class="address-style">
                                 {{ cChainAddressBinder }}
                             </p>
                             <input
@@ -29,20 +31,13 @@
                                 style="width: 100%"
                                 placeholder="C chain address"
                             />
-                            <p class="summary-warn">
+                            <div class="summary-warn">
                                 {{ $t('staking.addressBinder.summary.warn') }}
-                            </p>
+                            </div>
                         </div>
-                        <div style="margin: 30px 0">
-                            <h4>This is your Public Key</h4>
-                            <p
-                                style="
-                                    padding-bottom: 10px;
-                                    color: #6e7479;
-                                    word-break: break-all;
-                                    font-size: 10px;
-                                "
-                            >
+                        <div class="address-container">
+                            <h4 class="light-heading">This is your Public Key</h4>
+                            <p class="address-style">
                                 {{ pubKey }}
                             </p>
                             <input
@@ -61,14 +56,47 @@
                         </div>
                         <v-btn
                             v-else
-                            v-bind:disabled="isDisabled"
                             @click="bindAddress"
                             block
-                            class="button_secondary"
+                            :class="[
+                                'button_secondary',
+                                {
+                                    'disabled-button':
+                                        isAddressBindingPending ||
+                                        !registered ||
+                                        isInsufficientFunds,
+                                },
+                            ]"
                             depressed
                         >
-                            Bind address
+                            <span style="margin-right: 4px">Bind address</span>
+                            <fa v-if="isAddressBindingPending" icon="cog" spin></fa>
                         </v-btn>
+                        <div v-if="isInsufficientFunds" class="summary-warn">
+                            <p>
+                                <fa icon="times-circle"></fa>
+                                {{ $t('staking.addressBinder.summary.insufficientFunds') }}
+                            </p>
+                        </div>
+                        <div class="summary-warn">
+                            <div
+                                v-if="bindingError"
+                                style="display: inline-block; text-transform: capitalize"
+                            >
+                                <p>
+                                    <fa icon="times-circle"></fa>
+                                    {{ bindingError }}
+                                </p>
+                            </div>
+
+                            <Tooltip
+                                v-if="bindindDetailedError"
+                                style="display: inline-block; margin-left: 4px"
+                                :text="bindindDetailedError"
+                            >
+                                <fa icon="question-circle"></fa>
+                            </Tooltip>
+                        </div>
                     </div>
                 </transition-group>
             </form>
@@ -93,12 +121,16 @@ import { KeyChain } from 'avalanche/dist/apis/evm'
 import { ava } from '@/AVA'
 import Tooltip from '@/components/misc/Tooltip.vue'
 
-@Component({})
+@Component({
+    components: { Tooltip },
+})
 export default class AddressBinder extends Vue {
     success: boolean = false
     registered: boolean = false
-    isDisabled = false
-    // ...
+    isAddressBindingPending = false
+    isInsufficientFunds: boolean = false
+    bindingError: string = ''
+    bindindDetailedError: string = ''
     pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
     wallet = this.$store.state.activeWallet
     ethersWallet = new ethers.Wallet(this.wallet.ethKey)
@@ -166,7 +198,80 @@ export default class AddressBinder extends Vue {
             console.log('Please Register')
             this.registered = false
             this.onFail()
+        this.isAddressBindingPending = true
+        this.bindingError = ''
+        this.bindindDetailedError = ''
+        try {
+            const cAddress = this.wallet.getEvmChecksumAddress()
+            this.cChainAddress = cAddress
+            const rpcUrl: string = this.getIp()
+            const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+            const contractAddress: string = defaultContractAddresses.AddressBinder.costwo //change to dynamic
+            const abi = getAddressBinderABI() as ethers.ContractInterface
+            const contract = new ethers.Contract(contractAddress, abi, provider)
+            const nonce = await provider.getTransactionCount(cAddress)
+
+            const gasEstimate = await contract.estimateGas.registerAddresses(
+                this.pubKey,
+                this.pAddress,
+                cAddress,
+                { from: cAddress }
+            )
+            console.log('P-chain Address acc to tx', this.pAddress)
+            console.log('Gas Estimate', gasEstimate)
+            const gasPrice = await provider.getGasPrice()
+            console.log('Gas Price', gasPrice)
+            const balance = await this.getEthBalance()
+            const gasCost = gasEstimate.mul(gasPrice) // Calculate the gas cost
+            const hasEnoughFunds = balance.gte(gasCost)
+
+            if (!hasEnoughFunds) {
+                console.log('Insufficient funds')
+                // Store a variable for use in the template
+                this.isInsufficientFunds = true
+                this.isAddressBindingPending = false
+                return
+            }
+
+            const populatedTx = await contract.populateTransaction.registerAddresses(
+                this.pubKey,
+                this.pAddress,
+                cAddress
+            )
+            console.log('populated tx', populatedTx)
+            const chainId = ava.getNetworkID()
+            const unsignedTx = {
+                ...populatedTx,
+                nonce,
+                chainId: chainId,
+                gasPrice,
+                gasLimit: gasEstimate,
+            }
+            console.log('unsignedtx', unsignedTx)
+            const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
+            const txId = await contract.provider.sendTransaction(signedTx)
+            console.log('txId', txId)
+            const checkAddress: string = defaultContractAddresses.AddressBinder.flare
+            const abi2 = getAddressBinderABI() as ethers.ContractInterface
+            const contract2 = new ethers.Contract(contractAddress, abi, provider)
+            const result = await contract.cAddressToPAddress(cAddress)
+
+            if (result !== '0x0000000000000000000000000000000000000000') {
+                console.log('Success. You are registered')
+                this.registered = true
+                this.onSuccess()
+            } else {
+                console.log('Please Register')
+                this.registered = false
+                this.onFail()
+            }
+        } catch (e: any) {
+            const genericError =
+                'Something went wrong while binding your address. Please try again.'
+            this.bindingError = e?.reason || genericError
+            this.bindindDetailedError = e?.error?.message || ''
         }
+        this.isAddressBindingPending = false
     }
 
     onSuccess() {
@@ -189,6 +294,13 @@ export default class AddressBinder extends Vue {
 
     get activeWallet(): WalletType | null {
         return this.$store.state.activeWallet
+    }
+
+    getEthBalance() {
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey, provider)
+        return ethersWallet.getBalance()
     }
 
     privateKeyC(): string | null {
@@ -255,6 +367,22 @@ form {
     column-gap: 90px;
 }
 
+.light-heading {
+    font-weight: 400;
+    margin-top: 30px;
+}
+
+.address-container {
+    margin: 30px 0px;
+}
+
+.address-style {
+    color: #6e7479;
+    padding-bottom: 10px;
+    font-size: 12px;
+    word-break: break-all;
+}
+
 .ins_col {
     max-width: 490px;
     padding-bottom: 8vh;
@@ -301,8 +429,14 @@ input {
 }
 
 .summary-warn {
-    color: red;
-    font-style: italic;
+    color: var(--error);
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+.disabled-button {
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 label {

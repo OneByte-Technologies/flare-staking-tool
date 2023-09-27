@@ -458,7 +458,8 @@
                 "pAddrSubmit_toolTip": "Which Format ?",
                 "cAddr": "This is your C chain address",
                 "pubKey": "This is your public Key",
-                "warn": "You need funds on C chain to register your address"
+                "warn": "Please make sure you have funds on C Chain",
+                "insufficientFunds": "You don’t have enough funds on C Chain for address binding"
             }
         },
         "validate": {
