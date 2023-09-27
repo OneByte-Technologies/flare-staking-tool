@@ -4,53 +4,33 @@
             <form @submit.prevent="">
                 <transition-group name="fade" mode="out-in">
                     <div v-show="!isConfirm" key="form" class="ins_col">
-                        <div style="margin-bottom: 30px">
-                            <h4>This is your foriginal Pchain address:</h4>
-                            <p style="padding-bottom: 30px; color: #6e7479">
+                        <div class="address-container" style="margin-top: 0px;">
+                            <h4 class="light-heading">This is your original P Chain Address</h4>
+                            <p class="address-style" style="padding-bottom: 0px;">
                                 {{ pChainAddress }}
                             </p>
-                            <h4>This is your encoded P chain Address</h4>
-                            <p style="padding-bottom: 10px; color: #6e7479">{{ pAddress }}</p>
-                            <input
-                                type="text"
-                                v-model="pAddress"
-                                style="width: 100%"
-                                placeholder="P chain address"
-                            />
                         </div>
-                        <div style="margin: 30px 0">
-                            <h4>This is your C chain address</h4>
-                            <p style="padding-bottom: 10px; color: #6e7479">
+                        <div class="address-container">
+                            <h4 class="light-heading">This is your encoded P Chain Address</h4>
+                            <p class="address-style">{{ pAddress }}</p>
+                            <input type="text" v-model="pAddress" style="width: 100%" placeholder="P chain address" />
+                        </div>
+                        <div class="address-container">
+                            <h4 class="light-heading">This is your C Chain Address</h4>
+                            <p class="address-style">
                                 {{ cChainAddressBinder }}
                             </p>
-                            <input
-                                type="text"
-                                v-model="cChainAddress"
-                                style="width: 100%"
-                                placeholder="C chain address"
-                            />
-                            <p class="summary-warn">
+                            <input type="text" v-model="cChainAddress" style="width: 100%" placeholder="C chain address" />
+                            <div class="summary-warn">
                                 {{ $t('staking.addressBinder.summary.warn') }}
-                            </p>
+                            </div>
                         </div>
-                        <div style="margin: 30px 0">
-                            <h4>This is your Public Key</h4>
-                            <p
-                                style="
-                                    padding-bottom: 10px;
-                                    color: #6e7479;
-                                    word-break: break-all;
-                                    font-size: 10px;
-                                "
-                            >
+                        <div class="address-container">
+                            <h4 class="light-heading">This is your Public Key</h4>
+                            <p class="address-style">
                                 {{ pubKey }}
                             </p>
-                            <input
-                                type="text"
-                                v-model="pubKey"
-                                style="width: 100%"
-                                placeholder="publickey"
-                            />
+                            <input type="text" v-model="pubKey" style="width: 100%" placeholder="publickey" />
                         </div>
                         <div v-if="success" class="complete">
                             <h4>{{ $t('staking.transfer.success.titleAddressBind') }}</h4>
@@ -217,6 +197,22 @@ form {
     column-gap: 90px;
 }
 
+.light-heading {
+    font-weight: 400;
+    margin-top: 30px;
+}
+
+.address-container {
+    margin: 30px 0px;
+}
+
+.address-style {
+    color: #6e7479;
+    padding-bottom: 10px;
+    font-size: 12px;
+    word-break: break-all;
+}
+
 .ins_col {
     max-width: 490px;
     padding-bottom: 8vh;
@@ -264,7 +260,8 @@ input {
 
 .summary-warn {
     color: red;
-    font-style: italic;
+    margin-top:4px;
+    font-size: 14px;
 }
 
 label {
@@ -279,7 +276,7 @@ label {
     grid-template-columns: 1fr 1fr;
     grid-gap: 15px;
 
-    label > span {
+    label>span {
         float: right;
         opacity: 0.4;
         cursor: pointer;
@@ -300,7 +297,7 @@ label {
     border-left: 2px solid var(--bg-light);
     padding-left: 30px;
 
-    > div {
+    >div {
         margin-bottom: 14px;
 
         p {
