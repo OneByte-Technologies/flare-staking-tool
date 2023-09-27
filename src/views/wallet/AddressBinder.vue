@@ -198,11 +198,6 @@ export default class AddressBinder extends Vue {
         // } else return null
     }
 
-    get ethBalance() {
-        const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey)
-        return ethersWallet.getBalance()
-    }
-
     walletType(): WalletNameType {
         return this.wallet.type
     }
