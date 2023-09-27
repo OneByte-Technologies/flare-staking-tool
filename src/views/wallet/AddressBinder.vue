@@ -125,16 +125,16 @@ import Tooltip from '@/components/misc/Tooltip.vue'
     components: { Tooltip },
 })
 export default class AddressBinder extends Vue {
-    success: boolean = false
-    registered: boolean = false
+    success: boolean = false //old
+    registered: boolean = false //old
     isAddressBindingPending = false
     isInsufficientFunds: boolean = false
     bindingError: string = ''
     bindindDetailedError: string = ''
-    pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
-    wallet = this.$store.state.activeWallet
-    ethersWallet = new ethers.Wallet(this.wallet.ethKey)
-    pubKey: string = this.ethersWallet.publicKey
+    pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform() //old
+    wallet = this.$store.state.activeWallet //old
+    ethersWallet = new ethers.Wallet(this.wallet.ethKey) //old
+    pubKey: string = this.ethersWallet.publicKey //old
     cChainAddress: string = ''
     pAddress =
         '0x' +
@@ -143,61 +143,6 @@ export default class AddressBinder extends Vue {
         )
 
     async bindAddress() {
-        this.isDisabled = true
-        this.$store.dispatch('Notifications/add', {
-            type: 'In Progress',
-            title: 'Ongoing Registration',
-            message: 'Please wait for a moment',
-        })
-        const cAddress = this.wallet.getEvmChecksumAddress()
-        this.cChainAddress = cAddress
-        const rpcUrl: string = this.getIp()
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress = await this.getContractAddress(
-            ava.getHRP(),
-            addressBinderContractName
-        )
-        const abi = getAddressBinderABI() as ethers.ContractInterface
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        const nonce = await provider.getTransactionCount(cAddress)
-
-        const gasEstimate = await contract.estimateGas.registerAddresses(
-            this.pubKey,
-            this.pAddress,
-            cAddress,
-            { from: cAddress }
-        )
-        console.log('P-chain Address acc to tx', this.pAddress)
-        console.log('Gas Estimate', gasEstimate)
-        const gasPrice = await provider.getGasPrice()
-        console.log('Gas Price', gasPrice)
-        const populatedTx = await contract.populateTransaction.registerAddresses(
-            this.pubKey,
-            this.pAddress,
-            cAddress
-        )
-        console.log('populated tx', populatedTx)
-        const chainId = ava.getNetworkID()
-        const unsignedTx = {
-            ...populatedTx,
-            nonce,
-            chainId: chainId,
-            gasPrice,
-            gasLimit: gasEstimate,
-        }
-        console.log('unsignedtx', unsignedTx)
-        const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
-        const txId = await contract.provider.sendTransaction(signedTx)
-        const result = await contract.cAddressToPAddress(cAddress)
-
-        if (result !== '0x0000000000000000000000000000000000000000') {
-            console.log('Success. You are registered')
-            this.registered = true
-            this.onSuccess()
-        } else {
-            console.log('Please Register')
-            this.registered = false
-            this.onFail()
         this.isAddressBindingPending = true
         this.bindingError = ''
         this.bindindDetailedError = ''
@@ -292,15 +237,11 @@ export default class AddressBinder extends Vue {
         })
     }
 
-    get activeWallet(): WalletType | null {
-        return this.$store.state.activeWallet
-    }
-
-    getEthBalance() {
+    async getEthBalance() {
         const rpcUrl: string = this.getIp()
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
         const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey, provider)
-        return ethersWallet.getBalance()
+        return await ethersWallet.getBalance()
     }
 
     privateKeyC(): string | null {
@@ -333,6 +274,10 @@ export default class AddressBinder extends Vue {
             this.cChainAddress = wallet.getEvmChecksumAddress()
         }
         return this.cChainAddress
+    }
+
+    get activeWallet(): WalletType | null {
+        return this.$store.state.activeWallet
     }
 
     async getContractAddress(network: string, contractName: string): Promise<string> {

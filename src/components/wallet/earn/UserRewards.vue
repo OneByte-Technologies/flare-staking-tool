@@ -54,9 +54,9 @@
                     </p>
                 </div>
                 <div>
-                    <AvaxInput :max="maxAmt" v-model="unclaimedRewards"></AvaxInput>
+                    <AvaxInput :max="maxAmt"></AvaxInput>
                 </div>
-                <div v-bind:disabled="isRewards">
+                <div v-bind:disabled="canClaim">
                     <v-btn @click="claimRewards">
                         {{ $t('staking.rewards_card.submit2') }}
                     </v-btn>
@@ -68,8 +68,8 @@
             <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
         </template> -->
     <!-- <template>
-        <div :class="{ 'disabled-card-parent': !isRewards }">
-            <div :class="{ 'disabled-card': !isRewards }">
+        <div :class="{ 'disabled-card-parent': !canClaim }">
+            <div :class="{ 'disabled-card': !canClaim }">
                 <v-btn class="button_secondary" @click="claimRewards">
                     {{ $t('staking.rewards_card.submit2') }}
                 </v-btn>
@@ -105,8 +105,7 @@ import AvaxInput from '@/components/misc/AvaxInput.vue'
 export default class UserRewards extends Vue {
     @Prop() maxAmt!: BN
     updateInterval: ReturnType<typeof setInterval> | undefined = undefined
-    isRewards: boolean = false
-    rewardsAmt: BN = new BN(0)
+    canClaim: boolean = false
     totalRewardNumber: BN = new BN(0)
     claimedRewardNumber: BN = new BN(0)
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
@@ -130,6 +129,13 @@ export default class UserRewards extends Vue {
         const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
         this.unclaimedRewards = unclaimedRewards
         console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
+    }
+    async mounted() {
+        console.log('mounted')
+        await this.viewRewards()
+        console.log('here')
+        this.maxAmt = this.unclaimedRewards
+        console.log('Max Amt', this.maxAmt)
     }
 
     get userAddresses() {
@@ -165,12 +171,6 @@ export default class UserRewards extends Vue {
         )
         const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
-        console.log(
-            'Rewardsamt?????????',
-            this.rewardsAmt,
-            this.totalRewardNumber,
-            this.claimedRewardNumber
-        )
         const nonce = await provider.getTransactionCount(cAddress)
         let gasEstimate
         try {
@@ -191,7 +191,7 @@ export default class UserRewards extends Vue {
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
             cAddress,
-            this.unclaimedRewards,
+            this.unclaimedRewards.toString(),
             false
         )
         console.log('Populated Tx', populatedTx)
@@ -204,12 +204,10 @@ export default class UserRewards extends Vue {
             gasLimit: gasEstimate,
         }
         console.log('unsignedtx', unsignedTx)
-        // const txId = wallet.signC(unsignedTx)
         const ethersWallet = new ethers.Wallet(wallet.ethKey)
         const signedTx = await ethersWallet.signTransaction(unsignedTx)
         const txId = await contract.provider.sendTransaction(signedTx)
         console.log('txId', txId)
-        // return unclaimedRewards
     }
 
     getIp() {
@@ -223,21 +221,16 @@ export default class UserRewards extends Vue {
         return rpcUrl
     }
 
-    // get maxAmt(): BN {
-    //     let max = this.unclaimedRewards
-    //     max = max.sub(this.gasFee)
-    // }
-
     get rewardExist() {
         if (this.unclaimedRewards === new BN(0)) {
-            this.isRewards = false
-            return this.isRewards
+            this.canClaim = false
+            return this.canClaim
         }
-        this.isRewards = true
+        this.canClaim = true
     }
 
     get rewardBig(): Big {
-        return Big(this.rewardsAmt.toString()).div(Math.pow(10, 9))
+        return Big(this.unclaimedRewards.toString()).div(Math.pow(10, 9))
     }
 
     get stakingTxs() {
