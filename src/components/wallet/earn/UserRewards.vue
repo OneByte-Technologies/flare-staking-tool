@@ -11,17 +11,17 @@
                     </p>
                 </div>
                 <div>
-                    <label>
+                    <h4 style="text-align: center">
                         {{ $t('staking.rewards.claimed') }}
-                    </label>
+                    </h4>
                     <p>
                         {{ claimedRewardNumber.toString() }}
                     </p>
                 </div>
                 <div>
-                    <label>
+                    <h4 style="text-align: center">
                         {{ $t('staking.rewards.unclaimed') }}
-                    </label>
+                    </h4>
                     <p>
                         {{ unclaimedRewards.toString() }}
                     </p>
@@ -200,9 +200,8 @@ export default class UserRewards extends Vue {
     get rewardExist() {
         if (this.unclaimedRewards === new BN(0)) {
             this.isRewards = false
-            return this.isRewards
         }
-        this.isRewards = true
+        return this.isRewards
     }
 
     get rewardBig(): Big {

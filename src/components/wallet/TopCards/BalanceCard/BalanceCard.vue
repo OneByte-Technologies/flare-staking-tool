@@ -71,7 +71,7 @@
                         <!-- <label>{{ $t('top.balance.available') }} (X)</label>
                         <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p> -->
                         <label>{{ $t('top.balance.available') }} (P)</label>
-                        <p>{{ platformUnlocked | cleanAvaxBN }} FLR</p>
+                        <p style="padding-right: 1rem">{{ platformUnlocked | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
                         <p>{{ evmUnlocked | cleanAvaxBN }} FLR</p>
                     </div>
@@ -94,6 +94,19 @@
                         <p>{{ stakingText }} FLR</p>
                     </div>
                 </div>
+                <div class="alt_breakdown">
+                    <div>
+                        <label>Total Amount Mirror Funds</label>
+                        <p>{{ totalMirrorAmount }} FLR</p>
+                        <label v-if="isBreakdown">Mirror Funds in current Validator</label>
+                        <p v-if="isBreakdown">{{ amountFromCurrentValidator }} FLR</p>
+                    </div>
+
+                    <div v-if="isBreakdown">
+                        <label>Mirror Funds in pending delagator</label>
+                        <p>{{ amountFromPendingValidator }} FLR</p>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- <NftCol class="nft_card"></NftCol> -->
@@ -107,17 +120,38 @@ import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import Spinner from '@/components/misc/Spinner.vue'
 import NftCol from './NftCol.vue'
 import Tooltip from '@/components/misc/Tooltip.vue'
-
+import { bech32 } from 'bech32'
 import Big from 'big.js'
 import { BN } from 'avalanche/dist'
 import { ONEAVAX } from 'avalanche/dist/utils'
 import { bnToBig } from '@/helpers/helper'
 import { priceDict } from '@/store/types'
-import { WalletType } from '@/js/wallets/types'
+import { WalletNameType, WalletType } from '@/js/wallets/types'
 import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdownModal.vue'
 import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
 import { ethers } from 'ethers'
 import { mapGetters } from 'vuex'
+import { fetchMirrorFunds } from '@/js/mirrorFunds/MirrorFunds'
+import { ava } from '@/AVA'
+
+import { Defaults } from '@flarenetwork/flarejs/dist/utils'
+import {
+    pKeychain,
+    cKeychain,
+    cHexAddress,
+    web3,
+    pChainBlockchainIdStr,
+    cChain,
+    pChain,
+} from '@/components/utils/cChain/exportTxPChain'
+import { costwo } from '@/views/wallet/config'
+import { Context } from '@/views/wallet/Interfaces'
+import { Avalanche, BinTools, Buffer } from '@flarenetwork/flarejs/dist'
+
+import { cChainBlockchainID } from '@/components/utils/pChain/exportTxCChain'
+import { EVMAPI, KeyChain as EVMKeyChain } from '@flarenetwork/flarejs/dist/apis/evm'
+import { PlatformVMAPI } from '@flarenetwork/flarejs/dist/apis/platformvm'
+
 @Component({
     components: {
         UtxosBreakdownModal,
@@ -139,6 +173,84 @@ export default class BalanceCard extends Vue {
         utxos_modal: UtxosBreakdownModal
     }
 
+    // Initialize the ctx object here
+    totalMirrorAmount: number = 0
+    amountFromCurrentValidator: number = 0
+    amountFromPendingValidator: number = 0
+    pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
+    wallets = this.$store.state.activeWallet
+    ethersWallet = new ethers.Wallet(this.wallets.ethKey)
+    publicKey: string = this.ethersWallet.publicKey
+    cchain: string = ''
+    pchain =
+        '0x' +
+        Buffer.from(bech32.fromWords(bech32.decode(this.pChainAddress.slice(2)).words)).toString(
+            'hex'
+        )
+
+    port: number = 443
+    rpcUrl: string = this.getIp()
+    avaxAssetID: string | undefined = Defaults.network[costwo.networkID].X.avaxAssetID
+    cHexAddress: string = '0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC'
+
+    ctx = {
+        privkHex: this.privkHexKey(),
+        privkCB58: '',
+        publicKey: this.publicKey, // Add the public key to the ctx object
+        rpcurl: this.getIp(),
+        web3: web3, // Replace with the actual web3 instance
+        avalanche: ava, // Initialize with the correct value
+        cchain: cChain,
+        pchain: pChain,
+        cKeychain: cKeychain, // Replace with the actual cKeychain
+        pKeychain: pKeychain, // Replace with the actual pKeychain
+        pAddressBech32: this.pChainAddress,
+        cAddressBech32: this.addressEVMBech32,
+        cAddressHex: this.addressEVM,
+        cChainBlockchainID: cChainBlockchainID,
+        pChainBlockchainID: pChainBlockchainIdStr,
+        avaxAssetID: '',
+        config: {
+            protocol: costwo.protocol,
+            ip: costwo.ip,
+            port: this.port,
+            networkID: costwo.networkID,
+            hrp: costwo.hrp,
+        },
+    }
+
+    async fetchMirrorFundsData() {
+        const ip: string = 'coston2-api.flare.network'
+        const port: number = 443
+        const protocol: string = 'https'
+        const networkID: number = 114
+        const ava: Avalanche = new Avalanche(ip, port, protocol, networkID)
+        const pChain: PlatformVMAPI = ava.PChain()
+        const avaxAssetID: Buffer = await pChain.getAVAXAssetID()
+        this.ctx.avaxAssetID = avaxAssetID.toString('hex')
+        this.ctx.pchain = pChain
+        try {
+            // Call the fetchMirrorFunds function
+            console.log('MirrorFunds ctx', this.ctx)
+
+            const mirrorFundsData = await fetchMirrorFunds(this.ctx)
+
+            // Handle the data as needed, e.g., update component data or state
+            console.log('MirrorFunds')
+            console.log(`Mirror fund details on the network "${this.ctx.config.hrp}"`)
+            console.log(`${JSON.stringify(mirrorFundsData, null, 2)}`)
+            console.log('Mirror Funds Data:', mirrorFundsData)
+            this.totalMirrorAmount = Number(mirrorFundsData.TotalAmount)
+            this.amountFromCurrentValidator = mirrorFundsData.MirrorFunds[0].stakeAmount
+        } catch (error) {
+            console.error('Error fetching Mirror Funds:', error)
+        }
+    }
+
+    mounted() {
+        this.fetchMirrorFundsData()
+    }
+
     updateBalance(): void {
         this.$store.dispatch('Assets/updateUTXOs')
         this.$store.dispatch('History/updateTransactionHistory')
@@ -149,6 +261,7 @@ export default class BalanceCard extends Vue {
     }
     get ava_asset(): AvaAsset | null {
         let ava = this.$store.getters['Assets/AssetAVA']
+        console.log('ava', ava)
         return ava
     }
 
@@ -369,6 +482,64 @@ export default class BalanceCard extends Vue {
     }
     get hasMultisig(): boolean {
         return !this.avmMultisig.isZero() || !this.platformMultisig.isZero()
+    }
+    privkHexKey(): string {
+        // if (this.walletType() !== 'ledger') {
+        let wallet = this.$store.state.activeWallet
+        console.log('Wallet///', wallet)
+        console.log('Wallet Key', wallet.ethKey)
+        return wallet.ethKey
+        // } else return null
+    }
+
+    walletType(): WalletNameType {
+        return this.wallets.type
+    }
+
+    getIp() {
+        let ip = ''
+        if (ava.getHRP() === 'costwo') {
+            ip = 'coston2'
+        } else if (ava.getHRP() === 'flare') {
+            ip = 'flare'
+        }
+        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        return rpcUrl
+    }
+
+    get cChainAddressBinder() {
+        let wallet = this.wallets
+        console.log('walletpp')
+        if (!wallet) {
+            this.cchain = '-'
+        } else {
+            this.cchain = wallet.getEvmChecksumAddress()
+        }
+        console.log('cChainAddressBinder', this.cchain)
+        return this.cchain
+    }
+
+    get addressEVMBech32() {
+        let wallet = this.wallets
+        console.log(wallet, 'address wallet')
+        if (!wallet) {
+            console.log('addressEVMBech32', '-')
+            return '-'
+        }
+
+        console.log('addressEVMBech32', wallet.getEvmAddressBech())
+        return wallet.getEvmAddressBech()
+    }
+    get addressEVM() {
+        let wallet = this.wallets
+
+        if (!wallet) {
+            console.log('addressEVM', '-')
+            return '-'
+        }
+        console.log('addressEVM')
+        console.log('addressEVM', wallet.getEvmChecksumAddress())
+        return wallet.getEvmChecksumAddress()
     }
 }
 </script>
