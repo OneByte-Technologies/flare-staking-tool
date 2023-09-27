@@ -1,34 +1,7 @@
-<template v-if="true">
-    <!-- <div>
-        <template v-if="totLength > 0">
-            <div>
-                <label>{{ $t('staking.rewards.total') }}</label>
-                <p class="amt">{{ totalRewardBig.toLocaleString(9) }} FLR</p>
-            </div>
-            <div v-if="validatorTxs.length > 0">
-                <h3>{{ $t('staking.rewards.validation') }}</h3>
-                <UserRewardRow
-                    v-for="v in validatorTxs"
-                    :key="v.txHash"
-                    :tx="v"
-                    class="reward_row"
-                ></UserRewardRow>
-            </div>
-
-            <div v-if="delegatorTxs.length > 0">
-                <h3>{{ $t('staking.rewards.delegation') }}</h3>
-                <UserRewardRow
-                    v-for="v in delegatorTxs"
-                    :key="v.txHash"
-                    :tx="v"
-                    class="reward_row"
-                ></UserRewardRow>
-            </div>
-        </template> -->
-
+<template>
     <div style="max-width: 490px">
         <div>
-            <div class="box">
+            <div class="grid">
                 <div>
                     <label style="text-align: center">
                         {{ $t('staking.rewards.total') }}
@@ -38,7 +11,7 @@
                     </p>
                 </div>
                 <div>
-                    <label style="text-align: center">
+                    <label>
                         {{ $t('staking.rewards.claimed') }}
                     </label>
                     <p>
@@ -54,29 +27,17 @@
                     </p>
                 </div>
                 <div>
-                    <AvaxInput :max="maxAmt" v-model="unclaimedRewards"></AvaxInput>
+                    <label>{{ $t('staking.rewards.claim') }}</label>
+                    <AvaxInput :max="unclaimedRewards" v-model="rewardsAmt"></AvaxInput>
                 </div>
-                <div v-bind:disabled="isRewards">
-                    <v-btn @click="claimRewards">
-                        {{ $t('staking.rewards_card.submit2') }}
+                <div class="claimbutton">
+                    <v-btn @click="claimRewards" :disabled="!isRewardAmountValid()">
+                        {{ $t('staking.rewards_card.submit') }}
                     </v-btn>
                 </div>
             </div>
         </div>
     </div>
-    <!-- <template v-else>
-            <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
-        </template> -->
-    <!-- <template>
-        <div :class="{ 'disabled-card-parent': !isRewards }">
-            <div :class="{ 'disabled-card': !isRewards }">
-                <v-btn class="button_secondary" @click="claimRewards">
-                    {{ $t('staking.rewards_card.submit2') }}
-                </v-btn>
-            </div>
-        </div>
-    </template> -->
-    <!--</div>-->
 </template>
 <script lang="ts">
 import 'reflect-metadata'
@@ -100,6 +61,7 @@ import AvaxInput from '@/components/misc/AvaxInput.vue'
 @Component({
     components: {
         UserRewardRow,
+        AvaxInput,
     },
 })
 export default class UserRewards extends Vue {
@@ -152,6 +114,13 @@ export default class UserRewards extends Vue {
     destroyed() {
         // Clear interval if exists
         this.updateInterval && clearInterval(this.updateInterval)
+    }
+
+    isRewardAmountValid(): boolean {
+        const rewardAmt = this.rewardsAmt.toNumber() // Assuming rewardsAmt is a BN
+        const unclaimedAmt = this.unclaimedRewards.toNumber() // Assuming unclaimedRewards is a BN
+
+        return rewardAmt > 0 && rewardAmt <= unclaimedAmt
     }
 
     async claimRewards() {
@@ -296,8 +265,14 @@ export default class UserRewards extends Vue {
 }
 
 .box {
+    display: flex;
     border: 1px solid white;
     padding: 10px;
+}
+
+.box > div {
+    flex: 1; /* Equal width for both columns */
+    margin-right: 10px;
 }
 
 .reward_row {
@@ -341,6 +316,30 @@ label {
     color: var(--primary-color-light);
     font-size: 14px;
     margin-bottom: 3px;
+}
+
+.grid {
+    margin: 20px auto;
+    width: 100%; /* Set width to 100% for responsiveness */
+    display: grid;
+    grid-template-columns: 1fr; /* Start with one column */
+    grid-row-gap: 20px;
+    border: 1px solid white;
+    padding: 10px;
+}
+
+@media (min-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr); /* Two columns for larger screens */
+    }
+}
+
+.claimbutton {
+    margin-top: 20px;
+    align-items: center;
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
 }
 
 .amt {
