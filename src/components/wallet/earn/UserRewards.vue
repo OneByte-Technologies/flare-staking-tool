@@ -1,31 +1,4 @@
-<template v-if="true">
-    <!-- <div>
-        <template v-if="totLength > 0">
-            <div>
-                <label>{{ $t('staking.rewards.total') }}</label>
-                <p class="amt">{{ totalRewardBig.toLocaleString(9) }} FLR</p>
-            </div>
-            <div v-if="validatorTxs.length > 0">
-                <h3>{{ $t('staking.rewards.validation') }}</h3>
-                <UserRewardRow
-                    v-for="v in validatorTxs"
-                    :key="v.txHash"
-                    :tx="v"
-                    class="reward_row"
-                ></UserRewardRow>
-            </div>
-
-            <div v-if="delegatorTxs.length > 0">
-                <h3>{{ $t('staking.rewards.delegation') }}</h3>
-                <UserRewardRow
-                    v-for="v in delegatorTxs"
-                    :key="v.txHash"
-                    :tx="v"
-                    class="reward_row"
-                ></UserRewardRow>
-            </div>
-        </template> -->
-
+<template>
     <div style="max-width: 490px">
         <div>
             <div class="grid">
@@ -53,44 +26,18 @@
                         {{ unclaimedRewards.toString() }}
                     </p>
                 </div>
-                <!-- <div>
-                    <AvaxInput :max="unclaimedRewards" v-model="unclaimedRewards"></AvaxInput>
-                </div> -->
                 <div>
                     <label>{{ $t('staking.rewards.claim') }}</label>
                     <AvaxInput :max="unclaimedRewards" v-model="rewardsAmt"></AvaxInput>
                 </div>
                 <div class="claimbutton">
                     <v-btn @click="claimRewards" :disabled="!isRewardAmountValid()">
-                        {{ $t('staking.rewards_card.submit2') }}
-                    </v-btn>
-                </div>
-                <!-- <div v-if="!isRewards">
-                    <v-btn @click="viewRewards">
                         {{ $t('staking.rewards_card.submit') }}
                     </v-btn>
                 </div>
-                <div v-if="isRewards">
-                    <v-btn @click="claimRewards">
-                        {{ $t('staking.rewards_card.submit2') }}
-                    </v-btn>
-                </div> -->
             </div>
         </div>
     </div>
-    <!-- <template v-else>
-            <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
-        </template> -->
-    <!-- <template>
-        <div :class="{ 'disabled-card-parent': !isRewards }">
-            <div :class="{ 'disabled-card': !isRewards }">
-                <v-btn class="button_secondary" @click="claimRewards">
-                    {{ $t('staking.rewards_card.submit2') }}
-                </v-btn>
-            </div>
-        </div>
-    </template> -->
-    <!--</div>-->
 </template>
 <script lang="ts">
 import 'reflect-metadata'

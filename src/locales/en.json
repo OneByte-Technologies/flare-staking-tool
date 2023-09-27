@@ -76,7 +76,8 @@
             "staking": "Staking",
             "studio": "Studio",
             "advanced": "Advanced",
-            "activity": "Activity"
+            "activity": "Activity",
+            "earn": "Earn"
         },
         "address_card": {},
         "collectibles": {
@@ -389,10 +390,9 @@
             "submit": "Add Validator"
         },
         "rewards_card": {
-            "title": "View Rewards",
+            "title": "View & Claim Rewards",
             "desc": "View staking rewards you will receive.",
-            "submit": "View Rewards",
-            "submit2": "Claim Rewards"
+            "submit": "Claim Rewards"
         },
         "transfer": {
             "source": "Source Chain",

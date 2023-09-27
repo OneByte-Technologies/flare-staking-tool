@@ -13,7 +13,7 @@
             <div v-if="!pageNow">
                 <p>{{ $t('staking.desc') }}</p>
                 <div class="options">
-                    <div>
+                    <div class="card-container">
                         <h4 class="title">
                             {{ $t('staking.address_binder_card.title') }}
                         </h4>
@@ -43,7 +43,8 @@
                             {{ $t('staking.address_binder_card.submit') }}
                         </v-btn>
                     </div>
-                    <div>
+
+                    <div class="card-container">
                         <h4 class="title">
                             {{ $t('staking.transfer_card.title') }}
                         </h4>
@@ -60,8 +61,9 @@
                             {{ $t('staking.transfer_card.submit') }}
                         </v-btn>
                     </div>
+
                     <div :class="{ 'disabled-card-parent': !registered }">
-                        <div :class="{ 'disabled-card': !registered }">
+                        <div :class="['card-container', { 'disabled-card': !registered }]">
                             <h4 class="title">
                                 {{ $t('staking.delegate_card.title') }}
                             </h4>
@@ -84,7 +86,7 @@
                         </div>
                     </div>
                     <div :class="{ 'disabled-card-parent': !registered }">
-                        <div :class="{ 'disabled-card': !registered }">
+                        <div :class="['card-container', { 'disabled-card': !registered }]">
                             <h4 class="title">
                                 {{ $t('staking.validate_card.title') }}
                             </h4>
@@ -107,29 +109,26 @@
                         </div>
                     </div>
                     <div :class="{ 'disabled-card-parent': !registered }">
-                        <div :class="{ 'disabled-card': !registered }">
+                        <div :class="['card-container', { 'disabled-card': !registered }]">
                             <h4 class="title">
                                 {{ $t('staking.rewards_card.title') }}
                             </h4>
                             <p style="flex-grow: 1">
                                 {{ $t('staking.rewards_card.desc') }}
                             </p>
-                            <div v-if="registered">
-                                <v-btn
-                                    v-if="registered"
-                                    class="button_secondary"
-                                    data-cy="rewards"
-                                    @click="viewRewards"
-                                    depressed
-                                    small
-                                >
-                                    {{ $t('staking.rewards_card.submit') }}
-                                </v-btn>
-                            </div>
+                            <v-btn
+                                v-if="registered"
+                                class="button_secondary"
+                                data-cy="rewards"
+                                @click="viewRewards"
+                                depressed
+                                small
+                            >
+                                {{ $t('staking.rewards_card.submit') }}
+                            </v-btn>
                         </div>
                     </div>
                 </div>
-                <!--                <v-btn @click="viewRewards" depressed small>View Estimated Rewards</v-btn>-->
             </div>
             <div v-else>
                 <component :is="pageNow" class="comp" @cancel="cancel"></component>
@@ -296,33 +295,6 @@ export default class Earn extends Vue {
     display: grid;
     grid-template-rows: max-content 1fr;
 }
-.disabled-card {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.disabled-card-parent::after {
-    content: 'Complete Address Binding';
-    position: absolute;
-    top: 50%; /* Center vertically from the top */
-    left: 50%; /* Center horizontally from the left */
-    transform: translate(-50%, -50%); /* Center alignment */
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px;
-    text-align: center;
-    opacity: 0.9;
-    z-index: 1;
-    border: 2px solid #3498db;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    width: 95%;
-}
-.disabled-card-parent {
-    position: relative;
-}
 
 .header {
     h1 {
@@ -330,13 +302,10 @@ export default class Earn extends Vue {
     }
 
     display: flex;
-    /*justify-content: space-between;*/
-    /*align-items: center;*/
     align-items: center;
 
     .subtitle {
         margin-left: 0.5em;
-        /*font-size: 20px;*/
         color: var(--primary-color-light);
         font-weight: lighter;
     }
@@ -354,23 +323,50 @@ export default class Earn extends Vue {
 .options {
     margin: 30px 0;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 14px;
-    //display: flex;
-    //justify-content: space-evenly;
-    //padding: 60px;
 
-    > div {
+    .card-container {
+        position: relative;
         width: 100%;
+        height: 100%;
         justify-self: center;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
-        //max-width: 260px;
         padding: 30px;
         border-radius: 4px;
         background-color: var(--bg-light);
+    }
+
+    .disabled-card {
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    .disabled-card-parent {
+        position: relative;
+    }
+
+    .disabled-card-parent::after {
+        content: 'Complete Address Binding';
+        position: absolute;
+        top: 50%;
+        /* Center vertically from the top */
+        left: 50%;
+        /* Center horizontally from the left */
+        transform: translate(-50%, -50%);
+        /* Center alignment */
+        background-color: var(--bg-light);
+        padding: 10px;
+        text-align: center;
+        opacity: 0.9;
+        z-index: 1;
+        border-radius: 5px;
+        font-size: 14px;
+        color: var(--primary-color);
+        width: 100%;
     }
 
     h4 {
@@ -380,7 +376,6 @@ export default class Earn extends Vue {
     }
 
     p {
-        /*color: var(--primary-color-light);*/
         margin: 14px 0 !important;
     }
 
@@ -390,6 +385,7 @@ export default class Earn extends Vue {
 
     .v-btn {
         margin-top: 14px;
+        width: 100%;
     }
 }
 
@@ -420,6 +416,14 @@ span {
     .options {
         grid-template-columns: none;
         grid-row-gap: 15px;
+
+        .card-container {
+            display: block;
+        }
+
+        .v-btn {
+            width: unset;
+        }
     }
 }
 </style>
