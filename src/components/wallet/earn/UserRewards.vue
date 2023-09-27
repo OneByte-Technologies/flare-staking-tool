@@ -58,10 +58,10 @@
                 </div> -->
                 <div>
                     <label>{{ $t('staking.rewards.claim') }}</label>
-                    <AvaxInput :max="unclaimedRewards" v-model="unclaimedRewards"></AvaxInput>
+                    <AvaxInput :max="unclaimedRewards" v-model="rewardsAmt"></AvaxInput>
                 </div>
                 <div class="claimbutton">
-                    <v-btn @click="claimRewards">
+                    <v-btn @click="claimRewards" :disabled="!isRewardAmountValid()">
                         {{ $t('staking.rewards_card.submit2') }}
                     </v-btn>
                 </div>
@@ -162,6 +162,13 @@ export default class UserRewards extends Vue {
     destroyed() {
         // Clear interval if exists
         this.updateInterval && clearInterval(this.updateInterval)
+    }
+
+    isRewardAmountValid(): boolean {
+        const rewardAmt = this.rewardsAmt.toNumber() // Assuming rewardsAmt is a BN
+        const unclaimedAmt = this.unclaimedRewards.toNumber() // Assuming unclaimedRewards is a BN
+
+        return rewardAmt > 0 && rewardAmt <= unclaimedAmt
     }
 
     async claimRewards() {
@@ -334,14 +341,18 @@ label {
 
 .grid {
     margin: 20px auto;
-    width: 400px;
+    width: 100%; /* Set width to 100% for responsiveness */
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-row: auto auto;
-    grid-column-gap: 20px;
+    grid-template-columns: 1fr; /* Start with one column */
     grid-row-gap: 20px;
     border: 1px solid white;
     padding: 10px;
+}
+
+@media (min-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr); /* Two columns for larger screens */
+    }
 }
 
 .claimbutton {
