@@ -62,6 +62,7 @@ export default new Vuex.Store({
         prices: {
             usd: 0,
         },
+        registered: false,
     },
     getters: {
         addresses(state: RootState): string[] {

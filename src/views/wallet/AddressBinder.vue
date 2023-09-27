@@ -62,18 +62,40 @@
                                 'button_secondary',
                                 {
                                     'disabled-button':
-                                        isDisabled || !registered || isInsufficientFunds,
+                                        isAddressBindingPending ||
+                                        !registered ||
+                                        isInsufficientFunds,
                                 },
                             ]"
                             depressed
                         >
-                            Bind address
+                            <span style="margin-right: 4px">Bind address</span>
+                            <fa v-if="isAddressBindingPending" icon="cog" spin></fa>
                         </v-btn>
                         <div v-if="isInsufficientFunds" class="summary-warn">
                             <p>
                                 <fa icon="times-circle"></fa>
                                 {{ $t('staking.addressBinder.summary.insufficientFunds') }}
                             </p>
+                        </div>
+                        <div class="summary-warn">
+                            <div
+                                v-if="bindingError"
+                                style="display: inline-block; text-transform: capitalize"
+                            >
+                                <p>
+                                    <fa icon="times-circle"></fa>
+                                    {{ bindingError }}
+                                </p>
+                            </div>
+
+                            <Tooltip
+                                v-if="bindindDetailedError"
+                                style="display: inline-block; margin-left: 4px"
+                                :text="bindindDetailedError"
+                            >
+                                <fa icon="question-circle"></fa>
+                            </Tooltip>
                         </div>
                     </div>
                 </transition-group>
@@ -94,12 +116,16 @@ import { KeyChain } from 'avalanche/dist/apis/evm'
 import { ava } from '@/AVA'
 import Tooltip from '@/components/misc/Tooltip.vue'
 
-@Component({})
+@Component({
+    components: { Tooltip },
+})
 export default class AddressBinder extends Vue {
     success: boolean = false
     registered: boolean = false
-    isDisabled = false
+    isAddressBindingPending = false
     isInsufficientFunds: boolean = false
+    bindingError: string = ''
+    bindindDetailedError: string = ''
     pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
     wallet = this.$store.state.activeWallet
     ethersWallet = new ethers.Wallet(this.wallet.ethKey)
@@ -112,74 +138,80 @@ export default class AddressBinder extends Vue {
         )
 
     async bindAddress() {
-        this.isDisabled = true
-        this.$store.dispatch('Notifications/add', {
-            type: 'In Progress',
-            title: 'Ongoing Registration',
-            message: 'Please wait for a moment',
-        })
-        const cAddress = this.wallet.getEvmChecksumAddress()
-        this.cChainAddress = cAddress
-        const rpcUrl: string = this.getIp()
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress: string = defaultContractAddresses.AddressBinder.costwo //change to dynamic
-        const abi = getAddressBinderABI() as ethers.ContractInterface
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        const nonce = await provider.getTransactionCount(cAddress)
+        this.isAddressBindingPending = true
+        this.bindingError = ''
+        this.bindindDetailedError = ''
+        try {
+            const cAddress = this.wallet.getEvmChecksumAddress()
+            this.cChainAddress = cAddress
+            const rpcUrl: string = this.getIp()
+            const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+            const contractAddress: string = defaultContractAddresses.AddressBinder.costwo //change to dynamic
+            const abi = getAddressBinderABI() as ethers.ContractInterface
+            const contract = new ethers.Contract(contractAddress, abi, provider)
+            const nonce = await provider.getTransactionCount(cAddress)
 
-        const gasEstimate = await contract.estimateGas.registerAddresses(
-            this.pubKey,
-            this.pAddress,
-            cAddress,
-            { from: cAddress }
-        )
-        console.log('P-chain Address acc to tx', this.pAddress)
-        console.log('Gas Estimate', gasEstimate)
-        const gasPrice = await provider.getGasPrice()
-        console.log('Gas Price', gasPrice)
-        const balance = await this.getEthBalance()
-        const gasCost = gasEstimate.mul(gasPrice) // Calculate the gas cost
-        const hasEnoughFunds = balance.gte(gasCost)
+            const gasEstimate = await contract.estimateGas.registerAddresses(
+                this.pubKey,
+                this.pAddress,
+                cAddress,
+                { from: cAddress }
+            )
+            console.log('P-chain Address acc to tx', this.pAddress)
+            console.log('Gas Estimate', gasEstimate)
+            const gasPrice = await provider.getGasPrice()
+            console.log('Gas Price', gasPrice)
+            const balance = await this.getEthBalance()
+            const gasCost = gasEstimate.mul(gasPrice) // Calculate the gas cost
+            const hasEnoughFunds = balance.gte(gasCost)
 
-        if (hasEnoughFunds) {
-            console.log('Insufficient funds')
-            // Store a variable for use in the template
-            this.isInsufficientFunds = true
-            return
+            if (!hasEnoughFunds) {
+                console.log('Insufficient funds')
+                // Store a variable for use in the template
+                this.isInsufficientFunds = true
+                this.isAddressBindingPending = false
+                return
+            }
+
+            const populatedTx = await contract.populateTransaction.registerAddresses(
+                this.pubKey,
+                this.pAddress,
+                cAddress
+            )
+            console.log('populated tx', populatedTx)
+            const chainId = ava.getNetworkID()
+            const unsignedTx = {
+                ...populatedTx,
+                nonce,
+                chainId: chainId,
+                gasPrice,
+                gasLimit: gasEstimate,
+            }
+            console.log('unsignedtx', unsignedTx)
+            const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
+            const txId = await contract.provider.sendTransaction(signedTx)
+            console.log('txId', txId)
+            const checkAddress: string = defaultContractAddresses.AddressBinder.flare
+            const abi2 = getAddressBinderABI() as ethers.ContractInterface
+            const contract2 = new ethers.Contract(contractAddress, abi, provider)
+            const result = await contract.cAddressToPAddress(cAddress)
+
+            if (result !== '0x0000000000000000000000000000000000000000') {
+                console.log('Success. You are registered')
+                this.registered = true
+                this.onSuccess()
+            } else {
+                console.log('Please Register')
+                this.registered = false
+                this.onFail()
+            }
+        } catch (e: any) {
+            const genericError =
+                'Something went wrong while binding your address. Please try again.'
+            this.bindingError = e?.reason || genericError
+            this.bindindDetailedError = e?.error?.message || ''
         }
-
-        const populatedTx = await contract.populateTransaction.registerAddresses(
-            this.pubKey,
-            this.pAddress,
-            cAddress
-        )
-        console.log('populated tx', populatedTx)
-        const chainId = ava.getNetworkID()
-        const unsignedTx = {
-            ...populatedTx,
-            nonce,
-            chainId: chainId,
-            gasPrice,
-            gasLimit: gasEstimate,
-        }
-        console.log('unsignedtx', unsignedTx)
-        const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
-        const txId = await contract.provider.sendTransaction(signedTx)
-        console.log('txId', txId)
-        const checkAddress: string = defaultContractAddresses.AddressBinder.flare
-        const abi2 = getAddressBinderABI() as ethers.ContractInterface
-        const contract2 = new ethers.Contract(contractAddress, abi, provider)
-        const result = await contract.cAddressToPAddress(cAddress)
-
-        if (result !== '0x0000000000000000000000000000000000000000') {
-            console.log('Success. You are registered')
-            this.registered = true
-            this.onSuccess()
-        } else {
-            console.log('Please Register')
-            this.registered = false
-            this.onFail()
-        }
+        this.isAddressBindingPending = false
     }
 
     onSuccess() {
