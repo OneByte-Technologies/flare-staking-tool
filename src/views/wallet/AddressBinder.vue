@@ -39,7 +39,14 @@
                                 {{ $t('staking.transfer.success.messageAddressBind') }}
                             </p>
                         </div>
-                        <v-btn v-else @click="bindAddress" block class="button_secondary" depressed>
+                        <v-btn
+                            v-else
+                            v-bind:disabled="isDisabled"
+                            @click="bindAddress"
+                            block
+                            class="button_secondary"
+                            depressed
+                        >
                             Bind address
                         </v-btn>
                     </div>
@@ -65,6 +72,7 @@ import Tooltip from '@/components/misc/Tooltip.vue'
 export default class AddressBinder extends Vue {
     success: boolean = false
     registered: boolean = false
+    isDisabled = false
     // ...
     pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
     wallet = this.$store.state.activeWallet
@@ -78,6 +86,12 @@ export default class AddressBinder extends Vue {
         )
 
     async bindAddress() {
+        this.isDisabled = true
+        this.$store.dispatch('Notifications/add', {
+            type: 'In Progress',
+            title: 'Ongoing Registration',
+            message: 'Please wait for a moment',
+        })
         const cAddress = this.wallet.getEvmChecksumAddress()
         this.cChainAddress = cAddress
         const rpcUrl: string = this.getIp()
@@ -156,10 +170,13 @@ export default class AddressBinder extends Vue {
     privateKeyC(): string | null {
         // if (this.walletType() !== 'ledger') {
         let wallet = this.$store.state.activeWallet
-        console.log('Wallet///', wallet)
-        console.log('Wallet Key', wallet.ethKey)
         return wallet.ethKey
         // } else return null
+    }
+
+    get ethBalance() {
+        const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey)
+        return ethersWallet.getBalance()
     }
 
     walletType(): WalletNameType {

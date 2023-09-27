@@ -28,23 +28,9 @@
 
     <div style="max-width: 490px">
         <div>
-            <h4 style="text-align: center">
-                {{ $t('staking.rewards.total') }}
-            </h4>
-            <p>
-                {{ totalRewardNumber.toString() }}
-            </p>
-        </div>
-        <div>
-            <h4 style="text-align: center">
-                {{ $t('staking.rewards.claimed') }}
-            </h4>
-            <p>
-                {{ claimedRewardNumber.toString() }}
-            </p
             <div class="box">
                 <div>
-                    <label>
+                    <label style="text-align: center">
                         {{ $t('staking.rewards.total') }}
                     </label>
                     <p>
@@ -52,7 +38,7 @@
                     </p>
                 </div>
                 <div>
-                    <label>
+                    <label style="text-align: center">
                         {{ $t('staking.rewards.claimed') }}
                     </label>
                     <p>
@@ -67,6 +53,9 @@
                         {{ unclaimedRewards.toString() }}
                     </p>
                 </div>
+                <div>
+                    <AvaxInput :max="maxAmt" v-model="unclaimedRewards"></AvaxInput>
+                </div>
                 <div v-if="!isRewards">
                     <v-btn @click="viewRewards">
                         {{ $t('staking.rewards_card.submit') }}
@@ -79,16 +68,7 @@
                 </div>
             </div>
         </div>
-        <div>
-            <h4 style="text-align: center">
-                {{ $t('staking.rewards.unclaimed') }}
-            </h4>
-            <p>
-                {{ unclaimedRewards.toString() }}
-            </p>
-        </div>
     </div>
-
     <!-- <template v-else>
             <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
         </template> -->
@@ -118,6 +98,7 @@ import {
     defaultContractAddresses,
     getValidatorRewardManagerABI,
 } from '@/views/wallet/FlareContractConstants'
+import AvaxInput from '@/components/misc/AvaxInput.vue'
 
 @Component({
     components: {
@@ -125,6 +106,7 @@ import {
     },
 })
 export default class UserRewards extends Vue {
+    @Prop() maxAmt!: BN
     updateInterval: ReturnType<typeof setInterval> | undefined = undefined
     isRewards: boolean = false
     rewardsAmt: BN = new BN(0)
@@ -238,6 +220,11 @@ export default class UserRewards extends Vue {
         const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
         return rpcUrl
     }
+
+    // get maxAmt(): BN {
+    //     let max = this.unclaimedRewards
+    //     max = max.sub(this.gasFee)
+    // }
 
     get rewardExist() {
         if (this.unclaimedRewards === new BN(0)) return false

@@ -163,41 +163,38 @@ const platform_module: Module<PlatformState, RootState> = {
         },
 
         delegatorCount(state, getters) {
-            const now = Date.now()
             let validators = state.validators
-            validators = validators.filter((v) => {
-                const endTime = parseInt(v.endTime) * 1000
-                const dif = endTime - now
-
-                // If End time is less than 2 weeks + 1 hour, remove from list they are no use
-                const threshold = DAY_MS * 14 + 10 * MINUTE_MS
-                if (dif <= threshold) {
-                    return false
-                }
-
-                return true
-            })
+            const delCount: { [key: string]: number } = { ['']: 0 }
+            const delegatorPendingMap: ValidatorDelegatorPendingDict =
+                getters.nodeDelegatorPendingMap
+            let res: ValidatorListItem[] = []
             for (let i = 0; i < validators.length; i++) {
                 const v = validators[i]
 
                 const nodeID = v.nodeID
 
-                // const delegatorsPending: DelegatorPendingRaw[] = delegatorPendingMap[nodeID] || []
+                const delegatorsPending: DelegatorPendingRaw[] = delegatorPendingMap[nodeID] || []
+                console.log('Pending Delegators', delegatorsPending)
 
-                let delegatedAmt = new BN(0)
                 if (v.delegators && v.delegators.length > 0) {
                     for (let y = 0; y < v.delegators.length; y++) {
                         const delegator: Delegators = v.delegators[y]
                         console.log('DELEGATORS///', delegator)
 
-                        const rewardOwner = v.delegators[y].rewardOwner
-                        console.log('////////RewardOwner', rewardOwner)
-                        delegatedAmt = delegatedAmt.add(new BN(delegator.stakeAmount))
+                        const rewardOwnerAddr = v.delegators[y].rewardOwner.address[0]
+                        console.log('////////RewardOwner Address', rewardOwnerAddr)
+                        if (delCount[rewardOwnerAddr]) {
+                            delCount[rewardOwnerAddr]++
+                        } else {
+                            delCount[rewardOwnerAddr] = 1
+                        }
+
+                        console.log('DelCount////', delCount)
                     }
                 }
             }
 
-            return true
+            return delCount
         },
 
         nodeDelegatorPendingMap(state): ValidatorDelegatorPendingDict {

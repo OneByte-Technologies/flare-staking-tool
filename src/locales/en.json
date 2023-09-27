@@ -413,7 +413,7 @@
                 "export": "Export Transaction ID:",
                 "import": "Import Transaction ID:",
                 "message": "You have successfully transferred between chains.",
-                "messageAddressBind": "You have successfully done address binding.",
+                "messageAddressBind": "Addresses has been registered successfully",
                 "again": "Start Again",
                 "back": "Back to Earn"
             }
@@ -592,7 +592,9 @@
                 "max_dur": "Maximum staking duration is 1 year.",
                 "no_node": "You must specify a validator.",
                 "val_end": "Delegation end date can not be longer than the validator's end date.",
-                "amt": "Delegation amount must be at least {0} FLR."
+                "amt": "Delegation amount must be at least {0} FLR.",
+                "delCount": "Delegation Count",
+                "delCount_warn": "You cannot delegate with a address for more than three times"
             },
             "summary": {
                 "duration": "Staking Duration",

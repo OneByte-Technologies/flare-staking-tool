@@ -95,6 +95,7 @@
                                 {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
                             </p>
                             <v-btn
+                                v-if="registered"
                                 class="button_secondary"
                                 data-cy="validate"
                                 @click="addValidator"
