@@ -3,7 +3,7 @@
         <div class="cols">
             <form @submit.prevent="">
                 <transition-group name="fade" mode="out-in">
-                    <div v-show="!isConfirm" key="form" class="ins_col">
+                    <div key="form" class="ins_col">
                         <div class="address-container" style="margin-top: 0px;">
                             <h4 class="light-heading">This is your original P Chain Address</h4>
                             <p class="address-style" style="padding-bottom: 0px;">
@@ -39,16 +39,17 @@
                                 {{ $t('staking.transfer.success.messageAddressBind') }}
                             </p>
                         </div>
-                        <v-btn
-                            v-else
-                            v-bind:disabled="isDisabled"
-                            @click="bindAddress"
-                            block
-                            class="button_secondary"
-                            depressed
-                        >
+                        <v-btn v-else @click="bindAddress" block
+                            :class="['button_secondary', { 'disabled-button': isDisabled || !registered || isInsufficientFunds }]"
+                            depressed>
                             Bind address
                         </v-btn>
+                        <div v-if="isInsufficientFunds" class="summary-warn">
+                            <p>
+                                <fa icon="times-circle"></fa>
+                                {{ $t('staking.addressBinder.summary.insufficientFunds') }}
+                            </p>
+                        </div>
                     </div>
                 </transition-group>
             </form>
@@ -73,7 +74,7 @@ export default class AddressBinder extends Vue {
     success: boolean = false
     registered: boolean = false
     isDisabled = false
-    // ...
+    isInsufficientFunds: boolean = false
     pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
     wallet = this.$store.state.activeWallet
     ethersWallet = new ethers.Wallet(this.wallet.ethKey)
@@ -111,6 +112,17 @@ export default class AddressBinder extends Vue {
         console.log('Gas Estimate', gasEstimate)
         const gasPrice = await provider.getGasPrice()
         console.log('Gas Price', gasPrice)
+        const balance = await this.getEthBalance();
+        const gasCost = gasEstimate.mul(gasPrice); // Calculate the gas cost
+        const hasEnoughFunds = balance.gte(gasCost);
+
+        if (hasEnoughFunds) {
+            console.log('Insufficient funds');
+            // Store a variable for use in the template
+            this.isInsufficientFunds = true;
+            return;
+        }
+
         const populatedTx = await contract.populateTransaction.registerAddresses(
             this.pubKey,
             this.pAddress,
@@ -165,6 +177,13 @@ export default class AddressBinder extends Vue {
 
     get activeWallet(): WalletType | null {
         return this.$store.state.activeWallet
+    }
+
+    getEthBalance() {
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey, provider)
+        return ethersWallet.getBalance()
     }
 
     privateKeyC(): string | null {
@@ -276,9 +295,14 @@ input {
 }
 
 .summary-warn {
-    color: red;
-    margin-top:4px;
+    color: var(--error);
+    margin-top: 4px;
     font-size: 14px;
+}
+
+.disabled-button {
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 label {
