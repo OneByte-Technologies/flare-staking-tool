@@ -16,27 +16,28 @@ import {
     costExportTx,
 } from '@flarenetwork/flarejs/dist/utils'
 
-const ip: string = 'coston2-api.flare.network'
-const port: number = 443
-const protocol: string = 'https'
-const networkID: number = 114
-const ava: Avalanche = new Avalanche(ip, port, protocol, networkID)
-const cChain: EVMAPI = ava.CChain()
-const pChain: PlatformVMAPI = ava.PChain()
-const privKey: string = `${PrivateKeyPrefix}${DefaultLocalGenesisPrivateKey}`
-const pKeychain: PlatformKeyChain = pChain.keyChain()
-const cKeychain: EVMKeyChain = cChain.keyChain()
+export const ip: string = 'coston2-api.flare.network'
+export const port: number = 443
+export const protocol: string = 'https'
+export const networkID: number = 114
+export const ava: Avalanche = new Avalanche(ip, port, protocol, networkID)
+export const cChain: EVMAPI = ava.CChain()
+export const pChain: PlatformVMAPI = ava.PChain()
+export const privKey: string = `${PrivateKeyPrefix}${DefaultLocalGenesisPrivateKey}`
+export const pKeychain: PlatformKeyChain = pChain.keyChain()
+export const cKeychain: EVMKeyChain = cChain.keyChain()
 pKeychain.importKey(privKey)
 cKeychain.importKey(privKey)
-const pAddressStrings: string[] = pChain.keyChain().getAddressStrings()
-const cAddressStrings: string[] = cChain.keyChain().getAddressStrings()
-const pChainBlockchainIdStr: string = Defaults.network[networkID].P.blockchainID
-const avaxAssetID: string | undefined = Defaults.network[networkID].X.avaxAssetID
-const cHexAddress: string = '0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC'
-const Web3 = require('web3')
-const path: string = '/ext/bc/C/rpc'
-const web3: any = new Web3(`${protocol}://${ip}:${port}${path}`)
-const threshold: number = 1
+export const pAddressStrings: string[] = pChain.keyChain().getAddressStrings()
+export const cAddressStrings: string[] = cChain.keyChain().getAddressStrings()
+export const pChainBlockchainIdStr: string = Defaults.network[networkID].P.blockchainID
+export const avaxAssetID: string | undefined = Defaults.network[networkID].X.avaxAssetID
+export const cHexAddress: string = '0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC'
+export const Web3 = require('web3')
+export const path: string = '/ext/bc/C/rpc'
+export const web3: any = new Web3(`${protocol}://${ip}:${port}${path}`)
+export const threshold: number = 1
+
 
 const main = async (): Promise<any> => {
     let balance: BN = await web3.eth.getBalance(cHexAddress)
