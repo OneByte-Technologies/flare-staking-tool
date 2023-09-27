@@ -1,34 +1,7 @@
-<template v-if="true">
-    <!-- <div>
-        <template v-if="totLength > 0">
-            <div>
-                <label>{{ $t('staking.rewards.total') }}</label>
-                <p class="amt">{{ totalRewardBig.toLocaleString(9) }} FLR</p>
-            </div>
-            <div v-if="validatorTxs.length > 0">
-                <h3>{{ $t('staking.rewards.validation') }}</h3>
-                <UserRewardRow
-                    v-for="v in validatorTxs"
-                    :key="v.txHash"
-                    :tx="v"
-                    class="reward_row"
-                ></UserRewardRow>
-            </div>
-
-            <div v-if="delegatorTxs.length > 0">
-                <h3>{{ $t('staking.rewards.delegation') }}</h3>
-                <UserRewardRow
-                    v-for="v in delegatorTxs"
-                    :key="v.txHash"
-                    :tx="v"
-                    class="reward_row"
-                ></UserRewardRow>
-            </div>
-        </template> -->
-
+<template>
     <div style="max-width: 490px">
         <div>
-            <div class="box">
+            <div class="grid">
                 <div>
                     <label style="text-align: center">
                         {{ $t('staking.rewards.total') }}
@@ -38,7 +11,7 @@
                     </p>
                 </div>
                 <div>
-                    <label style="text-align: center">
+                    <label>
                         {{ $t('staking.rewards.claimed') }}
                     </label>
                     <p>
@@ -54,29 +27,17 @@
                     </p>
                 </div>
                 <div>
-                    <AvaxInput :max="maxAmt"></AvaxInput>
+                    <label>{{ $t('staking.rewards.claim') }}</label>
+                    <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
                 </div>
-                <div v-bind:disabled="canClaim">
-                    <v-btn @click="claimRewards">
+                <div class="claimbutton" v-if="canClaim">
+                    <v-btn @click="claimRewards" :disabled="!isRewardValid()">
                         {{ $t('staking.rewards_card.submit2') }}
                     </v-btn>
                 </div>
             </div>
         </div>
     </div>
-    <!-- <template v-else>
-            <p style="text-align: center">{{ $t('staking.rewards.empty') }}</p>
-        </template> -->
-    <!-- <template>
-        <div :class="{ 'disabled-card-parent': !canClaim }">
-            <div :class="{ 'disabled-card': !canClaim }">
-                <v-btn class="button_secondary" @click="claimRewards">
-                    {{ $t('staking.rewards_card.submit2') }}
-                </v-btn>
-            </div>
-        </div>
-    </template> -->
-    <!--</div>-->
 </template>
 <script lang="ts">
 import 'reflect-metadata'
@@ -109,6 +70,7 @@ export default class UserRewards extends Vue {
     totalRewardNumber: BN = new BN(0)
     claimedRewardNumber: BN = new BN(0)
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
+    inputReward: string = '0'
 
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
@@ -160,6 +122,11 @@ export default class UserRewards extends Vue {
         this.updateInterval && clearInterval(this.updateInterval)
     }
 
+    isRewardValid(): boolean {
+        const rewardAmt = new BN(this.inputReward)
+        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
+    }
+
     async claimRewards() {
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
@@ -191,7 +158,7 @@ export default class UserRewards extends Vue {
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
             cAddress,
-            this.unclaimedRewards.toString(),
+            this.inputReward,
             false
         )
         console.log('Populated Tx', populatedTx)
@@ -230,7 +197,7 @@ export default class UserRewards extends Vue {
     }
 
     get rewardBig(): Big {
-        return Big(this.unclaimedRewards.toString()).div(Math.pow(10, 9))
+        return Big(this.inputReward.toString()).div(Math.pow(10, 18))
     }
 
     get stakingTxs() {
@@ -288,38 +255,8 @@ export default class UserRewards extends Vue {
     padding-bottom: 5vh;
 }
 
-.box {
-    border: 1px solid white;
-    padding: 10px;
-}
-
 .reward_row {
     margin-bottom: 12px;
-}
-
-.disabled-card {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.disabled-card-parent::after {
-    content: 'No Rewards';
-    position: absolute;
-    top: 50%; /* Center vertically from the top */
-    left: 50%; /* Center horizontally from the left */
-    transform: translate(-50%, -50%); /* Center alignment */
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px;
-    text-align: center;
-    opacity: 0.9;
-    z-index: 1;
-    border: 2px solid #3498db;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    width: 95%;
 }
 
 h3 {
@@ -336,7 +273,27 @@ label {
     margin-bottom: 3px;
 }
 
-.amt {
-    font-size: 2em;
+.grid {
+    margin: 20px auto;
+    width: 100%; /* Set width to 100% for responsiveness */
+    display: grid;
+    grid-template-columns: 1fr; /* Start with one column */
+    grid-row-gap: 20px;
+    border: 1px solid white;
+    padding: 10px;
+}
+
+@media (min-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr); /* Two columns for larger screens */
+    }
+}
+
+.claimbutton {
+    margin-top: 20px;
+    align-items: center;
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
 }
 </style>
