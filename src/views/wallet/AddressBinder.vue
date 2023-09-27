@@ -80,7 +80,12 @@
 import { WalletType, WalletNameType } from '@/js/wallets/types'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { issueC } from '@/helpers/issueTx'
-import { defaultContractAddresses, getAddressBinderABI } from './FlareContractConstants'
+import {
+    defaultContractAddresses,
+    getAddressBinderABI,
+    getFlareContractRegistryABI,
+    addressBinderContractName,
+} from './FlareContractConstants'
 import { ethers } from 'ethers'
 import { bech32 } from 'bech32'
 import { cChain } from '@/AVA'
@@ -116,7 +121,10 @@ export default class AddressBinder extends Vue {
         this.cChainAddress = cAddress
         const rpcUrl: string = this.getIp()
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress: string = defaultContractAddresses.AddressBinder.costwo //change to dynamic
+        const contractAddress = await this.getContractAddress(
+            ava.getHRP(),
+            addressBinderContractName
+        )
         const abi = getAddressBinderABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
         const nonce = await provider.getTransactionCount(cAddress)
@@ -148,10 +156,6 @@ export default class AddressBinder extends Vue {
         console.log('unsignedtx', unsignedTx)
         const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
         const txId = await contract.provider.sendTransaction(signedTx)
-        console.log('txId', txId)
-        const checkAddress: string = defaultContractAddresses.AddressBinder.flare
-        const abi2 = getAddressBinderABI() as ethers.ContractInterface
-        const contract2 = new ethers.Contract(contractAddress, abi, provider)
         const result = await contract.cAddressToPAddress(cAddress)
 
         if (result !== '0x0000000000000000000000000000000000000000') {
@@ -222,6 +226,28 @@ export default class AddressBinder extends Vue {
             this.cChainAddress = wallet.getEvmChecksumAddress()
         }
         return this.cChainAddress
+    }
+
+    async getContractAddress(network: string, contractName: string): Promise<string> {
+        const rpcUrl = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+
+        const abi = getFlareContractRegistryABI() as ethers.ContractInterface
+        if (network != 'flare' && network != 'costwo') throw new Error('Invalid network passed')
+        const contract = new ethers.Contract(
+            defaultContractAddresses.flareContractRegistryAddress[network],
+            abi,
+            provider
+        )
+
+        const result = await contract.getContractAddressByName(contractName)
+
+        if (result !== '0x0000000000000000000000000000000000000000') return result
+
+        const defaultAddress = defaultContractAddresses[contractName]?.[network]
+        if (defaultAddress) return defaultAddress
+
+        throw new Error('Contract Address not found')
     }
 }
 </script>
