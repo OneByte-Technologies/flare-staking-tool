@@ -56,12 +56,7 @@
                 <div>
                     <AvaxInput :max="maxAmt" v-model="unclaimedRewards"></AvaxInput>
                 </div>
-                <div v-if="!isRewards">
-                    <v-btn @click="viewRewards">
-                        {{ $t('staking.rewards_card.submit') }}
-                    </v-btn>
-                </div>
-                <div v-if="isRewards">
+                <div v-bind:disabled="isRewards">
                     <v-btn @click="claimRewards">
                         {{ $t('staking.rewards_card.submit2') }}
                     </v-btn>
@@ -168,7 +163,6 @@ export default class UserRewards extends Vue {
             this.totalRewardNumber,
             this.claimedRewardNumber
         )
-        this.isRewards = true
         const nonce = await provider.getTransactionCount(cAddress)
         let gasEstimate
         try {
@@ -227,8 +221,11 @@ export default class UserRewards extends Vue {
     // }
 
     get rewardExist() {
-        if (this.unclaimedRewards === new BN(0)) return false
-        return true
+        if (this.unclaimedRewards === new BN(0)) {
+            this.isRewards = false
+            return this.isRewards
+        }
+        this.isRewards = true
     }
 
     get rewardBig(): Big {
