@@ -28,7 +28,7 @@
 
     <div style="max-width: 490px">
         <div>
-            <div class="box">
+            <div class="grid">
                 <div>
                     <label style="text-align: center">
                         {{ $t('staking.rewards.total') }}
@@ -38,7 +38,7 @@
                     </p>
                 </div>
                 <div>
-                    <label style="text-align: center">
+                    <label>
                         {{ $t('staking.rewards.claimed') }}
                     </label>
                     <p>
@@ -53,10 +53,19 @@
                         {{ unclaimedRewards.toString() }}
                     </p>
                 </div>
+                <!-- <div>
+                    <AvaxInput :max="unclaimedRewards" v-model="unclaimedRewards"></AvaxInput>
+                </div> -->
                 <div>
-                    <AvaxInput :max="maxAmt" v-model="unclaimedRewards"></AvaxInput>
+                    <label>{{ $t('staking.rewards.claim') }}</label>
+                    <AvaxInput :max="unclaimedRewards" v-model="unclaimedRewards"></AvaxInput>
                 </div>
-                <div v-if="!isRewards">
+                <div class="claimbutton">
+                    <v-btn @click="claimRewards">
+                        {{ $t('staking.rewards_card.submit2') }}
+                    </v-btn>
+                </div>
+                <!-- <div v-if="!isRewards">
                     <v-btn @click="viewRewards">
                         {{ $t('staking.rewards_card.submit') }}
                     </v-btn>
@@ -65,7 +74,7 @@
                     <v-btn @click="claimRewards">
                         {{ $t('staking.rewards_card.submit2') }}
                     </v-btn>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -103,6 +112,7 @@ import AvaxInput from '@/components/misc/AvaxInput.vue'
 @Component({
     components: {
         UserRewardRow,
+        AvaxInput,
     },
 })
 export default class UserRewards extends Vue {
@@ -269,8 +279,14 @@ export default class UserRewards extends Vue {
 }
 
 .box {
+    display: flex;
     border: 1px solid white;
     padding: 10px;
+}
+
+.box > div {
+    flex: 1; /* Equal width for both columns */
+    margin-right: 10px;
 }
 
 .reward_row {
@@ -314,6 +330,26 @@ label {
     color: var(--primary-color-light);
     font-size: 14px;
     margin-bottom: 3px;
+}
+
+.grid {
+    margin: 20px auto;
+    width: 400px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row: auto auto;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    border: 1px solid white;
+    padding: 10px;
+}
+
+.claimbutton {
+    margin-top: 20px;
+    align-items: center;
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
 }
 
 .amt {

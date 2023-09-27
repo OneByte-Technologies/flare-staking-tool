@@ -422,6 +422,7 @@
             "total": "Total Rewards",
             "claimed": "Claimed Rewards",
             "unclaimed": "Unclaimed Rewards",
+            "claim": "Amount to Claim",
             "validation": "Validation",
             "delegation": "Delegation",
             "empty": "You do not have any pending rewards.",
