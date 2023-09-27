@@ -4,23 +4,33 @@
             <form @submit.prevent="">
                 <transition-group name="fade" mode="out-in">
                     <div key="form" class="ins_col">
-                        <div class="address-container" style="margin-top: 0px;">
+                        <div class="address-container" style="margin-top: 0px">
                             <h4 class="light-heading">This is your original P Chain Address</h4>
-                            <p class="address-style" style="padding-bottom: 0px;">
+                            <p class="address-style" style="padding-bottom: 0px">
                                 {{ pChainAddress }}
                             </p>
                         </div>
                         <div class="address-container">
                             <h4 class="light-heading">This is your encoded P Chain Address</h4>
                             <p class="address-style">{{ pAddress }}</p>
-                            <input type="text" v-model="pAddress" style="width: 100%" placeholder="P chain address" />
+                            <input
+                                type="text"
+                                v-model="pAddress"
+                                style="width: 100%"
+                                placeholder="P chain address"
+                            />
                         </div>
                         <div class="address-container">
                             <h4 class="light-heading">This is your C Chain Address</h4>
                             <p class="address-style">
                                 {{ cChainAddressBinder }}
                             </p>
-                            <input type="text" v-model="cChainAddress" style="width: 100%" placeholder="C chain address" />
+                            <input
+                                type="text"
+                                v-model="cChainAddress"
+                                style="width: 100%"
+                                placeholder="C chain address"
+                            />
                             <div class="summary-warn">
                                 {{ $t('staking.addressBinder.summary.warn') }}
                             </div>
@@ -30,7 +40,12 @@
                             <p class="address-style">
                                 {{ pubKey }}
                             </p>
-                            <input type="text" v-model="pubKey" style="width: 100%" placeholder="publickey" />
+                            <input
+                                type="text"
+                                v-model="pubKey"
+                                style="width: 100%"
+                                placeholder="publickey"
+                            />
                         </div>
                         <div v-if="success" class="complete">
                             <h4>{{ $t('staking.transfer.success.titleAddressBind') }}</h4>
@@ -39,9 +54,19 @@
                                 {{ $t('staking.transfer.success.messageAddressBind') }}
                             </p>
                         </div>
-                        <v-btn v-else @click="bindAddress" block
-                            :class="['button_secondary', { 'disabled-button': isDisabled || !registered || isInsufficientFunds }]"
-                            depressed>
+                        <v-btn
+                            v-else
+                            @click="bindAddress"
+                            block
+                            :class="[
+                                'button_secondary',
+                                {
+                                    'disabled-button':
+                                        isDisabled || !registered || isInsufficientFunds,
+                                },
+                            ]"
+                            depressed
+                        >
                             Bind address
                         </v-btn>
                         <div v-if="isInsufficientFunds" class="summary-warn">
@@ -112,15 +137,15 @@ export default class AddressBinder extends Vue {
         console.log('Gas Estimate', gasEstimate)
         const gasPrice = await provider.getGasPrice()
         console.log('Gas Price', gasPrice)
-        const balance = await this.getEthBalance();
-        const gasCost = gasEstimate.mul(gasPrice); // Calculate the gas cost
-        const hasEnoughFunds = balance.gte(gasCost);
+        const balance = await this.getEthBalance()
+        const gasCost = gasEstimate.mul(gasPrice) // Calculate the gas cost
+        const hasEnoughFunds = balance.gte(gasCost)
 
         if (hasEnoughFunds) {
-            console.log('Insufficient funds');
+            console.log('Insufficient funds')
             // Store a variable for use in the template
-            this.isInsufficientFunds = true;
-            return;
+            this.isInsufficientFunds = true
+            return
         }
 
         const populatedTx = await contract.populateTransaction.registerAddresses(
@@ -317,7 +342,7 @@ label {
     grid-template-columns: 1fr 1fr;
     grid-gap: 15px;
 
-    label>span {
+    label > span {
         float: right;
         opacity: 0.4;
         cursor: pointer;
@@ -338,7 +363,7 @@ label {
     border-left: 2px solid var(--bg-light);
     padding-left: 30px;
 
-    >div {
+    > div {
         margin-bottom: 14px;
 
         p {
