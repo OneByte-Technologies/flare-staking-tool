@@ -53,6 +53,8 @@ import { ethers } from 'ethers'
 import {
     defaultContractAddresses,
     getValidatorRewardManagerABI,
+    getFlareContractRegistryABI,
+    validatorRewardManagerContractName,
 } from '@/views/wallet/FlareContractConstants'
 import AvaxInput from '@/components/misc/AvaxInput.vue'
 
@@ -76,7 +78,10 @@ export default class UserRewards extends Vue {
         const cAddress = wallet.getEvmChecksumAddress()
         const rpcUrl: string = this.getIp()
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress: string = defaultContractAddresses.ValidatorRewardManager.costwo
+        const contractAddress = await this.getContractAddress(
+            ava.getHRP(),
+            validatorRewardManagerContractName
+        )
         const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
         const rewards = await contract.getStateOfRewards(cAddress)
@@ -123,7 +128,10 @@ export default class UserRewards extends Vue {
         const cAddress = wallet.getEvmChecksumAddress()
         const rpcUrl: string = this.getIp()
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress: string = defaultContractAddresses.ValidatorRewardManager.costwo
+        const contractAddress = await this.getContractAddress(
+            ava.getHRP(),
+            validatorRewardManagerContractName
+        )
         const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
         console.log(
@@ -132,7 +140,6 @@ export default class UserRewards extends Vue {
             this.totalRewardNumber,
             this.claimedRewardNumber
         )
-        this.isRewards = true
         const nonce = await provider.getTransactionCount(cAddress)
         let gasEstimate
         try {
@@ -191,8 +198,11 @@ export default class UserRewards extends Vue {
     // }
 
     get rewardExist() {
-        if (this.unclaimedRewards === new BN(0)) return false
-        return true
+        if (this.unclaimedRewards === new BN(0)) {
+            this.isRewards = false
+            return this.isRewards
+        }
+        this.isRewards = true
     }
 
     get rewardBig(): Big {
@@ -224,6 +234,28 @@ export default class UserRewards extends Vue {
 
     get totalRewardBig(): Big {
         return bnToBig(this.totalReward, 9)
+    }
+
+    async getContractAddress(network: string, contractName: string): Promise<string> {
+        const rpcUrl = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+
+        const abi = getFlareContractRegistryABI() as ethers.ContractInterface
+        if (network != 'flare' && network != 'costwo') throw new Error('Invalid network passed')
+        const contract = new ethers.Contract(
+            defaultContractAddresses.flareContractRegistryAddress[network],
+            abi,
+            provider
+        )
+
+        const result = await contract.getContractAddressByName(contractName)
+
+        if (result !== '0x0000000000000000000000000000000000000000') return result
+
+        const defaultAddress = defaultContractAddresses[contractName]?.[network]
+        if (defaultAddress) return defaultAddress
+
+        throw new Error('Contract Address not found')
     }
 }
 </script>
