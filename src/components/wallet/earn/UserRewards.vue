@@ -29,7 +29,7 @@
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
             </div>
-            <div class="claimbutton" v-if="canClaim">
+            <div class="claimbutton">
                 <v-btn @click="claimRewards" :disabled="!isRewardValid()">
                     {{ $t('staking.rewards_card.submit') }}
                 </v-btn>
