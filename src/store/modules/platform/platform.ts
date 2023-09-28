@@ -163,11 +163,11 @@ const platform_module: Module<PlatformState, RootState> = {
         },
 
         delegatorCount(state, getters) {
-            let validators = state.validators
+            const validators = state.validators
             const delCount: { [key: string]: number } = { ['']: 0 }
             const delegatorPendingMap: ValidatorDelegatorPendingDict =
                 getters.nodeDelegatorPendingMap
-            let res: ValidatorListItem[] = []
+            const res: ValidatorListItem[] = []
             for (let i = 0; i < validators.length; i++) {
                 const v = validators[i]
 
