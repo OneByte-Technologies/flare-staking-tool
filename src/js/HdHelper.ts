@@ -132,6 +132,7 @@ class HdHelper {
         // } else {
         //     this.hdIndex = await this.findAvailableIndexNode()
         // }
+        this.hdIndex = await this.findAvailableIndexNode()
 
         if (!this.isPublic) {
             this.updateKeychain()

@@ -28,10 +28,10 @@
                 </div>
                 <div>
                     <label>{{ $t('staking.rewards.claim') }}</label>
-                    <AvaxInput :max="unclaimedRewards" v-model="rewardsAmt"></AvaxInput>
+                    <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
                 </div>
-                <div class="claimbutton">
-                    <v-btn @click="claimRewards" :disabled="!isRewardAmountValid()">
+                <div class="claimbutton" v-if="canClaim">
+                    <v-btn @click="claimRewards" :disabled="!isRewardValid()">
                         {{ $t('staking.rewards_card.submit') }}
                     </v-btn>
                 </div>
@@ -67,11 +67,11 @@ import AvaxInput from '@/components/misc/AvaxInput.vue'
 export default class UserRewards extends Vue {
     @Prop() maxAmt!: BN
     updateInterval: ReturnType<typeof setInterval> | undefined = undefined
-    isRewards: boolean = false
-    rewardsAmt: BN = new BN(0)
+    canClaim: boolean = false
     totalRewardNumber: BN = new BN(0)
     claimedRewardNumber: BN = new BN(0)
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
+    inputReward: string = '0'
 
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
@@ -92,6 +92,14 @@ export default class UserRewards extends Vue {
         const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
         this.unclaimedRewards = unclaimedRewards
         console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
+        this.rewardExist
+    }
+    async mounted() {
+        console.log('mounted')
+        await this.viewRewards()
+        console.log('here')
+        this.maxAmt = this.unclaimedRewards
+        console.log('Max Amt', this.maxAmt)
     }
 
     get userAddresses() {
@@ -116,11 +124,9 @@ export default class UserRewards extends Vue {
         this.updateInterval && clearInterval(this.updateInterval)
     }
 
-    isRewardAmountValid(): boolean {
-        const rewardAmt = this.rewardsAmt.toNumber() // Assuming rewardsAmt is a BN
-        const unclaimedAmt = this.unclaimedRewards.toNumber() // Assuming unclaimedRewards is a BN
-
-        return rewardAmt > 0 && rewardAmt <= unclaimedAmt
+    isRewardValid(): boolean {
+        const rewardAmt = new BN(this.inputReward)
+        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
     }
 
     async claimRewards() {
@@ -134,12 +140,6 @@ export default class UserRewards extends Vue {
         )
         const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
-        console.log(
-            'Rewardsamt?????????',
-            this.rewardsAmt,
-            this.totalRewardNumber,
-            this.claimedRewardNumber
-        )
         const nonce = await provider.getTransactionCount(cAddress)
         let gasEstimate
         try {
@@ -160,7 +160,7 @@ export default class UserRewards extends Vue {
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
             cAddress,
-            this.unclaimedRewards,
+            this.inputReward,
             false
         )
         console.log('Populated Tx', populatedTx)
@@ -173,12 +173,10 @@ export default class UserRewards extends Vue {
             gasLimit: gasEstimate,
         }
         console.log('unsignedtx', unsignedTx)
-        // const txId = wallet.signC(unsignedTx)
         const ethersWallet = new ethers.Wallet(wallet.ethKey)
         const signedTx = await ethersWallet.signTransaction(unsignedTx)
         const txId = await contract.provider.sendTransaction(signedTx)
         console.log('txId', txId)
-        // return unclaimedRewards
     }
 
     getIp() {
@@ -192,21 +190,16 @@ export default class UserRewards extends Vue {
         return rpcUrl
     }
 
-    // get maxAmt(): BN {
-    //     let max = this.unclaimedRewards
-    //     max = max.sub(this.gasFee)
-    // }
-
     get rewardExist() {
         if (this.unclaimedRewards === new BN(0)) {
-            this.isRewards = false
-            return this.isRewards
+            this.canClaim = false
+            return this.canClaim
         }
-        this.isRewards = true
+        this.canClaim = true
     }
 
     get rewardBig(): Big {
-        return Big(this.rewardsAmt.toString()).div(Math.pow(10, 9))
+        return Big(this.inputReward.toString()).div(Math.pow(10, 18))
     }
 
     get stakingTxs() {
@@ -264,44 +257,8 @@ export default class UserRewards extends Vue {
     padding-bottom: 5vh;
 }
 
-.box {
-    display: flex;
-    border: 1px solid white;
-    padding: 10px;
-}
-
-.box > div {
-    flex: 1; /* Equal width for both columns */
-    margin-right: 10px;
-}
-
 .reward_row {
     margin-bottom: 12px;
-}
-
-.disabled-card {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.disabled-card-parent::after {
-    content: 'No Rewards';
-    position: absolute;
-    top: 50%; /* Center vertically from the top */
-    left: 50%; /* Center horizontally from the left */
-    transform: translate(-50%, -50%); /* Center alignment */
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px;
-    text-align: center;
-    opacity: 0.9;
-    z-index: 1;
-    border: 2px solid #3498db;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    width: 95%;
 }
 
 h3 {
@@ -340,9 +297,5 @@ label {
     grid-column: span 2;
     display: flex;
     justify-content: center;
-}
-
-.amt {
-    font-size: 2em;
 }
 </style>
