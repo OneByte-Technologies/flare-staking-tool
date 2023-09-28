@@ -237,11 +237,11 @@ export default class AddressBinder extends Vue {
         })
     }
 
-    async getEthBalance() {
+    getEthBalance() {
         const rpcUrl: string = this.getIp()
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
         const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey, provider)
-        return await ethersWallet.getBalance()
+        return ethersWallet.getBalance()
     }
 
     privateKeyC(): string | null {

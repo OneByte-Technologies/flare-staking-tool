@@ -92,6 +92,7 @@ export default class UserRewards extends Vue {
         const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
         this.unclaimedRewards = unclaimedRewards
         console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
+        this.rewardExist
     }
     async mounted() {
         console.log('mounted')
