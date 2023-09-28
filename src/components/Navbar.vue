@@ -22,7 +22,6 @@
                 </router-link>
             </template>
             <network-menu></network-menu>
-            <Web3Modal></Web3Modal>
             <LanguageSelect class="lang_web"></LanguageSelect>
 
             <button @click="togglePopup">
