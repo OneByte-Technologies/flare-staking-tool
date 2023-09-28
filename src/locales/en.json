@@ -76,7 +76,8 @@
             "staking": "Staking",
             "studio": "Studio",
             "advanced": "Advanced",
-            "activity": "Activity"
+            "activity": "Activity",
+            "earn": "Earn"
         },
         "address_card": {},
         "collectibles": {
@@ -391,8 +392,7 @@
         "rewards_card": {
             "title": "View & Claim Rewards",
             "desc": "View staking rewards you will receive.",
-            "submit": "View Rewards",
-            "submit2": "Claim Rewards"
+            "submit": "Claim Rewards"
         },
         "transfer": {
             "source": "Source Chain",
@@ -422,6 +422,7 @@
             "total": "Total Rewards",
             "claimed": "Claimed Rewards",
             "unclaimed": "Unclaimed Rewards",
+            "claim": "Amount to Claim",
             "validation": "Validation",
             "delegation": "Delegation",
             "empty": "You do not have any pending rewards.",

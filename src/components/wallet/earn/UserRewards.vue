@@ -61,6 +61,7 @@ import AvaxInput from '@/components/misc/AvaxInput.vue'
 @Component({
     components: {
         UserRewardRow,
+        AvaxInput,
     },
 })
 export default class UserRewards extends Vue {
