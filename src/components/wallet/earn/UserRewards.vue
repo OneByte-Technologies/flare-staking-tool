@@ -193,9 +193,9 @@ export default class UserRewards extends Vue {
     get rewardExist() {
         if (this.unclaimedRewards === new BN(0)) {
             this.canClaim = false
-            return this.canClaim
         }
         this.canClaim = true
+        return this.canClaim
     }
 
     get rewardBig(): Big {
