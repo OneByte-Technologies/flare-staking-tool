@@ -140,7 +140,7 @@
                                 * {{ $t('staking.validate.summary.warn') }}
                             </label>
                             <p v-if="warnShortDuration" class="err">
-                                {{ $t('staking.validate.errs.duration_warn') }}
+                                <!-- {{ $t('staking.validate.errs.duration_warn') }} -->
                             </p>
                             <p class="err">{{ err }}</p>
                             <!-- <v-btn
