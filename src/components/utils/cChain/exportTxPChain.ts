@@ -38,7 +38,6 @@ export const path: string = '/ext/bc/C/rpc'
 export const web3: any = new Web3(`${protocol}://${ip}:${port}${path}`)
 export const threshold: number = 1
 
-
 const main = async (): Promise<any> => {
     let balance: BN = await web3.eth.getBalance(cHexAddress)
     balance = new BN(balance.toString().substring(0, 17))
@@ -47,11 +46,11 @@ const main = async (): Promise<any> => {
     const txcount = await web3.eth.getTransactionCount(cHexAddress)
     const nonce: number = txcount
     const locktime: BN = new BN(0)
-    let avaxAmount: BN = new BN(1e7)
+    const avaxAmount: BN = new BN(1e7)
     let fee: BN = baseFee.div(new BN(1e9))
     fee = fee.add(new BN(1e6))
 
-    let unsignedTx: UnsignedTx = await cChain.buildExportTx(
+    const unsignedTx: UnsignedTx = await cChain.buildExportTx(
         avaxAmount,
         avaxAssetID as any,
         pChainBlockchainIdStr,

@@ -93,9 +93,9 @@ export function recoverMessageSigner(message: Buffer, signature: string) {
 }
 
 export function recoverTransactionSigner(message: Buffer, signature: string) {
-    let split = ethutil.fromRpcSig(signature)
-    let publicKey = ethutil.ecrecover(message, split.v, split.r, split.s)
-    let signer = ethutil.pubToAddress(publicKey).toString('hex')
+    const split = ethutil.fromRpcSig(signature)
+    const publicKey = ethutil.ecrecover(message, split.v, split.r, split.s)
+    const signer = ethutil.pubToAddress(publicKey).toString('hex')
     return signer
 }
 

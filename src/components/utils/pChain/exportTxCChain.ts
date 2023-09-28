@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 import { Avalanche, BN, Buffer } from '@flarenetwork/flarejs/dist'
 import { AVMAPI, KeyChain as AVMKeyChain } from '@flarenetwork/flarejs/dist/apis/avm'
 import {
