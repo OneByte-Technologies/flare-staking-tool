@@ -253,6 +253,7 @@ export default class UserRewards extends Vue {
 }
 </script>
 <style scoped lang="scss">
+@use '../../../main';
 .user_rewards {
     padding-bottom: 5vh;
 }
@@ -279,15 +280,18 @@ label {
     margin: 20px auto;
     width: 100%; /* Set width to 100% for responsiveness */
     display: grid;
-    grid-template-columns: 1fr; /* Start with one column */
+    grid-template-columns: 1fr 1fr;
     grid-row-gap: 20px;
     border: 1px solid white;
     padding: 10px;
 }
 
-@media (min-width: 600px) {
+@include main.mobile-device {
     .grid {
-        grid-template-columns: repeat(2, 1fr); /* Two columns for larger screens */
+        display: block;
+    }
+    .grid > div {
+        margin: 10px;
     }
 }
 
