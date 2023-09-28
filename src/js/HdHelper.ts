@@ -126,12 +126,14 @@ class HdHelper {
         // @ts-ignore
         const network: AvaNetwork = store.state.Network.selectedNetwork
         const explorerUrl = network.explorerUrl
-
+        // Commented below code to resolve balance issue for new wallets
         // if (explorerUrl) {
         //     this.hdIndex = await this.findAvailableIndexExplorer()
         // } else {
         //     this.hdIndex = await this.findAvailableIndexNode()
         // }
+
+        this.hdIndex = await this.findAvailableIndexNode()
 
         if (!this.isPublic) {
             this.updateKeychain()

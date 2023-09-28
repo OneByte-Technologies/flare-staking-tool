@@ -62,7 +62,7 @@
                     <router-link to="/wallet/cross_chain">
                         {{ $t('wallet.sidebar.export') }}
                     </router-link>
-                    <router-link to="/wallet/earn">{{ $t('wallet.sidebar.earn') }}</router-link>
+                    <router-link to="/wallet/earn">{{ $t('wallet.sidebar.staking') }}</router-link>
                     <router-link to="/wallet/activity">Activity</router-link>
                     <router-link to="/wallet/keys">{{ $t('wallet.sidebar.manage') }}</router-link>
                     <router-link to="/wallet/advanced" data-cy="wallet_advanced">

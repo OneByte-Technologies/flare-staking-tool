@@ -363,7 +363,7 @@
         "subtitle1": "Validate",
         "subtitle2": "Delegate",
         "subtitle3": "Cross Chain",
-        "subtitle4": "Estimated Rewards",
+        "subtitle4": "View and Claim Rewards",
         "subtitle5": "Address Binder",
         "warning_1": "You must have at least {0} FLR on the P chain to become a validator.",
         "warning_2": "You must have at least {0} FLR on the P chain to become a delegator.",
@@ -375,8 +375,8 @@
             "submit": "Register"
         },
         "transfer_card": {
-            "title": "Cross Chain Transfer",
-            "desc": "Staking requires FLR on the P chain. Transfer tokens from C and P.",
+            "title": "Chain Transfer",
+            "desc": "Staking requires FLR on the P chain. Transfer tokens between C and P chain",
             "submit": "Transfer"
         },
         "delegate_card": {
@@ -426,6 +426,7 @@
             "validation": "Validation",
             "delegation": "Delegation",
             "empty": "You do not have any pending rewards.",
+            "claim": "Rewards to claim",
             "row": {
                 "start": "Start",
                 "end": "End",
