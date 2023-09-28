@@ -23,7 +23,7 @@
         >
             {{ $t('advanced.verify.submit') }}
         </v-btn>
-        <div v-if="addressX" class="result">
+        <div v-if="addressP" class="result">
             <label>{{ $t('advanced.verify.label3') }}</label>
             <p class="address">{{ addressP }}</p>
         </div>
