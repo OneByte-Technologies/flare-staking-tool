@@ -63,7 +63,7 @@
                                 {
                                     'disabled-button':
                                         isAddressBindingPending ||
-                                        !registered ||
+                                        registered ||
                                         isInsufficientFunds,
                                 },
                             ]"
