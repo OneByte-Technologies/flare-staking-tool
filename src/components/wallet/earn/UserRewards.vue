@@ -140,7 +140,7 @@ export default class UserRewards extends Vue {
             gasEstimate = await contract.estimateGas.claim(
                 cAddress,
                 cAddress,
-                this.inputReward,
+                this.inputReward.toString(),
                 false,
                 {
                     from: cAddress,
@@ -155,7 +155,7 @@ export default class UserRewards extends Vue {
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
             cAddress,
-            this.inputReward,
+            this.inputReward.toString(),
             false
         )
         console.log('Populated Tx', populatedTx)
@@ -186,7 +186,7 @@ export default class UserRewards extends Vue {
     }
 
     rewardExist() {
-        if (this.unclaimedRewards === new BN(0)) {
+        if (this.unclaimedRewards.eq(new BN(0))) {
             this.canClaim = false
         }
         this.canClaim = true
