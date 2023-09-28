@@ -32,7 +32,7 @@
                 </div>
                 <div class="claimbutton" v-if="canClaim">
                     <v-btn @click="claimRewards" :disabled="!isRewardValid()">
-                        {{ $t('staking.rewards_card.submit2') }}
+                        {{ $t('staking.rewards_card.submit') }}
                     </v-btn>
                 </div>
             </div>
