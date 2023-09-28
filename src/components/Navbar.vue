@@ -61,7 +61,7 @@
                     <router-link to="/wallet/cross_chain">
                         {{ $t('wallet.sidebar.export') }}
                     </router-link>
-                    <router-link to="/wallet/earn">{{ $t('wallet.sidebar.earn') }}</router-link>
+                    <router-link to="/wallet/earn">{{ $t('wallet.sidebar.staking') }}</router-link>
                     <router-link to="/wallet/activity">Activity</router-link>
                     <router-link to="/wallet/keys">{{ $t('wallet.sidebar.manage') }}</router-link>
                     <router-link to="/wallet/advanced" data-cy="wallet_advanced">
@@ -97,6 +97,7 @@ import DayNightToggle from '@/components/misc/DayNightToggle.vue'
 import NetworkMenu from './NetworkSettings/NetworkMenu.vue'
 import ConfirmLogout from '@/components/modals/ConfirmLogout.vue'
 import AccountMenu from '@/components/wallet/sidebar/AccountMenu.vue'
+// import Web3Modal from '@/components/Web3Modal.vue'
 @Component({
     components: {
         AccountMenu,

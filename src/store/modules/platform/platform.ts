@@ -107,6 +107,10 @@ const platform_module: Module<PlatformState, RootState> = {
                 if (v.delegators && v.delegators.length > 0) {
                     for (let y = 0; y < v.delegators.length; y++) {
                         const delegator: Delegators = v.delegators[y]
+                        console.log('DELEGATORS///', delegator)
+
+                        const rewardOwner = v.delegators[y].rewardOwner
+                        console.log('////////RewardOwner', rewardOwner)
                         delegatedAmt = delegatedAmt.add(new BN(delegator.stakeAmount))
                     }
                 }
@@ -156,6 +160,41 @@ const platform_module: Module<PlatformState, RootState> = {
             })
 
             return res
+        },
+
+        delegatorCount(state, getters) {
+            const validators = state.validators
+            const delCount: { [key: string]: number } = { ['']: 0 }
+            const delegatorPendingMap: ValidatorDelegatorPendingDict =
+                getters.nodeDelegatorPendingMap
+            const res: ValidatorListItem[] = []
+            for (let i = 0; i < validators.length; i++) {
+                const v = validators[i]
+
+                const nodeID = v.nodeID
+
+                const delegatorsPending: DelegatorPendingRaw[] = delegatorPendingMap[nodeID] || []
+                console.log('Pending Delegators', delegatorsPending)
+
+                if (v.delegators && v.delegators.length > 0) {
+                    for (let y = 0; y < v.delegators.length; y++) {
+                        const delegator: Delegators = v.delegators[y]
+                        console.log('DELEGATORS///', delegator)
+
+                        const rewardOwnerAddr = v.delegators[y].rewardOwner.address[0]
+                        console.log('////////RewardOwner Address', rewardOwnerAddr)
+                        if (delCount[rewardOwnerAddr]) {
+                            delCount[rewardOwnerAddr]++
+                        } else {
+                            delCount[rewardOwnerAddr] = 1
+                        }
+
+                        console.log('DelCount////', delCount)
+                    }
+                }
+            }
+
+            return delCount
         },
 
         nodeDelegatorPendingMap(state): ValidatorDelegatorPendingDict {

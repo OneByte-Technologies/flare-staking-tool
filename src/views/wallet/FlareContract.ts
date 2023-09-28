@@ -1,57 +1,57 @@
-// import { ClaimRewardsInterface, RegisterAddressInterface, UnsignedTxJson } from './Interfaces'
-// import { SignatureRequest } from '@flarenetwork/flarejs/dist/common'
+import { ClaimRewardsInterface, RegisterAddressInterface, UnsignedTxJson } from './Interfaces'
+import { SignatureRequest } from '@flarenetwork/flarejs/dist/common'
 // import { bech32 } from 'bech32'
-// import { BigNumber, ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 // import { ledgerSign } from './ledger/sign'
-// import fs from 'fs'
-// import { colorCodes, forDefiDirectory, forDefiUnsignedTxnDirectory } from './constants'
-// import { NetworkConfig } from './config'
-// import {
-//     getAddressBinderABI,
-//     getFlareContractRegistryABI,
-//     defaultContractAddresses,
-//     addressBinderContractName,
-//     validatorRewardManagerContractName,
-//     contractTransactionName,
-//     getValidatorRewardManagerABI,
-// } from './FlareContractConstants'
+import fs from 'fs'
+import { colorCodes, forDefiDirectory, forDefiUnsignedTxnDirectory } from './Constants'
+import { NetworkConfig, costwo, flare, localflare } from './config'
+import {
+    getAddressBinderABI,
+    getFlareContractRegistryABI,
+    defaultContractAddresses,
+    addressBinderContractName,
+    validatorRewardManagerContractName,
+    contractTransactionName,
+    getValidatorRewardManagerABI,
+} from './FlareContractConstants'
 // import { prefix0x, saveUnsignedTxJson } from './utils'
 // import { walletConstants } from './screenConstants'
-// import { exit } from 'process' //correct
+import { exit } from 'process' //correct
 
-// /**
-//  * @description checks if the address is registered with the addressBinder contract
-//  * @param ethAddressToCheck
-//  * @param network
-//  */ export async function isAddressRegistered(
-//     ethAddressToCheck: string,
-//     network: string
-// ): Promise<boolean> {
-//     console.log('Checking Address Registration...')
-//     const rpcUrl = getRpcUrl(network)
-//     const addressBinderContractAddress = await getContractAddress(
-//         network,
-//         addressBinderContractName
-//     )
-//     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+/**
+ * @description checks if the address is registered with the addressBinder contract
+ * @param ethAddressToCheck
+ * @param network
+ */ export async function isAddressRegistered(
+    ethAddressToCheck: string,
+    network: string
+): Promise<boolean> {
+    console.log('Checking Address Registration...')
+    const rpcUrl = getRpcUrl(network)
+    const addressBinderContractAddress = await getContractAddress(
+        network,
+        addressBinderContractName
+    )
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
 
-//     const abi = getAddressBinderABI() as ethers.ContractInterface
-//     const contract = new ethers.Contract(addressBinderContractAddress, abi, provider)
+    const abi = getAddressBinderABI() as ethers.ContractInterface
+    const contract = new ethers.Contract(addressBinderContractAddress, abi, provider)
 
-//     const result = await contract.cAddressToPAddress(ethAddressToCheck)
+    const result = await contract.cAddressToPAddress(ethAddressToCheck)
 
-//     if (result !== '0x0000000000000000000000000000000000000000') {
-//         console.log(
-//             `${colorCodes.greenColor}Address associated with key ${ethAddressToCheck}: ${result}${colorCodes.resetColor}`
-//         )
-//         return true
-//     } else {
-//         console.log(
-//             `${colorCodes.redColor}No address found for key ${ethAddressToCheck}${colorCodes.resetColor}`
-//         )
-//         return false
-//     }
-// } //To Check
+    if (result !== '0x0000000000000000000000000000000000000000') {
+        console.log(
+            `${colorCodes.greenColor}Address associated with key ${ethAddressToCheck}: ${result}${colorCodes.resetColor}`
+        )
+        return true
+    } else {
+        console.log(
+            `${colorCodes.redColor}No address found for key ${ethAddressToCheck}${colorCodes.resetColor}`
+        )
+        return false
+    }
+} //To Check
 
 // /**
 //  * @description checks if there are any unclaimed rewards with the validatorRewardManager contract
@@ -202,12 +202,12 @@
 
 //     const gasPrice = await provider.getGasPrice()
 
-//     const populatedTx = await contract.populateTransaction.claim(
-//         cAddress,
-//         cAddress,
-//         rewardAmount,
-//         false
-//     )
+// const populatedTx = await contract.populateTransaction.claim(
+//     cAddress,
+//     cAddress,
+//     rewardAmount,
+//     false
+// )
 //     const unsignedTx = {
 //         ...populatedTx,
 //         nonce,
@@ -236,44 +236,44 @@
 //     return unsignedTxJson
 // }
 
-// function getRpcUrl(network: string): string {
-//     const config: NetworkConfig = getConfig(network)
-//     return `${config.protocol}://${config.ip}/ext/bc/C/rpc`
-// }
+function getRpcUrl(network: string): string {
+    const config: NetworkConfig = getConfig(network)
+    return `${config.protocol}://${config.ip}/ext/C/rpc`
+}
 
-// function getConfig(network: string): NetworkConfig {
-//     let networkConfig
-//     if (network == 'flare' || network === undefined) {
-//         networkConfig = flare
-//     } else if (network == 'costwo') {
-//         networkConfig = costwo
-//     } else if (network == 'localflare') {
-//         networkConfig = localflare
-//     } else throw Error('Invalid network')
-//     return networkConfig
-// }
+function getConfig(network: string): NetworkConfig {
+    let networkConfig: NetworkConfig
+    if (network == 'flare' || network === undefined) {
+        networkConfig = flare
+    } else if (network == 'costwo') {
+        networkConfig = costwo
+    } else if (network == 'localflare') {
+        networkConfig = localflare
+    } else throw Error('Invalid network')
+    return networkConfig
+}
 
-// async function getContractAddress(network: string, contractName: string): Promise<string> {
-//     const rpcUrl = getRpcUrl(network)
-//     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+async function getContractAddress(network: string, contractName: string): Promise<string> {
+    const rpcUrl = getRpcUrl(network)
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
 
-//     const abi = getFlareContractRegistryABI() as ethers.ContractInterface
-//     if (network != 'flare' && network != 'costwo') throw new Error('Invalid network passed')
-//     const contract = new ethers.Contract(
-//         defaultContractAddresses.flareContractRegistryAddress[network],
-//         abi,
-//         provider
-//     )
+    const abi = getFlareContractRegistryABI() as ethers.ContractInterface
+    if (network != 'flare' && network != 'costwo') throw new Error('Invalid network passed')
+    const contract = new ethers.Contract(
+        defaultContractAddresses.flareContractRegistryAddress[network],
+        abi,
+        provider
+    )
 
-//     const result = await contract.getContractAddressByName(contractName)
+    const result = await contract.getContractAddressByName(contractName)
 
-//     if (result !== '0x0000000000000000000000000000000000000000') return result
+    if (result !== '0x0000000000000000000000000000000000000000') return result
 
-//     const defaultAddress = defaultContractAddresses[contractName]?.[network]
-//     if (defaultAddress) return defaultAddress
+    const defaultAddress = defaultContractAddresses[contractName]?.[network]
+    if (defaultAddress) return defaultAddress
 
-//     throw new Error('Contract Address not found')
-// }
+    throw new Error('Contract Address not found')
+}
 
 // function readUnsignedEVMObject(id: string): ethers.utils.UnsignedTransaction {
 //     const fname = `${forDefiDirectory}/${forDefiUnsignedTxnDirectory}/${id}.unsignedEVMObject.json`

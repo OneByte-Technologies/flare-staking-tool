@@ -122,6 +122,8 @@
                         <label style="margin: 8px 0 !important">
                             * {{ $t('staking.delegate.summary.warn') }}
                         </label>
+                        <label>{{ $t('staking.delegate.errs.delCount') }}</label>
+                        <p>{{ delegatorCount }}</p>
                         <p class="err">{{ err }}</p>
                         <v-btn
                             v-if="!isConfirm"
@@ -221,7 +223,6 @@ import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
-import { addDelegatorTx } from '@/components/utils/pChain/addDelegatorTx'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -296,6 +297,8 @@ export default class AddDelegator extends Vue {
 
         let wallet: WalletType = this.$store.state.activeWallet
 
+        const delAddress = this.formRewardAddr
+
         // Start delegation in 5 minutes
         let startDate = new Date(Date.now() + 5 * MIN_MS)
 
@@ -309,7 +312,6 @@ export default class AddDelegator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
-            await addDelegatorTx(this.formNodeID)
             this.isSuccess = true
             this.txId = txId
             this.updateTxStatus(txId)
@@ -376,6 +378,12 @@ export default class AddDelegator extends Vue {
             title: 'Delegation Failed',
             message: 'Failed to delegate tokens.',
         })
+    }
+
+    get delegatorCount(): number {
+        const delCount: { [key: string]: number } = this.$store.getters['Platform/delegatorCount']
+        const rewardAddr = this.formRewardAddr
+        return delCount[rewardAddr]
     }
 
     get estimatedReward(): Big {

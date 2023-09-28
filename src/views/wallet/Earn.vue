@@ -13,7 +13,7 @@
             <div v-if="!pageNow">
                 <p>{{ $t('staking.desc') }}</p>
                 <div class="options">
-                    <div>
+                    <div class="card-container">
                         <h4 class="title">
                             {{ $t('staking.address_binder_card.title') }}
                         </h4>
@@ -33,6 +33,7 @@
                             </div>
                         </div>
                         <v-btn
+                            v-if="!registered"
                             class="button_secondary"
                             data-cy="addressBinder"
                             @click="addressBinder"
@@ -42,7 +43,8 @@
                             {{ $t('staking.address_binder_card.submit') }}
                         </v-btn>
                     </div>
-                    <div>
+
+                    <div class="card-container">
                         <h4 class="title">
                             {{ $t('staking.transfer_card.title') }}
                         </h4>
@@ -59,65 +61,74 @@
                             {{ $t('staking.transfer_card.submit') }}
                         </v-btn>
                     </div>
-                    <div>
-                        <h4 class="title">
-                            {{ $t('staking.delegate_card.title') }}
-                        </h4>
-                        <p style="flex-grow: 1">
-                            {{ $t('staking.delegate_card.desc') }}
-                        </p>
-                        <p class="no_balance">
-                            {{ $t('staking.warning_2', [minDelegationAmt.toLocaleString()]) }}
-                        </p>
-                        <v-btn
-                            class="button_secondary"
-                            data-cy="delegate"
-                            @click="addDelegator"
-                            depressed
-                            small
-                        >
-                            {{ $t('staking.delegate_card.submit') }}
-                        </v-btn>
+
+                    <div :class="{ 'disabled-card-parent': !registered }">
+                        <div :class="['card-container', { 'disabled-card': !registered }]">
+                            <h4 class="title">
+                                {{ $t('staking.delegate_card.title') }}
+                            </h4>
+                            <p style="flex-grow: 1">
+                                {{ $t('staking.delegate_card.desc') }}
+                            </p>
+                            <p class="no_balance">
+                                {{ $t('staking.warning_2', [minDelegationAmt.toLocaleString()]) }}
+                            </p>
+                            <v-btn
+                                v-if="registered"
+                                class="button_secondary"
+                                data-cy="delegate"
+                                @click="addDelegator"
+                                depressed
+                                small
+                            >
+                                {{ $t('staking.delegate_card.submit') }}
+                            </v-btn>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="title">
-                            {{ $t('staking.validate_card.title') }}
-                        </h4>
-                        <p style="flex-grow: 1">
-                            {{ $t('staking.validate_card.desc') }}
-                        </p>
-                        <p class="no_balance">
-                            {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
-                        </p>
-                        <v-btn
-                            class="button_secondary"
-                            data-cy="validate"
-                            @click="addValidator"
-                            depressed
-                            small
-                        >
-                            {{ $t('staking.validate_card.submit') }}
-                        </v-btn>
+                    <div :class="{ 'disabled-card-parent': !registered }">
+                        <div :class="['card-container', { 'disabled-card': !registered }]">
+                            <h4 class="title">
+                                {{ $t('staking.validate_card.title') }}
+                            </h4>
+                            <p style="flex-grow: 1">
+                                {{ $t('staking.validate_card.desc') }}
+                            </p>
+                            <p style="padding-top: 24px" class="no_balance">
+                                {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
+                            </p>
+                            <v-btn
+                                v-if="registered"
+                                class="button_secondary"
+                                data-cy="validate"
+                                @click="addValidator"
+                                depressed
+                                small
+                            >
+                                {{ $t('staking.validate_card.submit') }}
+                            </v-btn>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="title">
-                            {{ $t('staking.rewards_card.title') }}
-                        </h4>
-                        <p style="flex-grow: 1">
-                            {{ $t('staking.rewards_card.desc') }}
-                        </p>
-                        <v-btn
-                            class="button_secondary"
-                            data-cy="rewards"
-                            @click="viewRewards"
-                            depressed
-                            small
-                        >
-                            {{ $t('staking.rewards_card.submit') }}
-                        </v-btn>
+                    <div :class="{ 'disabled-card-parent': !registered }">
+                        <div :class="['card-container', { 'disabled-card': !registered }]">
+                            <h4 class="title">
+                                {{ $t('staking.rewards_card.title') }}
+                            </h4>
+                            <p style="flex-grow: 1">
+                                {{ $t('staking.rewards_card.desc') }}
+                            </p>
+                            <v-btn
+                                v-if="registered"
+                                class="button_secondary"
+                                data-cy="rewards"
+                                @click="viewRewards"
+                                depressed
+                                small
+                            >
+                                {{ $t('staking.rewards_card.submit') }}
+                            </v-btn>
+                        </div>
                     </div>
                 </div>
-                <!--                <v-btn @click="viewRewards" depressed small>View Estimated Rewards</v-btn>-->
             </div>
             <div v-else>
                 <component :is="pageNow" class="comp" @cancel="cancel"></component>
@@ -131,15 +142,20 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import AddValidator from '@/components/wallet/earn/Validate/AddValidator.vue'
 import AddDelegator from '@/components/wallet/earn/Delegate/AddDelegator.vue'
+import Tooltip from '@/components/misc/Tooltip.vue'
 import Register from '@/components/wallet/earn/Register.vue'
 import { BN } from 'avalanche/dist'
 import UserRewards from '@/components/wallet/earn/UserRewards.vue'
 import { bnToBig } from '@/helpers/helper'
 import Big from 'big.js'
-// import { isAddressRegistered, registerAddress } from '@/views/wallet/FlareContract'
 import { ava } from '@/AVA'
-import { ClaimRewardsInterface, RegisterAddressInterface, UnsignedTxJson } from './Interfaces'
-import { issueC } from '@/helpers/issueTx'
+import {
+    defaultContractAddresses,
+    getAddressBinderABI,
+    getValidatorRewardManagerABI,
+} from './FlareContractConstants'
+import AddressBinder from '@/views/wallet/AddressBinder.vue'
+import { ethers } from 'ethers'
 
 @Component({
     name: 'earn',
@@ -153,29 +169,34 @@ export default class Earn extends Vue {
     pageNow: any = null
     subtitle: string = ''
     intervalID: any = null
-    registered: boolean = false
+    registered: Boolean = false
+    isRewards: boolean = false
 
     async isRegistered(): Promise<Boolean> {
         const wallet = this.$store.state.activeWallet
         const cHexAddr = wallet.getEvmChecksumAddress()
-        const network: string = ava.getHRP()
-        console.log('Network ??????', network)
-        console.log(cHexAddr, 'cHexAddr')
-        // this.registered = await isAddressRegistered(cHexAddr, network)
-        return this.registered
-    }
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const contractAddress: string = defaultContractAddresses.AddressBinder.flare
+        const abi = getAddressBinderABI() as ethers.ContractInterface
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const result = await contract.cAddressToPAddress(cHexAddr)
 
-    async addressBinder() {
-        // this.pageNow = AddressBinder
-        const wallet = this.$store.state.activeWallet
-        const network: string = ava.getHRP()
-        const cAddress = wallet.getEvmChecksumAddress()
-        const pAddress = wallet.getCurrentAddressPlatform()
-        const publicKey: string = ''
-        // const registerParams: RegisterAddressInterface = { publicKey, pAddress, cAddress, network, wallet1, dPath, pvtKey, txId }
-        // const unsignedTx: object = registerAddress(registerParams)
-        //issueC() + signC() ??
-        console.log('Address Binding Completed')
+        if (result !== '0x0000000000000000000000000000000000000000') {
+            console.log('Success. You are registered')
+            this.registered = true
+            return this.registered
+        } else {
+            console.log('Please Register')
+            this.registered = false
+            return this.registered
+        }
+    }
+    res = this.isRegistered()
+
+    addressBinder() {
+        this.pageNow = AddressBinder
+        this.subtitle = this.$t('staking.subtitle5') as string
     }
 
     addValidator() {
@@ -194,6 +215,7 @@ export default class Earn extends Vue {
         this.pageNow = UserRewards
         this.subtitle = this.$t('staking.subtitle4') as string
     }
+
     cancel() {
         this.pageNow = null
         this.subtitle = ''
@@ -205,6 +227,17 @@ export default class Earn extends Vue {
 
     destroyed() {
         clearInterval(this.intervalID)
+    }
+
+    getIp() {
+        let ip = ''
+        if (ava.getHRP() === 'costwo') {
+            ip = 'coston2'
+        } else if (ava.getHRP() === 'flare') {
+            ip = 'flare'
+        }
+        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        return rpcUrl
     }
 
     get platformUnlocked(): BN {
@@ -234,7 +267,7 @@ export default class Earn extends Vue {
 
     get canValidate(): boolean {
         let bn = this.$store.state.Platform.minStake
-        if (this.totBal.lt(bn)) {
+        if (this.totBal.lt(bn) && !this.isRegistered) {
             return false
         }
         return true
@@ -248,6 +281,10 @@ export default class Earn extends Vue {
     get minDelegationAmt(): Big {
         let bn = this.$store.state.Platform.minStakeDelegation
         return bnToBig(bn, 9)
+    }
+
+    get register(): Promise<Boolean> {
+        return this.isRegistered()
     }
 }
 </script>
@@ -265,13 +302,10 @@ export default class Earn extends Vue {
     }
 
     display: flex;
-    /*justify-content: space-between;*/
-    /*align-items: center;*/
     align-items: center;
 
     .subtitle {
         margin-left: 0.5em;
-        /*font-size: 20px;*/
         color: var(--primary-color-light);
         font-weight: lighter;
     }
@@ -289,23 +323,50 @@ export default class Earn extends Vue {
 .options {
     margin: 30px 0;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 14px;
-    //display: flex;
-    //justify-content: space-evenly;
-    //padding: 60px;
 
-    > div {
+    .card-container {
+        position: relative;
         width: 100%;
+        height: 100%;
         justify-self: center;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
-        //max-width: 260px;
         padding: 30px;
         border-radius: 4px;
         background-color: var(--bg-light);
+    }
+
+    .disabled-card {
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    .disabled-card-parent {
+        position: relative;
+    }
+
+    .disabled-card-parent::after {
+        content: 'Complete Address Binding';
+        position: absolute;
+        top: 50%;
+        /* Center vertically from the top */
+        left: 50%;
+        /* Center horizontally from the left */
+        transform: translate(-50%, -50%);
+        /* Center alignment */
+        background-color: var(--bg-light);
+        padding: 10px;
+        text-align: center;
+        opacity: 0.9;
+        z-index: 1;
+        border-radius: 5px;
+        font-size: 14px;
+        color: var(--primary-color);
+        width: 100%;
     }
 
     h4 {
@@ -315,7 +376,6 @@ export default class Earn extends Vue {
     }
 
     p {
-        /*color: var(--primary-color-light);*/
         margin: 14px 0 !important;
     }
 
@@ -325,6 +385,7 @@ export default class Earn extends Vue {
 
     .v-btn {
         margin-top: 14px;
+        width: 100%;
     }
 }
 
@@ -355,6 +416,14 @@ span {
     .options {
         grid-template-columns: none;
         grid-row-gap: 15px;
+
+        .card-container {
+            display: block;
+        }
+
+        .v-btn {
+            width: unset;
+        }
     }
 }
 </style>

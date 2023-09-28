@@ -31,6 +31,8 @@ const notifications_module: Module<NotifState, RootState> = {
                 case 'warning':
                     color = COLOR_WARNING
                     break
+                case 'in-progress':
+                    color = COLOR_SUCCESS
             }
 
             const item: Notification = {
@@ -38,7 +40,7 @@ const notifications_module: Module<NotifState, RootState> = {
                 title: data.title,
                 message: data.message,
                 color: color,
-                duration: 5000,
+                duration: 11000,
             }
 
             setTimeout(() => {
