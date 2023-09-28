@@ -3,22 +3,27 @@
         <div class="history_block" :disabled="!isActivityPage"></div>
         <div class="header">
             <h2>Transactions</h2>
-            <Spinner v-if="isUpdating" class="spinner"></Spinner>
+            <!-- <Spinner v-if="isUpdating" class="spinner"></Spinner> -->
         </div>
-        <div class="empty" v-if="!isExplorer">
+        <!-- <div class="empty" v-if="!isExplorer">
             <h4>{{ $t('transactions.error_api') }}</h4>
             <p>{{ $t('transactions.error_api_desc') }}</p>
+            
         </div>
         <div class="empty" v-else-if="isEmpty && !isUpdating">
             <p>{{ $t('transactions.notx') }}</p>
-        </div>
-        <div class="list no_scroll_bar" v-else>
-            <tx-history-row
+            
+        </div> -->
+        <div class="txn_comingsoon">
+            <!-- <tx-history-row
                 v-for="tx in transactions"
                 :key="tx.txHash"
                 :transaction="tx"
                 class="tx_row"
-            ></tx-history-row>
+            ></tx-history-row> -->
+            <h2>Coming Soon</h2>
+            <!-- You can customize the text below as needed -->
+            <!-- <p>Transaction details will be available soon.</p> -->
         </div>
     </div>
 </template>
@@ -155,6 +160,13 @@ export default class TransactionHistoryPanel extends Vue {
     &[disabled] {
         opacity: 0;
     }
+}
+
+.txn_comingsoon {
+    margin-top: 50%;
+    margin-bottom: 50%;
+    margin-left: 70px;
+    margin-right: 35px;
 }
 @include main.medium-device {
 }
