@@ -126,16 +126,7 @@
                             <label>{{ $t('staking.validate.summary.duration') }} *</label>
                             <p>{{ durationText }}</p>
                         </div>
-                        <!-- The below code has been commented to remove Estimated rewards -->
-                        <!-- <div>
-                            <label>{{ $t('staking.validate.summary.rewards') }}</label>
-                            <p v-if="currency_type === 'FLR'">
-                                {{ estimatedReward.toLocaleString(2) }} FLR
-                            </p>
-                            <p v-if="currency_type === 'USD'">
-                                ${{ estimatedRewardUSD.toLocaleString(2) }} USD
-                            </p>
-                        </div> -->
+
                         <div class="submit_box">
                             <label style="margin: 8px 0 !important">
                                 * {{ $t('staking.validate.summary.warn') }}
@@ -489,22 +480,6 @@ export default class AddValidator extends Vue {
     get avaxPrice(): Big {
         return Big(this.$store.state.prices.usd)
     }
-
-    // get estimatedReward(): Big {
-    //     let start = new Date(this.startDate)
-    //     let end = new Date(this.endDate)
-    //     let duration = end.getTime() - start.getTime() // in ms
-
-    //     let currentSupply = this.$store.state.Platform.currentSupply
-    //     let estimation = calculateStakingReward(this.stakeAmt, duration / 1000, currentSupply)
-    //     let res = bnToBig(estimation, 9)
-
-    //     return res
-    // }
-
-    // get estimatedRewardUSD() {
-    //     return this.estimatedReward.times(this.avaxPrice)
-    // }
 
     updateFormData() {
         this.formNodeId = this.nodeId.trim()
