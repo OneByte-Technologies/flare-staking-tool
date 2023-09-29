@@ -126,22 +126,11 @@
                             <label>{{ $t('staking.validate.summary.duration') }} *</label>
                             <p>{{ durationText }}</p>
                         </div>
-                        <div>
-                            <label>{{ $t('staking.validate.summary.rewards') }}</label>
-                            <p v-if="currency_type === 'FLR'">
-                                {{ estimatedReward.toLocaleString(2) }} FLR
-                            </p>
-                            <p v-if="currency_type === 'USD'">
-                                ${{ estimatedRewardUSD.toLocaleString(2) }} USD
-                            </p>
-                        </div>
+
                         <div class="submit_box">
                             <label style="margin: 8px 0 !important">
                                 * {{ $t('staking.validate.summary.warn') }}
                             </label>
-                            <p v-if="warnShortDuration" class="err">
-                                {{ $t('staking.validate.errs.duration_warn') }}
-                            </p>
                             <p class="err">{{ err }}</p>
                             <!-- <v-btn
                                 v-if="!isConfirm"
@@ -193,7 +182,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="success_cont">
+                    <div class="success_cont" v-else>
                         <h2>{{ $t('staking.validate.success.title') }}</h2>
                         <p>{{ $t('staking.validate.success.desc') }}</p>
                         <p class="tx_id">Tx ID: {{ txId }}</p>
@@ -348,17 +337,6 @@ export default class AddValidator extends Vue {
         this.rewardDestination = val
     }
 
-    // Returns true to show a warning about short validation periods that can not take any delegators
-    get warnShortDuration(): boolean {
-        let dur = this.stakeDuration
-
-        // If duration is less than 16 days give a warning
-        if (dur <= DAY_MS * 16) {
-            return true
-        }
-        return false
-    }
-
     get stakeDuration(): number {
         let start = new Date(this.startDate)
         let end = new Date(this.endDate)
@@ -487,22 +465,6 @@ export default class AddValidator extends Vue {
 
     get avaxPrice(): Big {
         return Big(this.$store.state.prices.usd)
-    }
-
-    get estimatedReward(): Big {
-        let start = new Date(this.startDate)
-        let end = new Date(this.endDate)
-        let duration = end.getTime() - start.getTime() // in ms
-
-        let currentSupply = this.$store.state.Platform.currentSupply
-        let estimation = calculateStakingReward(this.stakeAmt, duration / 1000, currentSupply)
-        let res = bnToBig(estimation, 9)
-
-        return res
-    }
-
-    get estimatedRewardUSD() {
-        return this.estimatedReward.times(this.avaxPrice)
     }
 
     updateFormData() {
@@ -698,7 +660,7 @@ export default class AddValidator extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../../../../main";
+@use '../../../../main';
 
 form {
     display: grid;
