@@ -28,7 +28,7 @@ export function updateFilterAddresses(): void {
     if (!socketX || !wallet) {
         return
     }
-
+    // @ts-ignore
     const externalAddrs = wallet.getAllDerivedExternalAddresses()
     const addrsLen = externalAddrs.length
     const startIndex = Math.max(0, addrsLen - FILTER_ADDRESS_SIZE)

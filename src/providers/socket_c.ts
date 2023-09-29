@@ -75,6 +75,7 @@ function updateWalletBalanceC() {
     const wallet: null | WalletType = store.state.activeWallet
     if (!wallet) return
     // Refresh the wallet balance
+    //@ts-ignore
     wallet.getEthBalance()
 }
 

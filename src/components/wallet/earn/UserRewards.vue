@@ -30,8 +30,19 @@
                 <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
             </div>
             <div class="claimbutton">
-                <v-btn @click="claimRewards" :disabled="!isRewardValid()">
+                <v-btn
+                    @click="claimRewards"
+                    :disabled="!isRewardValid()"
+                    :class="[
+                        'button_secondary',
+                        {
+                            'disabled-button': isclaimRewardPending,
+                        },
+                    ]"
+                    depressed
+                >
                     {{ $t('staking.rewards_card.submit') }}
+                    <fa v-if="isclaimRewardPending" icon="cog" spin></fa>
                 </v-btn>
             </div>
         </div>
@@ -70,6 +81,7 @@ export default class UserRewards extends Vue {
     claimedRewardNumber: BN = new BN(0)
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
     inputReward: BN = new BN(0)
+    isclaimRewardPending = false
 
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
@@ -125,6 +137,7 @@ export default class UserRewards extends Vue {
     }
 
     async claimRewards() {
+        this.isclaimRewardPending = true
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
         const rpcUrl: string = this.getIp()
@@ -172,6 +185,7 @@ export default class UserRewards extends Vue {
         const ethersWallet = new ethers.Wallet(wallet.ethKey)
         const signedTx = await ethersWallet.signTransaction(unsignedTx)
         const txId = await contract.provider.sendTransaction(signedTx)
+        this.isclaimRewardPending = false
         console.log('txId', txId)
     }
 
@@ -249,6 +263,7 @@ export default class UserRewards extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../main';
+
 .user_rewards {
     padding-bottom: 5vh;
 }
@@ -260,7 +275,8 @@ export default class UserRewards extends Vue {
 }
 
 .box > div {
-    flex: 1; /* Equal width for both columns */
+    flex: 1;
+    /* Equal width for both columns */
     margin-right: 10px;
 }
 
@@ -276,9 +292,12 @@ export default class UserRewards extends Vue {
 .disabled-card-parent::after {
     content: 'No Rewards';
     position: absolute;
-    top: 50%; /* Center vertically from the top */
-    left: 50%; /* Center horizontally from the left */
-    transform: translate(-50%, -50%); /* Center alignment */
+    top: 50%;
+    /* Center vertically from the top */
+    left: 50%;
+    /* Center horizontally from the left */
+    transform: translate(-50%, -50%);
+    /* Center alignment */
     background: rgba(255, 255, 255, 0.9);
     padding: 10px;
     text-align: center;
@@ -309,7 +328,8 @@ label {
 
 .grid {
     margin: 20px auto;
-    width: 100%; /* Set width to 100% for responsiveness */
+    width: 100%;
+    /* Set width to 100% for responsiveness */
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-row-gap: 20px;
@@ -320,6 +340,7 @@ label {
     .grid {
         display: block;
     }
+
     .grid > div {
         margin: 10px;
     }
