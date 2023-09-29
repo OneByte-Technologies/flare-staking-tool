@@ -139,9 +139,6 @@
                             <label style="margin: 8px 0 !important">
                                 * {{ $t('staking.validate.summary.warn') }}
                             </label>
-                            <p v-if="warnShortDuration" class="err">
-                                <!-- {{ $t('staking.validate.errs.duration_warn') }} -->
-                            </p>
                             <p class="err">{{ err }}</p>
                             <!-- <v-btn
                                 v-if="!isConfirm"
@@ -698,7 +695,7 @@ export default class AddValidator extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../../../../main";
+@use '../../../../main';
 
 form {
     display: grid;
