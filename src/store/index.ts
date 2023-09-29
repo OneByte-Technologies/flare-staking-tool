@@ -374,6 +374,7 @@ export default new Vuex.Store({
         },
 
         async updateIsRegistered(store) {
+            store.state.isRegistered = false
             if (!store.state.activeWallet) {
                 const addr = 'no active wallet'
                 console.log('store.state.activeWallet', store.state.activeWallet, addr)
