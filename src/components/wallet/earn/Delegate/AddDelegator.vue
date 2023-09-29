@@ -122,8 +122,6 @@
                         <label style="margin: 8px 0 !important">
                             * {{ $t('staking.delegate.summary.warn') }}
                         </label>
-                        <label>{{ $t('staking.delegate.errs.delCount') }}</label>
-                        <p>{{ delegatorCount }}</p>
                         <p class="err">{{ err }}</p>
                         <v-btn
                             v-if="!isConfirm"
@@ -138,6 +136,7 @@
                         </v-btn>
                         <template v-else>
                             <v-btn
+                                :disabled="getDelCount > 3"
                                 @click="submit"
                                 class="button_secondary"
                                 depressed
@@ -146,6 +145,14 @@
                             >
                                 {{ $t('staking.delegate.submit') }}
                             </v-btn>
+                            >
+                            <Tooltip
+                                v-if="getDelCount > 3"
+                                style="display: inline-block"
+                                :text="$t('staking.delegate.warn_tooltip')"
+                            >
+                                <fa icon="question-circle"></fa>
+                            </Tooltip>
                             <v-btn
                                 text
                                 @click="cancelConfirm"
@@ -202,10 +209,10 @@ import StakingCalculator from '@/components/wallet/earn/StakingCalculator.vue'
 import ConfirmPage from '@/components/wallet/earn/Delegate/ConfirmPage.vue'
 import Big from 'big.js'
 import moment from 'moment'
-
+import { ethers } from 'ethers'
 import { BN } from 'avalanche'
 import { AmountOutput, PlatformVMConstants, UTXO, UTXOSet } from 'avalanche/dist/apis/platformvm'
-import { ava, avm, bintools, infoApi, pChain } from '@/AVA'
+import { ava, avm, bintools, infoApi, pChain, cChain } from '@/AVA'
 import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import { bnToBig, calculateStakingReward } from '@/helpers/helper'
 import { Defaults, ONEAVAX } from 'avalanche/dist/utils'
@@ -223,6 +230,9 @@ import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
+import { getDelCount } from '@/views/wallet/FlareContract'
+import { fetchMirrorFunds } from '@/views/wallet/FlareContract'
+import { Context } from '@/views/wallet/Interfaces'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -295,26 +305,24 @@ export default class AddDelegator extends Vue {
         this.isLoading = true
         this.err = ''
 
-        let wallet: WalletType = this.$store.state.activeWallet
-
-        const delAddress = this.formRewardAddr
-
         // Start delegation in 5 minutes
         let startDate = new Date(Date.now() + 5 * MIN_MS)
 
         try {
             this.isLoading = false
-            let txId = await wallet.delegate(
-                this.formNodeID,
-                this.formAmt,
-                startDate,
-                this.formEnd,
-                this.formRewardAddr,
-                this.formUtxos
-            )
-            this.isSuccess = true
-            this.txId = txId
-            this.updateTxStatus(txId)
+            if (getDelCount() < 3) {
+                let txId = await this.wallet.delegate(
+                    this.formNodeID,
+                    this.formAmt,
+                    startDate,
+                    this.formEnd,
+                    this.formRewardAddr,
+                    this.formUtxos
+                )
+                this.isSuccess = true
+                this.txId = txId
+                this.updateTxStatus(txId)
+            }
         } catch (e) {
             this.onerror(e)
             this.isLoading = false
@@ -333,6 +341,17 @@ export default class AddDelegator extends Vue {
             this.$store.dispatch('Assets/updateUTXOs')
             this.$store.dispatch('History/updateTransactionHistory')
         }, 3000)
+    }
+
+    getIp() {
+        let ip = ''
+        if (ava.getHRP() === 'costwo') {
+            ip = 'coston2'
+        } else if (ava.getHRP() === 'flare') {
+            ip = 'flare'
+        }
+        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        return rpcUrl
     }
 
     async updateTxStatus(txId: string) {
@@ -381,9 +400,8 @@ export default class AddDelegator extends Vue {
     }
 
     get delegatorCount(): number {
-        const delCount: { [key: string]: number } = this.$store.getters['Platform/delegatorCount']
-        const rewardAddr = this.formRewardAddr
-        return delCount[rewardAddr]
+        console.log('Delegator Count', getDelCount())
+        return getDelCount()
     }
 
     get estimatedReward(): Big {
