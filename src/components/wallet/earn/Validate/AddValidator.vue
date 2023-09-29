@@ -383,7 +383,7 @@ export default class AddValidator extends Vue {
 
         // absolute max stake
         let mult = new BN(10).pow(new BN(6 + 9))
-        let absMaxStake = new BN(3).mul(mult)
+        let absMaxStake = new BN(200).mul(mult)
 
         // If above stake limit
         if (pAmt.gt(absMaxStake)) {
@@ -436,12 +436,12 @@ export default class AddValidator extends Vue {
 
     get maxDelegationAmt(): BN {
         let stakeAmt = this.stakeAmt
-
-        let maxRelative = stakeAmt.mul(new BN(5))
+        console.log('STAKEAMT//////', this.stakeAmt.toString())
+        let maxRelative = stakeAmt.mul(new BN(16))
 
         // absolute max stake
         let mult = new BN(10).pow(new BN(6 + 9))
-        let absMaxStake = new BN(3).mul(mult)
+        let absMaxStake = new BN(200).mul(mult)
 
         let res
         if (maxRelative.lt(absMaxStake)) {
@@ -540,6 +540,7 @@ export default class AddValidator extends Vue {
 
         // Stake amount
         if (this.stakeAmt.lt(this.minStakeAmt)) {
+            console.log('STAKE AMOUNT//', this.stakeAmt, 'MINSTAKE AMOUNT', this.minStakeAmt)
             let big = Big(this.minStakeAmt.toString()).div(Math.pow(10, 9))
             this.err = this.$t('staking.validate.errs.amount', [big.toLocaleString()]) as string
             return false
