@@ -551,6 +551,7 @@ export default class AddValidator extends Vue {
 
     async submit() {
         if (!this.formCheck()) return
+        this.updateFormData()
         let wallet: WalletType = this.$store.state.activeWallet
 
         // Start delegation in 5 minutes
