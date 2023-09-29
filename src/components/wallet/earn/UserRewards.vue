@@ -30,8 +30,19 @@
                 <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
             </div>
             <div class="claimbutton">
-                <v-btn @click="claimRewards" :disabled="!isRewardValid()">
+                <v-btn
+                    @click="claimRewards"
+                    :disabled="!isRewardValid()"
+                    :class="[
+                        'button_secondary',
+                        {
+                            'disabled-button': isClaimRewardPending,
+                        },
+                    ]"
+                    depressed
+                >
                     {{ $t('staking.rewards_card.submit') }}
+                    <fa style="margin-left: 8px" v-if="isClaimRewardPending" icon="cog" spin></fa>
                 </v-btn>
             </div>
         </div>
@@ -69,6 +80,7 @@ export default class UserRewards extends Vue {
     claimedRewardNumber: BN = new BN(0)
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
     inputReward: BN = new BN(0)
+    isClaimRewardPending: boolean = false
 
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
@@ -124,6 +136,7 @@ export default class UserRewards extends Vue {
     }
 
     async claimRewards() {
+        this.isClaimRewardPending = true
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
         const rpcUrl: string = this.getIp()
@@ -171,6 +184,7 @@ export default class UserRewards extends Vue {
         const ethersWallet = new ethers.Wallet(wallet.ethKey)
         const signedTx = await ethersWallet.signTransaction(unsignedTx)
         const txId = await contract.provider.sendTransaction(signedTx)
+        this.isClaimRewardPending = false
         console.log('txId', txId)
     }
 
@@ -248,6 +262,10 @@ export default class UserRewards extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../main';
+.disabled-button {
+    opacity: 0.4;
+    pointer-events: none;
+}
 .user_rewards {
     padding-bottom: 5vh;
 }
