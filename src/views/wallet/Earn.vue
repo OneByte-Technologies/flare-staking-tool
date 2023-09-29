@@ -21,7 +21,7 @@
                             {{ $t('staking.address_binder_card.desc') }}
                         </p>
                         <div>
-                            <div v-if="!registered">
+                            <div v-if="!$store.state.isRegistered">
                                 <p class="no_balance">
                                     {{ $t('staking.warning_3') }}
                                 </p>
@@ -33,7 +33,7 @@
                             </div>
                         </div>
                         <v-btn
-                            v-if="!registered"
+                            v-if="!$store.state.isRegistered"
                             class="button_secondary"
                             data-cy="addressBinder"
                             @click="addressBinder"
@@ -62,8 +62,13 @@
                         </v-btn>
                     </div>
 
-                    <div :class="{ 'disabled-card-parent': !registered }">
-                        <div :class="['card-container', { 'disabled-card': !registered }]">
+                    <div :class="{ 'disabled-card-parent': !$store.state.isRegistered }">
+                        <div
+                            :class="[
+                                'card-container',
+                                { 'disabled-card': !$store.state.isRegistered },
+                            ]"
+                        >
                             <h4 class="title">
                                 {{ $t('staking.delegate_card.title') }}
                             </h4>
@@ -74,7 +79,7 @@
                                 {{ $t('staking.warning_2', [minDelegationAmt.toLocaleString()]) }}
                             </p>
                             <v-btn
-                                v-if="registered"
+                                v-if="$store.state.isRegistered"
                                 class="button_secondary"
                                 data-cy="delegate"
                                 @click="addDelegator"
@@ -85,8 +90,13 @@
                             </v-btn>
                         </div>
                     </div>
-                    <div :class="{ 'disabled-card-parent': !registered }">
-                        <div :class="['card-container', { 'disabled-card': !registered }]">
+                    <div :class="{ 'disabled-card-parent': !$store.state.isRegistered }">
+                        <div
+                            :class="[
+                                'card-container',
+                                { 'disabled-card': !$store.state.isRegistered },
+                            ]"
+                        >
                             <h4 class="title">
                                 {{ $t('staking.validate_card.title') }}
                             </h4>
@@ -97,7 +107,7 @@
                                 {{ $t('staking.warning_1', [minStakeAmt.toLocaleString()]) }}
                             </p>
                             <v-btn
-                                v-if="registered"
+                                v-if="$store.state.isRegistered"
                                 class="button_secondary"
                                 data-cy="validate"
                                 @click="addValidator"
@@ -108,8 +118,13 @@
                             </v-btn>
                         </div>
                     </div>
-                    <div :class="{ 'disabled-card-parent': !registered }">
-                        <div :class="['card-container', { 'disabled-card': !registered }]">
+                    <div :class="{ 'disabled-card-parent': !$store.state.isRegistered }">
+                        <div
+                            :class="[
+                                'card-container',
+                                { 'disabled-card': !$store.state.isRegistered },
+                            ]"
+                        >
                             <h4 class="title">
                                 {{ $t('staking.rewards_card.title') }}
                             </h4>
@@ -117,7 +132,7 @@
                                 {{ $t('staking.rewards_card.desc') }}
                             </p>
                             <v-btn
-                                v-if="registered"
+                                v-if="$store.state.isRegistered"
                                 class="button_secondary"
                                 data-cy="rewards"
                                 @click="viewRewards"
@@ -156,6 +171,7 @@ import {
 } from './FlareContractConstants'
 import AddressBinder from '@/views/wallet/AddressBinder.vue'
 import { ethers } from 'ethers'
+import store from '@/store'
 
 @Component({
     name: 'earn',
@@ -169,30 +185,7 @@ export default class Earn extends Vue {
     pageNow: any = null
     subtitle: string = ''
     intervalID: any = null
-    registered: Boolean = false
     isRewards: boolean = false
-
-    async isRegistered(): Promise<Boolean> {
-        const wallet = this.$store.state.activeWallet
-        const cHexAddr = wallet.getEvmChecksumAddress()
-        const rpcUrl: string = this.getIp()
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress: string = defaultContractAddresses.AddressBinder.flare
-        const abi = getAddressBinderABI() as ethers.ContractInterface
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        const result = await contract.cAddressToPAddress(cHexAddr)
-
-        if (result !== '0x0000000000000000000000000000000000000000') {
-            console.log('Success. You are registered')
-            this.registered = true
-            return this.registered
-        } else {
-            console.log('Please Register')
-            this.registered = false
-            return this.registered
-        }
-    }
-    res = this.isRegistered()
 
     addressBinder() {
         this.pageNow = AddressBinder
@@ -267,7 +260,7 @@ export default class Earn extends Vue {
 
     get canValidate(): boolean {
         let bn = this.$store.state.Platform.minStake
-        if (this.totBal.lt(bn) && !this.isRegistered) {
+        if (this.totBal.lt(bn) && !this.$store.state.isRegistered) {
             return false
         }
         return true
@@ -284,7 +277,7 @@ export default class Earn extends Vue {
     }
 
     get register(): Promise<Boolean> {
-        return this.isRegistered()
+        return this.$store.state.isRegistered
     }
 }
 </script>

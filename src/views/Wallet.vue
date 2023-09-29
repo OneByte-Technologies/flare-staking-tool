@@ -63,6 +63,7 @@ export default class Wallet extends Vue {
         this.intervalId = setInterval(() => {
             this.checkLogout()
         }, 1000)
+        this.$store.dispatch('updateIsRegistered')
     }
 
     unload(event: BeforeUnloadEvent) {

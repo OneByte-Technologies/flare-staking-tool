@@ -40,6 +40,7 @@ import { Buffer } from 'avalanche'
 import { privateToAddress } from 'ethereumjs-util'
 import { updateFilterAddresses } from '../providers'
 import { getAvaxPriceUSD } from '@/helpers/price_helper'
+import { checkIsRegistered } from '@/js/Register'
 
 export default new Vuex.Store({
     modules: {
@@ -62,6 +63,7 @@ export default new Vuex.Store({
         prices: {
             usd: 0,
         },
+        isRegistered: false,
     },
     getters: {
         addresses(state: RootState): string[] {
@@ -368,6 +370,24 @@ export default new Vuex.Store({
             const usd = await getAvaxPriceUSD()
             store.state.prices = {
                 usd,
+            }
+        },
+
+        async updateIsRegistered(store) {
+            if (!store.state.activeWallet) {
+                const addr = 'no active wallet'
+                console.log('store.state.activeWallet', store.state.activeWallet, addr)
+                // const register = await checkIsRegistered(addr)
+                // console.log(register)
+                // const convertedValue: boolean = Boolean(register)
+                // store.state.isRegistered = convertedValue
+            } else {
+                const addr = store.state.activeWallet.getEvmChecksumAddress()
+
+                // Check address binder and updated isRegistered value
+                const register = await checkIsRegistered(addr)
+                const convertedValue: boolean = Boolean(register)
+                store.state.isRegistered = convertedValue
             }
         },
     },

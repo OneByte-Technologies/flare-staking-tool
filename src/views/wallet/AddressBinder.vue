@@ -226,6 +226,7 @@ export default class AddressBinder extends Vue {
             title: 'Binding Complete',
             message: 'You have registered',
         })
+        this.$store.dispatch('updateIsRegistered')
     }
 
     onFail() {

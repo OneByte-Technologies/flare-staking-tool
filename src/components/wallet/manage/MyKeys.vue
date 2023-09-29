@@ -44,6 +44,7 @@ export default class MyKeys extends Vue {
         console.log('keys-selectWallet:', wallet)
         this.$store.dispatch('activateWallet', wallet)
         this.$store.dispatch('History/updateTransactionHistory')
+        this.$store.dispatch('updateIsRegistered')
     }
 
     get account() {
