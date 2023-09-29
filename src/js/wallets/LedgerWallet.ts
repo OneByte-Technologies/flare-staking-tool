@@ -448,9 +448,11 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
     // Used for signing transactions that are parsable
     async signTransactionParsable<
-        UnsignedTx extends AVMUnsignedTx | PlatformUnsignedTx | EVMUnsignedTx,
+        UnsignedTx extends PlatformUnsignedTx | EVMUnsignedTx,
         SignedTx extends AVMTx | PlatformTx | EvmTx
     >(unsignedTx: UnsignedTx, paths: string[], chainId: ChainIdType): Promise<SignedTx> {
+        const cKeyChain = avalanche.CChain().keyChain()
+        const txHashes = unsignedTx.prepareUnsignedHashes(cKeyChain)
         const tx = unsignedTx.getTransaction()
         const txType = tx.getTxType()
         const parseableTxs = {
@@ -469,11 +471,10 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
                 : bippath.fromString(`${AVA_ACCOUNT_PATH}`)
         const txbuff = unsignedTx.toBuffer()
 
+        const messageBuffer = Buffer.from(txHashes[0].message, 'hex')
         const outputAddrs = getTxOutputAddresses<UnsignedTx>(unsignedTx)
-
         // Get their paths, for owned ones
         const changePaths = this.getAddressPaths(outputAddrs)
-
         const messages = this.getTransactionMessages<UnsignedTx>(
             unsignedTx,
             chainId,
@@ -486,12 +487,11 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
                 messages: messages,
                 info: null,
             })
-            const ledgerSignedTx = await this.provider.signTx(
+            const ledgerSignedTx = await this.provider.signHash(
                 this.getTransport(),
-                Buffer.from(txbuff),
+                messageBuffer,
                 accountPath,
-                bip32Paths,
-                changePaths
+                bip32Paths
             )
 
             const sigMap = ledgerSignedTx.signatures
@@ -499,9 +499,9 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
             let signedTx
             switch (chainId) {
-                case 'X':
-                    signedTx = new AVMTx(unsignedTx as AVMUnsignedTx, creds)
-                    break
+                // case 'X':
+                //     signedTx = new AVMTx(unsignedTx as AVMUnsignedTx, creds)
+                //     break
                 case 'P':
                     signedTx = new PlatformTx(unsignedTx as PlatformUnsignedTx, creds)
                     break
@@ -737,21 +737,20 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             paths.length
         )
 
-        let signedTx
-        if (canSign) {
-            signedTx = await this.signTransactionParsable<AVMUnsignedTx, AVMTx>(
-                unsignedTx,
-                paths,
-                chainId
-            )
-        } else {
-            signedTx = await this.signTransactionHash<AVMUnsignedTx, AVMTx>(
-                unsignedTx,
-                paths,
-                chainId
-            )
-        }
-
+        // let signedTx
+        // if (canSign) {
+        //     // signedTx = await this.signTransactionParsable<AVMUnsignedTx, AVMTx>(
+        //     //     unsignedTx,
+        //     //     paths,
+        //     //     chainId
+        //     // )
+        // } else {
+        const signedTx = await this.signTransactionHash<AVMUnsignedTx, AVMTx>(
+            unsignedTx,
+            paths,
+            chainId
+        )
+        // }
         store.commit('Ledger/closeModal')
         return signedTx
     }
