@@ -63,6 +63,7 @@ const fetchDelegateStake = async (ctx: Context, validatorFunction: (ctx: Context
 // calculates the total amount of delegation
 const getTotalFromDelegation = (data: DelegatedAmount[]) => {
     let total = 0
+
     for (let i = 0; i < data.length; i++) {
         total += data[i].stakeAmount
         delegationCount++
@@ -103,6 +104,8 @@ export async function fetchMirrorFunds(ctx: Context) {
             ...delegationToPendingValidator,
         },
         'Delegation Count': delegationCount,
+        'Total Current Amount': getTotalFromDelegation(delegationToCurrentValidator),
+        'Total Pending Amount': getTotalFromDelegation(delegationToPendingValidator),
     }
 }
 

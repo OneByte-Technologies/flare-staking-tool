@@ -203,8 +203,8 @@ export default class BalanceCard extends Vue {
             console.log('Mirror Funds Data:', mirrorFundsData)
             this.totalMirrorAmount = mirrorFundsData['Total Mirrored Amount']
             this.mirrorFundDetail = mirrorFundsData['Mirror Funds Details']
-            this.amountFromCurrentValidator = mirrorFundsData['Mirror Funds Details'][0].stakeAmount
-            this.amountFromPendingValidator = mirrorFundsData['Mirror Funds Details'][1].stakeAmount
+            this.amountFromCurrentValidator = mirrorFundsData['Total Current Amount']
+            this.amountFromPendingValidator = mirrorFundsData['Total Pending Amount']
         } catch (error) {
             console.error('Error fetching Mirror Funds:', error)
         }
