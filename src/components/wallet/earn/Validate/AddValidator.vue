@@ -345,17 +345,6 @@ export default class AddValidator extends Vue {
         this.rewardDestination = val
     }
 
-    // Returns true to show a warning about short validation periods that can not take any delegators
-    get warnShortDuration(): boolean {
-        let dur = this.stakeDuration
-
-        // If duration is less than 16 days give a warning
-        if (dur <= DAY_MS * 16) {
-            return true
-        }
-        return false
-    }
-
     get stakeDuration(): number {
         let start = new Date(this.startDate)
         let end = new Date(this.endDate)
