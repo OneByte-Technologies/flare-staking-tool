@@ -34,7 +34,7 @@ const fetchPendingValidatorInfo = async (ctx: Context) => {
 const fetchDelegateStake = async (ctx: Context, validatorFunction: (ctx: Context) => {}) => {
     const validatorsInfo = await validatorFunction(ctx)
     const validatorData = (validatorsInfo as any)?.validators
-    let userStake = []
+    const userStake = []
     for (let i = 0; i < validatorData.length; i++) {
         for (
             let j = 0;
