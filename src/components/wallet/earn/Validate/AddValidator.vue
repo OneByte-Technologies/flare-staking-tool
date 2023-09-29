@@ -139,9 +139,6 @@
                             <label style="margin: 8px 0 !important">
                                 * {{ $t('staking.validate.summary.warn') }}
                             </label>
-                            <p v-if="warnShortDuration" class="err">
-                                {{ $t('staking.validate.errs.duration_warn') }}
-                            </p>
                             <p class="err">{{ err }}</p>
                             <!-- <v-btn
                                 v-if="!isConfirm"
@@ -346,17 +343,6 @@ export default class AddValidator extends Vue {
             this.rewardIn = ''
         }
         this.rewardDestination = val
-    }
-
-    // Returns true to show a warning about short validation periods that can not take any delegators
-    get warnShortDuration(): boolean {
-        let dur = this.stakeDuration
-
-        // If duration is less than 16 days give a warning
-        if (dur <= DAY_MS * 16) {
-            return true
-        }
-        return false
     }
 
     get stakeDuration(): number {
@@ -698,7 +684,7 @@ export default class AddValidator extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../../../../main";
+@use '../../../../main';
 
 form {
     display: grid;
