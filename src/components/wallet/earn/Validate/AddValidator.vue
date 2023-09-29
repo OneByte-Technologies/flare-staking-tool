@@ -126,7 +126,8 @@
                             <label>{{ $t('staking.validate.summary.duration') }} *</label>
                             <p>{{ durationText }}</p>
                         </div>
-                        <div>
+                        <!-- The below code has been commented to remove Estimated rewards -->
+                        <!-- <div>
                             <label>{{ $t('staking.validate.summary.rewards') }}</label>
                             <p v-if="currency_type === 'FLR'">
                                 {{ estimatedReward.toLocaleString(2) }} FLR
@@ -134,7 +135,7 @@
                             <p v-if="currency_type === 'USD'">
                                 ${{ estimatedRewardUSD.toLocaleString(2) }} USD
                             </p>
-                        </div>
+                        </div> -->
                         <div class="submit_box">
                             <label style="margin: 8px 0 !important">
                                 * {{ $t('staking.validate.summary.warn') }}
@@ -193,7 +194,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="success_cont">
+                    <div class="success_cont" v-else>
                         <h2>{{ $t('staking.validate.success.title') }}</h2>
                         <p>{{ $t('staking.validate.success.desc') }}</p>
                         <p class="tx_id">Tx ID: {{ txId }}</p>
