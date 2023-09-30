@@ -113,7 +113,7 @@ class AvaNetwork {
 
     getWsUrlC(): string {
         const protocol = this.protocol === 'https' ? 'wss' : 'ws'
-        return `${protocol}://${this.ip}:${this.port}/ext/bc/C/ws`
+        return `${protocol}://${this.ip}:${this.port}/ext/C/ws`
     }
 }
 
