@@ -17,12 +17,12 @@
         <LedgerWalletLoading></LedgerWalletLoading>
         <NetworkLoadingBlock></NetworkLoadingBlock>
         <notifications></notifications>
-        <analytics></analytics>
+        <!-- <analytics></analytics> -->
         <TestNetBanner></TestNetBanner>
     </v-app>
 </template>
 <script>
-import Analytics from '@/components/Analytics/Analytics'
+// import Analytics from '@/components/Analytics/Analytics'
 import Notifications from '@/components/Notifications'
 import Navbar from './components/Navbar'
 import SaveAccountModal from '@/components/modals/SaveAccount/SaveAccountModal'
@@ -45,7 +45,7 @@ export default {
         SaveAccountModal,
         Navbar,
         Notifications,
-        Analytics,
+        // Analytics,
         TestNetBanner,
     },
     async created() {

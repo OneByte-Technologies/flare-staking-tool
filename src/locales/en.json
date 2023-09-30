@@ -371,7 +371,7 @@
         "warning_4": "You are already registered",
         "address_binder_card": {
             "title": "Address Binder",
-            "desc": "Ready to up your Staking game? Secure your spot by registering your Wallet address!",
+            "desc": "Bind Your P-Chain Address to Your C-Chain Address to Unlock Rewards",
             "submit": "Register"
         },
         "transfer_card": {
