@@ -122,8 +122,6 @@
                         <label style="margin: 8px 0 !important">
                             * {{ $t('staking.delegate.summary.warn') }}
                         </label>
-                        <label>{{ $t('staking.delegate.errs.delCount') }}</label>
-                        <p>{{ delegatorCount }}</p>
                         <p class="err">{{ err }}</p>
                         <v-btn
                             v-if="!isConfirm"
@@ -378,12 +376,6 @@ export default class AddDelegator extends Vue {
             title: 'Delegation Failed',
             message: 'Failed to delegate tokens.',
         })
-    }
-
-    get delegatorCount(): number {
-        const delCount: { [key: string]: number } = this.$store.getters['Platform/delegatorCount']
-        const rewardAddr = this.formRewardAddr
-        return delCount[rewardAddr]
     }
 
     get estimatedReward(): Big {
