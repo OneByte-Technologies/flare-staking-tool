@@ -104,6 +104,7 @@ export default class NetworkRow extends Vue {
                 { root: true }
             )
         }
+        this.$store.dispatch('updateIsRegistered')
     }
 }
 </script>
