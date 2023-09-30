@@ -136,7 +136,6 @@
                         </v-btn>
                         <template v-else>
                             <v-btn
-                                :disabled="getDelCount > 3"
                                 @click="submit"
                                 class="button_secondary"
                                 depressed
@@ -145,14 +144,6 @@
                             >
                                 {{ $t('staking.delegate.submit') }}
                             </v-btn>
-                            >
-                            <Tooltip
-                                v-if="getDelCount > 3"
-                                style="display: inline-block"
-                                :text="$t('staking.delegate.warn_tooltip')"
-                            >
-                                <fa icon="question-circle"></fa>
-                            </Tooltip>
                             <v-btn
                                 text
                                 @click="cancelConfirm"
@@ -397,11 +388,6 @@ export default class AddDelegator extends Vue {
             title: 'Delegation Failed',
             message: 'Failed to delegate tokens.',
         })
-    }
-
-    get delegatorCount(): number {
-        console.log('Delegator Count', getDelCount())
-        return getDelCount()
     }
 
     get estimatedReward(): Big {
