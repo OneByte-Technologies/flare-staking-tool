@@ -1,40 +1,48 @@
 <template>
-    <div style="max-width: 490px">
-        <div>
-            <div class="grid">
-                <div>
-                    <label style="text-align: center">
-                        {{ $t('staking.rewards.total') }}
-                    </label>
-                    <p>
-                        {{ totalRewardNumber.toString() }}
-                    </p>
-                </div>
-                <div>
-                    <label>
-                        {{ $t('staking.rewards.claimed') }}
-                    </label>
-                    <p>
-                        {{ claimedRewardNumber.toString() }}
-                    </p>
-                </div>
-                <div>
-                    <label>
-                        {{ $t('staking.rewards.unclaimed') }}
-                    </label>
-                    <p>
-                        {{ unclaimedRewards.toString() }}
-                    </p>
-                </div>
-                <div>
-                    <label>{{ $t('staking.rewards.claim') }}</label>
-                    <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
-                </div>
-                <div class="claimbutton" v-if="canClaim">
-                    <v-btn @click="claimRewards" :disabled="!isRewardValid()">
-                        {{ $t('staking.rewards_card.submit') }}
-                    </v-btn>
-                </div>
+    <div>
+        <div class="grid">
+            <div>
+                <label style="text-align: center">
+                    {{ $t('staking.rewards.total') }}
+                </label>
+                <p>
+                    {{ totalRewardNumber.toString() }}
+                </p>
+            </div>
+            <div>
+                <label>
+                    {{ $t('staking.rewards.claimed') }}
+                </label>
+                <p>
+                    {{ claimedRewardNumber.toString() }}
+                </p>
+            </div>
+            <div>
+                <label>
+                    {{ $t('staking.rewards.unclaimed') }}
+                </label>
+                <p>
+                    {{ unclaimedRewards.toString() }}
+                </p>
+            </div>
+            <div>
+                <label>{{ $t('staking.rewards.claim') }}</label>
+                <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
+            </div>
+            <div class="claimbutton">
+                <v-btn
+                    @click="claimRewards"
+                    :disabled="!isRewardValid()"
+                    :class="[
+                        'button_secondary',
+                        {
+                            'disabled-button': isClaimRewardPending,
+                        },
+                    ]"
+                >
+                    {{ $t('staking.rewards_card.submit') }}
+                    <fa style="margin-left: 4px" v-if="isClaimRewardPending" icon="cog" spin></fa>
+                </v-btn>
             </div>
         </div>
     </div>
@@ -65,13 +73,13 @@ import AvaxInput from '@/components/misc/AvaxInput.vue'
     },
 })
 export default class UserRewards extends Vue {
-    @Prop() maxAmt!: BN
     updateInterval: ReturnType<typeof setInterval> | undefined = undefined
     canClaim: boolean = false
     totalRewardNumber: BN = new BN(0)
     claimedRewardNumber: BN = new BN(0)
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
-    inputReward: string = '0'
+    inputReward: BN = new BN(0)
+    isClaimRewardPending = false
 
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
@@ -85,21 +93,18 @@ export default class UserRewards extends Vue {
         const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
         const rewards = await contract.getStateOfRewards(cAddress)
-        const totalRewardNumber: BN = rewards[0]
+        const totalRewardNumber: BN = new BN(rewards[0])
         this.totalRewardNumber = totalRewardNumber
-        const claimedRewardNumber: BN = rewards[1]
+        const claimedRewardNumber: BN = new BN(rewards[1])
         this.claimedRewardNumber = claimedRewardNumber
         const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
         this.unclaimedRewards = unclaimedRewards
         console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
-        this.rewardExist
+        this.rewardExist()
     }
     async mounted() {
         console.log('mounted')
-        await this.viewRewards()
-        console.log('here')
-        this.maxAmt = this.unclaimedRewards
-        console.log('Max Amt', this.maxAmt)
+        this.viewRewards()
     }
 
     get userAddresses() {
@@ -125,11 +130,12 @@ export default class UserRewards extends Vue {
     }
 
     isRewardValid(): boolean {
-        const rewardAmt = new BN(this.inputReward)
+        const rewardAmt = this.inputReward
         return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
     }
 
     async claimRewards() {
+        this.isClaimRewardPending = true
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
         const rpcUrl: string = this.getIp()
@@ -146,13 +152,14 @@ export default class UserRewards extends Vue {
             gasEstimate = await contract.estimateGas.claim(
                 cAddress,
                 cAddress,
-                this.unclaimedRewards.toString(),
+                this.inputReward.toString(),
                 false,
                 {
                     from: cAddress,
                 }
             )
-        } catch {
+        } catch (error) {
+            console.log('error', error)
             console.log('Incorrect arguments passed')
         }
         const gasPrice = await provider.getGasPrice()
@@ -160,7 +167,7 @@ export default class UserRewards extends Vue {
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
             cAddress,
-            this.inputReward,
+            this.inputReward.toString(),
             false
         )
         console.log('Populated Tx', populatedTx)
@@ -176,6 +183,7 @@ export default class UserRewards extends Vue {
         const ethersWallet = new ethers.Wallet(wallet.ethKey)
         const signedTx = await ethersWallet.signTransaction(unsignedTx)
         const txId = await contract.provider.sendTransaction(signedTx)
+        this.isClaimRewardPending = false
         console.log('txId', txId)
     }
 
@@ -190,12 +198,11 @@ export default class UserRewards extends Vue {
         return rpcUrl
     }
 
-    get rewardExist() {
-        if (this.unclaimedRewards === new BN(0)) {
+    rewardExist() {
+        if (this.unclaimedRewards.eq(new BN(0))) {
             this.canClaim = false
         }
         this.canClaim = true
-        return this.canClaim
     }
 
     get rewardBig(): Big {
@@ -253,6 +260,11 @@ export default class UserRewards extends Vue {
 }
 </script>
 <style scoped lang="scss">
+@use '../../../main';
+.disabled-button {
+    opacity: 0.4;
+    pointer-events: none;
+}
 .user_rewards {
     padding-bottom: 5vh;
 }
@@ -279,15 +291,17 @@ label {
     margin: 20px auto;
     width: 100%; /* Set width to 100% for responsiveness */
     display: grid;
-    grid-template-columns: 1fr; /* Start with one column */
+    grid-template-columns: 1fr 1fr;
     grid-row-gap: 20px;
-    border: 1px solid white;
     padding: 10px;
 }
 
-@media (min-width: 600px) {
+@include main.mobile-device {
     .grid {
-        grid-template-columns: repeat(2, 1fr); /* Two columns for larger screens */
+        display: block;
+    }
+    .grid > div {
+        margin: 10px;
     }
 }
 

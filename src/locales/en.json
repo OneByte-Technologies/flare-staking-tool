@@ -371,7 +371,7 @@
         "warning_4": "You are already registered",
         "address_binder_card": {
             "title": "Address Binder",
-            "desc": "Ready to up your Staking game? Secure your spot by registering your Wallet address!",
+            "desc": "Bind Your P-Chain Address to Your C-Chain Address to Unlock Rewards",
             "submit": "Register"
         },
         "transfer_card": {
@@ -515,7 +515,6 @@
                 "reason": "Reason"
             },
             "errs": {
-                "duration_warn": "WARNING: You must have at least 14 days remaining on your validation period to accept delegations.",
                 "date": "Start date must be in the future and end date must be after start date.",
                 "amount": "Stake amount must be at least {0} FLR",
                 "id": "Invalid Node ID.",

@@ -13,10 +13,10 @@ import vuetify from './plugins/vuetify'
 // @ts-ignore
 import i18n from './plugins/i18n.js'
 // @ts-ignore
-import posthogPlugin from './plugins/posthog.js'
+// import posthogPlugin from './plugins/posthog.js'
 
 // Install Posthog
-Vue.use(posthogPlugin)
+// Vue.use(posthogPlugin)
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
