@@ -34,7 +34,7 @@
                             :balance="utxosBalanceBig"
                         ></AvaxInput>
                     </div>
-                    <div class="reward_in" style="margin: 30px 0" :type="rewardDestination">
+                    <!-- <div class="reward_in" style="margin: 30px 0" :type="rewardDestination">
                         <h4>{{ $t('staking.delegate.form.reward.label') }}</h4>
                         <p class="desc">
                             {{ $t('staking.delegate.form.reward.desc') }}
@@ -59,7 +59,7 @@
                             placeholder="Reward Address"
                             class="reward_addr_in"
                         ></QrInput>
-                    </div>
+                    </div> -->
                     <Expandable>
                         <template v-slot:triggerOn>
                             <p>
