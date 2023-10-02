@@ -1,5 +1,5 @@
 <template>
-    <div class="balance_card">
+    <div>
         <UtxosBreakdownModal ref="utxos_modal"></UtxosBreakdownModal>
         <div class="fungible_card">
             <div class="header">
@@ -92,14 +92,20 @@
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
                         <p>{{ stakingText }} FLR</p>
+                        <label>Total Mirror Funds</label>
+                        <p>{{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR</p>
                     </div>
                 </div>
                 <div class="alt_breakdown">
                     <div>
-                        <label>Total Mirror Funds</label>
-                        <p>{{ totalMirrorAmount }}</p>
+                        <label v-if="!isBreakdown">Total Mirror Funds</label>
+                        <p v-if="!isBreakdown">
+                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }}
+                        </p>
                         <label v-if="isBreakdown">Mirror Funds</label>
-                        <p v-if="isBreakdown">{{ amountFromCurrentValidator }} FLR</p>
+                        <p v-if="isBreakdown">
+                            {{ formatNumberWithCommas(amountFromCurrentValidator) }} FLR
+                        </p>
                     </div>
 
                     <div v-if="isBreakdown">
@@ -201,7 +207,9 @@ export default class BalanceCard extends Vue {
             console.log(`Mirror fund details on the network "${ava.getHRP()}"`)
             console.log(`${JSON.stringify(mirrorFundsData, null, 2)}`)
             console.log('Mirror Funds Data:', mirrorFundsData)
-            this.totalMirrorAmount = mirrorFundsData['Total Mirrored Amount']
+            this.totalMirrorAmount = parseFloat(
+                mirrorFundsData['Total Mirrored Amount']
+            ).toLocaleString()
             this.mirrorFundDetail = mirrorFundsData['Mirror Funds Details']
             this.amountFromCurrentValidator = mirrorFundsData['Total Current Amount']
             this.amountFromPendingValidator = mirrorFundsData['Total Pending Amount']
@@ -212,6 +220,10 @@ export default class BalanceCard extends Vue {
 
     mounted() {
         this.mirrorFunds()
+    }
+
+    formatNumberWithCommas(number: number) {
+        return number.toLocaleString()
     }
 
     getIp() {
@@ -461,12 +473,6 @@ export default class BalanceCard extends Vue {
 <style scoped lang="scss">
 @use '../../../../main';
 
-.balance_card {
-    display: grid;
-    grid-template-columns: 1fr 230px;
-    column-gap: 20px;
-}
-
 .nft_card {
     border-left: 2px solid var(--bg-light);
 }
@@ -625,11 +631,6 @@ h4 {
 }
 
 @include main.medium-device {
-    .balance_card {
-        display: block;
-        //grid-template-columns: 1fr 120px;
-    }
-
     .balance {
         font-size: 1.8rem !important;
     }
@@ -648,11 +649,6 @@ h4 {
 }
 
 @include main.mobile-device {
-    .balance_card {
-        grid-template-columns: none;
-        display: block !important;
-    }
-
     .nft_col {
         display: none;
     }

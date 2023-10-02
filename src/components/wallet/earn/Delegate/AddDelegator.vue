@@ -34,7 +34,7 @@
                             :balance="utxosBalanceBig"
                         ></AvaxInput>
                     </div>
-                    <div class="reward_in" style="margin: 30px 0" :type="rewardDestination">
+                    <!-- <div class="reward_in" style="margin: 30px 0" :type="rewardDestination">
                         <h4>{{ $t('staking.delegate.form.reward.label') }}</h4>
                         <p class="desc">
                             {{ $t('staking.delegate.form.reward.desc') }}
@@ -59,7 +59,7 @@
                             placeholder="Reward Address"
                             class="reward_addr_in"
                         ></QrInput>
-                    </div>
+                    </div> -->
                     <Expandable>
                         <template v-slot:triggerOn>
                             <p>
@@ -100,15 +100,6 @@
                         <p>{{ stakingDurationText }}</p>
                     </div>
                     <div>
-                        <label>{{ $t('staking.delegate.summary.reward') }}</label>
-                        <p v-if="currency_type === 'FLR'">
-                            {{ estimatedReward.toLocaleString(2) }} FLR
-                        </p>
-                        <p v-if="currency_type === 'USD'">
-                            ${{ estimatedRewardUSD.toLocaleString(2) }} USD
-                        </p>
-                    </div>
-                    <div>
                         <label>{{ $t('staking.delegate.summary.fee') }}</label>
                         <p v-if="currency_type === 'FLR'">
                             {{ totalFeeBig.toLocaleString(2) }} FLR
@@ -141,6 +132,7 @@
                                 depressed
                                 :loading="isLoading"
                                 block
+                                :disabled="canDelegate"
                             >
                                 {{ $t('staking.delegate.submit') }}
                             </v-btn>
@@ -285,6 +277,11 @@ export default class AddDelegator extends Vue {
         this.selected = val
     }
 
+    get canDelegate(): boolean {
+        console.log('DelCount Working ? ', getDelCount() < 3)
+        return getDelCount() < 3
+    }
+
     get wallet(): WalletType {
         return this.$store.state.activeWallet
     }
@@ -313,6 +310,8 @@ export default class AddDelegator extends Vue {
                 this.isSuccess = true
                 this.txId = txId
                 this.updateTxStatus(txId)
+            } else {
+                this.err = 'You cannot delegate more than 3 times using the same reward address'
             }
         } catch (e) {
             this.onerror(e)
@@ -660,7 +659,7 @@ export default class AddDelegator extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../../../../main";
+@use '../../../../main';
 
 .add_delegator {
     height: 100%;
@@ -710,6 +709,7 @@ label {
 .node_col {
     max-width: 390px;
 }
+
 .selected {
     display: flex;
     flex-wrap: wrap;
@@ -730,6 +730,7 @@ label {
 
     button {
         opacity: 0.4;
+
         &:hover {
             opacity: 1;
         }
@@ -742,6 +743,7 @@ label {
 
 .dates {
     display: flex;
+
     > div {
         flex-grow: 1;
         margin-right: 15px;
@@ -751,6 +753,7 @@ label {
         float: right;
         opacity: 0.4;
         cursor: pointer;
+
         &:hover {
             opacity: 1;
         }
@@ -760,6 +763,7 @@ label {
 .reward_in {
     width: 100%;
     transition-duration: 0.2s;
+
     &[type='local'] {
         .reward_addr_in {
             opacity: 0.3;
@@ -776,6 +780,7 @@ label {
 .reward_tabs {
     margin-bottom: 8px;
     font-size: 13px;
+
     button {
         color: var(--primary-color-light);
 
@@ -806,8 +811,10 @@ label {
 .summary {
     border-left: 2px solid var(--bg-light);
     padding-left: 30px;
+
     > div {
         margin-bottom: 14px;
+
         p {
             font-size: 24px;
         }
@@ -860,6 +867,7 @@ label {
     .summary {
         > div {
             margin-bottom: 10px;
+
             p {
                 font-size: 18px;
             }

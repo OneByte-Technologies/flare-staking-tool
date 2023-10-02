@@ -27,21 +27,21 @@ export default {
     },
     methods: {
         onAccept() {
-            localStorage.setItem('consentsToAnalytics', true)
+            // localStorage.setItem('consentsToAnalytics', true)
             // @ts-ignore
-            this.$posthog.opt_in_capturing()
-            this.consentsToAnalytics = true
-            this.$emit('change', this.value)
+            // this.$posthog.opt_in_capturing()
+            // this.consentsToAnalytics = true
+            // this.$emit('change', this.value)
 
             return
         },
         onReject() {
-            localStorage.setItem('consentsToAnalytics', false)
+            // localStorage.setItem('consentsToAnalytics', false)
             // @ts-ignore
-            this.$posthog.opt_out_capturing()
-            this.analyticsEnabled = false
-            this.consentsToAnalytics = false
-            this.$emit('change', this.value)
+            // this.$posthog.opt_out_capturing()
+            // this.analyticsEnabled = false
+            // this.consentsToAnalytics = false
+            // this.$emit('change', this.value)
 
             return
         },
