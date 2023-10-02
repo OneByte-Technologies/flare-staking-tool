@@ -93,13 +93,15 @@
                         <label>{{ $t('top.balance.stake') }}</label>
                         <p>{{ stakingText }} FLR</p>
                         <label>Total Mirror Funds</label>
-                        <p>{{ totalMirrorAmount }} FLR</p>
+                        <p>{{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR</p>
                     </div>
                 </div>
                 <div class="alt_breakdown">
                     <div>
                         <label v-if="!isBreakdown">Total Mirror Funds</label>
-                        <p v-if="!isBreakdown">{{ totalMirrorAmount }}</p>
+                        <p v-if="!isBreakdown">
+                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }}
+                        </p>
                         <label v-if="isBreakdown">Mirror Funds</label>
                         <p v-if="isBreakdown">
                             {{ formatNumberWithCommas(amountFromCurrentValidator) }} FLR
