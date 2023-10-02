@@ -90,7 +90,7 @@ export default class DateForm extends Vue {
     maxoutEndDate() {
         this.localEnd = this.endDateMax
     }
-    get disableDateRestrictionComputed() {
+    get startDateOffset() {
         return this.disableDateRestriction === true ? DAY_MS * 0 : DAY_MS * 14
     }
 
@@ -123,7 +123,7 @@ export default class DateForm extends Vue {
         let start = this.localStart
         let startDate = new Date(start)
 
-        let end = startDate.getTime() + this.disableDateRestrictionComputed
+        let end = startDate.getTime() + this.startDateOffset
         let endDate = new Date(end)
         return endDate.toISOString()
     }
