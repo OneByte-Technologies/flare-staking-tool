@@ -52,8 +52,8 @@
             </div>
             <div class="bottom">
                 <AccountMenu class="wallet_link"></AccountMenu>
-                <LanguageSelect></LanguageSelect>
-                <AnalyticsCheckbox></AnalyticsCheckbox>
+                <!-- <LanguageSelect></LanguageSelect> -->
+                <!-- <AnalyticsCheckbox></AnalyticsCheckbox> -->
             </div>
         </div>
     </div>
