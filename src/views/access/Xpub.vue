@@ -4,7 +4,7 @@
             <h1>XPUB (Readonly)</h1>
             <p class="desc">Show FLR balances.</p>
             <form @submit.prevent="access">
-                <p class="_label">X & P-Chain Extended Public Key</p>
+                <p class="_label">P-Chain Extended Public Key</p>
                 <v-text-field
                     class="pass"
                     label="xpub..."
