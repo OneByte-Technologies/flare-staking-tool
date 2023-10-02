@@ -24,7 +24,7 @@
                             {{ $t('staking.delegate.form.amount.desc') }}
                         </p>
                         <p v-if="showMaxTxSizeWarning" class="desc amount_warning">
-                            The maximum amount that fits into this transaction issds
+                            The maximum amount that fits into this transaction is
                             <b>{{ maxTxSizeString }} FLR</b>
                         </p>
                         <AvaxInput
