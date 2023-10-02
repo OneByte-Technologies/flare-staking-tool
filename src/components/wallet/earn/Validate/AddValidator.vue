@@ -18,7 +18,10 @@
                             <p class="desc">
                                 {{ $t('staking.validate.duration.desc') }}
                             </p>
-                            <DateForm @change_end="setEnd"></DateForm>
+                            <DateForm
+                                :disableDateRestriction="disableDateRestriction"
+                                @change_end="setEnd"
+                            ></DateForm>
                         </div>
                         <div style="margin: 30px 0">
                             <h4>{{ $t('staking.validate.amount.label') }}</h4>
@@ -305,6 +308,7 @@ export default class AddValidator extends Vue {
 
     maxTxSizeAmount = new BN(0)
     bnToAvaxP: any
+    disableDateRestriction: boolean = true
 
     mounted() {
         this.rewardSelect('local')
