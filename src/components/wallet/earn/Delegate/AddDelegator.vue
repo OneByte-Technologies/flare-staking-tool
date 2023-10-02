@@ -141,6 +141,7 @@
                                 depressed
                                 :loading="isLoading"
                                 block
+                                :disabled="canDelegate"
                             >
                                 {{ $t('staking.delegate.submit') }}
                             </v-btn>
@@ -285,6 +286,11 @@ export default class AddDelegator extends Vue {
         this.selected = val
     }
 
+    get canDelegate(): boolean {
+        console.log('DelCount Working ? ', getDelCount() < 3)
+        return getDelCount() < 3
+    }
+
     get wallet(): WalletType {
         return this.$store.state.activeWallet
     }
@@ -313,6 +319,8 @@ export default class AddDelegator extends Vue {
                 this.isSuccess = true
                 this.txId = txId
                 this.updateTxStatus(txId)
+            } else {
+                this.err = 'You cannot delegate more than 3 times using the same reward address'
             }
         } catch (e) {
             this.onerror(e)

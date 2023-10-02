@@ -11,9 +11,7 @@
             <!--            <p>{{ uptimeText }}</p>-->
             <p style="font-size: 0.8rem">
                 Please refer to
-                <a :href="vscoutURL" target="_blank">VScout</a>
-                or
-                <a :href="avascanURL" target="_blank">Avascan</a>
+                <a :href="vscoutURL" target="_blank">Towo Labs</a>
                 to get more information about a node's uptime.
             </p>
         </div>
@@ -88,7 +86,7 @@ export default class NodeCard extends Vue {
     }
 
     get vscoutURL() {
-        return `https://vscout.io/validator/${this.node.nodeID}`
+        return `https://validators.towolabs.com/validator/${this.node.nodeID}`
     }
 }
 </script>
