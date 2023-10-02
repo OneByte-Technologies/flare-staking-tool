@@ -169,8 +169,9 @@ export default class Activity extends Vue {
     }
 
     get showList(): boolean {
-        if (this.isUpdatingAll || this.isLoading || this.isError) return false
-        return true
+        return false
+        // if (this.isUpdatingAll || this.isLoading || this.isError) return false
+        // return true
     }
 
     get isUpdatingAll(): boolean {

@@ -14,12 +14,14 @@ export default {
     methods: {
         setNight() {
             this.val = true
+            this.$vuetify.theme.dark = true
             localStorage.setItem('theme', 'night')
             document.documentElement.setAttribute('data-theme', 'night')
             this.$root.theme = 'night'
         },
         setDay() {
             this.val = false
+            this.$vuetify.theme.dark = false
             localStorage.setItem('theme', 'day')
             document.documentElement.setAttribute('data-theme', 'day')
             this.$root.theme = 'day'

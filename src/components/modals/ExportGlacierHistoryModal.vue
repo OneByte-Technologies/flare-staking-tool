@@ -5,7 +5,7 @@
                 <label>Include Chains</label>
                 <MultiSelect
                     style="margin: 0px auto"
-                    :labels="['X-Chain', 'P-Chain', 'C-Chain']"
+                    :labels="['P-Chain', 'C-Chain']"
                     :keys="initialSelection"
                     v-model="includeChains"
                     :disabled="operationID"
