@@ -34,18 +34,18 @@ export default {
     computed: {},
     methods: {
         onAccept() {
-            localStorage.setItem('consentsToAnalytics', true)
+            // localStorage.setItem('consentsToAnalytics', true)
             // @ts-ignore
-            this.$posthog.opt_in_capturing()
-            this.showConsentModal = false
+            // this.$posthog.opt_in_capturing()
+            // this.showConsentModal = false
 
             return
         },
         onReject() {
-            localStorage.setItem('consentsToAnalytics', false)
+            // localStorage.setItem('consentsToAnalytics', false)
             // @ts-ignore
-            this.$posthog.opt_out_capturing()
-            this.showConsentModal = false
+            // this.$posthog.opt_out_capturing()
+            // this.showConsentModal = false
 
             return
         },

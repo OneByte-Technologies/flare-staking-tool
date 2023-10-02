@@ -1,5 +1,5 @@
 <template>
-    <div class="balance_card">
+    <div>
         <UtxosBreakdownModal ref="utxos_modal"></UtxosBreakdownModal>
         <div class="fungible_card">
             <div class="header">
@@ -461,12 +461,6 @@ export default class BalanceCard extends Vue {
 <style scoped lang="scss">
 @use '../../../../main';
 
-.balance_card {
-    display: grid;
-    grid-template-columns: 1fr 230px;
-    column-gap: 20px;
-}
-
 .nft_card {
     border-left: 2px solid var(--bg-light);
 }
@@ -625,10 +619,6 @@ h4 {
 }
 
 @include main.medium-device {
-    .balance_card {
-        display: block;
-        //grid-template-columns: 1fr 120px;
-    }
 
     .balance {
         font-size: 1.8rem !important;
@@ -648,10 +638,6 @@ h4 {
 }
 
 @include main.mobile-device {
-    .balance_card {
-        grid-template-columns: none;
-        display: block !important;
-    }
 
     .nft_col {
         display: none;
