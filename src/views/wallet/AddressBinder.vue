@@ -79,23 +79,17 @@
                             </p>
                         </div>
                         <div class="summary-warn">
-                            <div
-                                v-if="bindingError"
-                                style="display: inline-block; text-transform: capitalize"
-                            >
-                                <p>
-                                    <fa icon="times-circle"></fa>
-                                    {{ bindingError }}
-                                </p>
+                            <div v-if="bindingError" style="text-transform: capitalize">
+                                <fa icon="times-circle" style="margin-right: 4px"></fa>
+                                <span>{{ bindingError }}</span>
+                                <Tooltip
+                                    v-if="bindindDetailedError"
+                                    style="display: inline-block; margin-left: 4px"
+                                    :text="bindindDetailedError"
+                                >
+                                    <fa icon="question-circle"></fa>
+                                </Tooltip>
                             </div>
-
-                            <Tooltip
-                                v-if="bindindDetailedError"
-                                style="display: inline-block; margin-left: 4px"
-                                :text="bindindDetailedError"
-                            >
-                                <fa icon="question-circle"></fa>
-                            </Tooltip>
                         </div>
                     </div>
                 </transition-group>
