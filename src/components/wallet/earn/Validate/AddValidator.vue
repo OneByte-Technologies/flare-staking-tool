@@ -19,7 +19,7 @@
                                 {{ $t('staking.validate.duration.desc') }}
                             </p>
                             <DateForm
-                                :isMirrorStaking="isMirrorStaking"
+                                :isDateRestrictionOf="isDateRestrictionOf"
                                 @change_end="setEnd"
                             ></DateForm>
                         </div>
@@ -308,7 +308,7 @@ export default class AddValidator extends Vue {
 
     maxTxSizeAmount = new BN(0)
     bnToAvaxP: any
-    isMirrorStaking: boolean = true
+    isDateRestrictionOf: boolean = true
 
     mounted() {
         this.rewardSelect('local')

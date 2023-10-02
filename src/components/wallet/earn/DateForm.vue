@@ -33,7 +33,7 @@ export default class DateForm extends Vue {
     localStart = this.startDateMin
     localEnd = this.endDateMin
     @Prop() maxEndDate?: string
-    @Prop() isMirrorStaking?: boolean
+    @Prop() isDateRestrictionOf?: boolean
     // @Watch('localStart')
     // startChange(val: string) {
     //     this.setStartDate(val)
@@ -90,8 +90,8 @@ export default class DateForm extends Vue {
     maxoutEndDate() {
         this.localEnd = this.endDateMax
     }
-    get isMirrorStakingAmountComputed() {
-        return this.isMirrorStaking === true ? DAY_MS * 0 : DAY_MS * 14
+    get isDateRestrictionOfComputed() {
+        return this.isDateRestrictionOf === true ? DAY_MS * 0 : DAY_MS * 14
     }
 
     get stakeDuration(): number {
@@ -123,7 +123,7 @@ export default class DateForm extends Vue {
         let start = this.localStart
         let startDate = new Date(start)
 
-        let end = startDate.getTime() + this.isMirrorStakingAmountComputed
+        let end = startDate.getTime() + this.isDateRestrictionOfComputed
         let endDate = new Date(end)
         return endDate.toISOString()
     }
