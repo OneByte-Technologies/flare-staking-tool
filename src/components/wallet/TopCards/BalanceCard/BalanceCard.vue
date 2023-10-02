@@ -97,7 +97,7 @@
                 <div class="alt_breakdown">
                     <div>
                         <label>Total Mirror Funds</label>
-                        <p>{{ totalMirrorAmount }}</p>
+                        <p>{{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }}</p>
                         <label v-if="isBreakdown">Mirror Funds</label>
                         <p v-if="isBreakdown">{{ amountFromCurrentValidator }} FLR</p>
                     </div>
