@@ -631,7 +631,6 @@ h4 {
 }
 
 @include main.medium-device {
-
     .balance {
         font-size: 1.8rem !important;
     }
@@ -650,7 +649,6 @@ h4 {
 }
 
 @include main.mobile-device {
-
     .nft_col {
         display: none;
     }
