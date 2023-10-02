@@ -93,7 +93,7 @@
                         <label>{{ $t('top.balance.stake') }}</label>
                         <p>{{ stakingText }} FLR</p>
                         <label>Total Mirror Funds</label>
-                        <p>{{ totalMirrorAmount }}</p>
+                        <p>{{ totalMirrorAmount }} FLR</p>
                     </div>
                 </div>
                 <div class="alt_breakdown">
