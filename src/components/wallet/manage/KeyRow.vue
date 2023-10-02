@@ -94,7 +94,21 @@
 
             <div class="header">
                 <div></div>
-                <div>
+                <div v-if="shouldDisplayPBalance()">
+                    <div class="addressBalance bal_cols" v-if="pBalanceText === '0'">
+                        <p>{{ $t('keys.empty') }}</p>
+                    </div>
+                    <div class="addressBalance bal_cols" v-else>
+                        <p>This key has:</p>
+                        <div class="bal_rows">
+                            <p>
+                                {{ pBalanceText }}
+                                <b>FLR</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
                     <p v-if="Object.keys(balances).length === 0" class="balance_empty">
                         {{ $t('keys.empty') }}
                     </p>
@@ -124,11 +138,11 @@ import MnemonicPhraseModal from '@/components/modals/MnemonicPhraseModal.vue'
 import HdDerivationListModal from '@/components/modals/HdDerivationList/HdDerivationListModal.vue'
 import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import Tooltip from '@/components/misc/Tooltip.vue'
-
+import Big from 'big.js'
 import ExportKeys from '@/components/modals/ExportKeys.vue'
 import PrivateKey from '@/components/modals/PrivateKey.vue'
 import { WalletNameType, WalletType } from '@/js/wallets/types'
-
+import { BN } from 'avalanche/dist'
 import { SingletonWallet } from '../../../js/wallets/SingletonWallet'
 import MnemonicPhrase from '@/js/wallets/MnemonicPhrase'
 import XpubModal from '@/components/modals/XpubModal.vue'
@@ -159,6 +173,30 @@ export default class KeyRow extends Vue {
         modal_hd: HdDerivationListModal
         modal_priv_key: PrivateKey
         modal_xpub: XpubModal
+    }
+    get ava_asset(): AvaAsset | null {
+        let ava = this.$store.getters['Assets/AssetAVA']
+        return ava
+    }
+    get platformBalance() {
+        console.log('platformBalance: ', this.$store.getters['Assets/walletPlatformBalance'])
+        return this.$store.getters['Assets/walletPlatformBalance']
+    }
+    get platformUnlocked(): BN {
+        console.log('platformUnlocked: ', this.platformBalance.available)
+        return this.platformBalance.available
+    }
+    get pBalanceText() {
+        if (!this.ava_asset) return '0'
+        let denom = this.ava_asset.denomination
+        let bal = this.platformUnlocked
+        let bigBal = Big(bal.toString())
+        bigBal = bigBal.div(Math.pow(10, denom))
+        if (bigBal.lt(Big('1'))) {
+            return bigBal.toLocaleString(9)
+        } else {
+            return bigBal.toLocaleString(3)
+        }
     }
 
     get isVolatile() {
@@ -258,6 +296,12 @@ export default class KeyRow extends Vue {
             return (this.wallet as AbstractHdWallet).getXpubXP()
         }
         return null
+    }
+    shouldDisplayPBalance() {
+        return (
+            this.walletType === 'singleton' &&
+            (this.wallet as SingletonWallet).keyChain.hrp === 'costwo'
+        )
     }
 
     remove() {
