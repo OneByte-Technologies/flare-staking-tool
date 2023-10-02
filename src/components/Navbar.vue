@@ -22,16 +22,16 @@
                 </router-link>
             </template>
             <network-menu></network-menu>
-            <LanguageSelect class="lang_web"></LanguageSelect>
+            <!-- <LanguageSelect class="lang_web"></LanguageSelect> -->
 
-            <button @click="togglePopup">
+            <!-- <button @click="togglePopup">
                 <fa icon="ellipsis-h"></fa>
-            </button>
-            <div class="popup-wrapper">
+            </button> -->
+            <!-- <div class="popup-wrapper">
                 <div class="popup" v-if="popupOpen">
                     <AnalyticsCheckbox></AnalyticsCheckbox>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="mobile_right">
@@ -82,7 +82,7 @@
                 </template>
                 <div class="mobile_bottom">
                     <AccountMenu></AccountMenu>
-                    <LanguageSelect class="lang_mobile"></LanguageSelect>
+                    <!-- <LanguageSelect class="lang_mobile"></LanguageSelect> -->
                 </div>
             </v-list>
         </v-navigation-drawer>
@@ -110,7 +110,7 @@ import AccountMenu from '@/components/wallet/sidebar/AccountMenu.vue'
 })
 export default class Navbar extends Vue {
     isDrawer: boolean = false
-    popupOpen: boolean = false
+    // popupOpen: boolean = false
 
     get isAuth(): boolean {
         return this.$store.state.isAuth
@@ -121,9 +121,9 @@ export default class Navbar extends Vue {
         this.$refs.logout.open()
     }
 
-    togglePopup(): void {
-        this.popupOpen = !this.popupOpen
-    }
+    // togglePopup(): void {
+    //     this.popupOpen = !this.popupOpen
+    // }
 }
 </script>
 <style scoped lang="scss">
