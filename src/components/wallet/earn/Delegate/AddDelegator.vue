@@ -99,7 +99,7 @@
                         <label>{{ $t('staking.delegate.summary.duration') }} *</label>
                         <p>{{ stakingDurationText }}</p>
                     </div>
-                    <div>
+                    <!-- <div>
                         <label>{{ $t('staking.delegate.summary.fee') }}</label>
                         <p v-if="currency_type === 'FLR'">
                             {{ totalFeeBig.toLocaleString(2) }} FLR
@@ -107,7 +107,7 @@
                         <p v-if="currency_type === 'USD'">
                             ${{ totalFeeUsdBig.toLocaleString(2) }} USD
                         </p>
-                    </div>
+                    </div> -->
 
                     <div>
                         <label style="margin: 8px 0 !important">
