@@ -182,6 +182,10 @@ export default class KeyRow extends Vue {
         for (var n = 0; n < addrUtxos.length; n++) {
             let utxo = addrUtxos[n]
 
+            if ((this.wallet as SingletonWallet).keyChain.hrp === 'costwo') {
+                return this.platformBalance // Assign platformBalance directly to balances
+            }
+
             // ignore NFTS and mint outputs
             //TODO: support nfts
             let outId = utxo.getOutput().getOutputID()
@@ -221,10 +225,26 @@ export default class KeyRow extends Vue {
                 asset.addBalance(amount)
             }
         }
+        if ((this.wallet as SingletonWallet).keyChain.hrp === 'costwo') {
+            let filteredBalances: IKeyBalanceDict = {}
+            for (let assetId in res) {
+                if (res.hasOwnProperty(assetId)) {
+                    let asset = res[assetId]
+                    if (asset.symbol === 'P') {
+                        filteredBalances[assetId] = asset
+                    }
+                }
+            }
+            console.log(filteredBalances, 'filtered')
+            return filteredBalances
+        }
 
         return res
     }
-
+    get platformBalance() {
+        console.log(this.$store.getters['Assets/walletPlatformBalance'])
+        return this.$store.getters['Assets/walletPlatformBalance']
+    }
     get walletType(): WalletNameType {
         return this.wallet.type
     }
