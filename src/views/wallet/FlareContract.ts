@@ -1,260 +1,116 @@
-import { ClaimRewardsInterface, RegisterAddressInterface, UnsignedTxJson } from './Interfaces'
-import { SignatureRequest } from '@flarenetwork/flarejs/dist/common'
-// import { bech32 } from 'bech32'
-import { BigNumber, ethers } from 'ethers'
-// import { ledgerSign } from './ledger/sign'
-import fs from 'fs'
-import { colorCodes, forDefiDirectory, forDefiUnsignedTxnDirectory } from './Constants'
-import { NetworkConfig, costwo, flare, localflare } from './config'
+import { Context } from './Interfaces'
+import { ethers } from 'ethers'
 import {
-    getAddressBinderABI,
+    pChainStakeMirror,
+    getPChainStakeMirrorABI,
     getFlareContractRegistryABI,
     defaultContractAddresses,
-    addressBinderContractName,
-    validatorRewardManagerContractName,
-    contractTransactionName,
-    getValidatorRewardManagerABI,
 } from './FlareContractConstants'
-// import { prefix0x, saveUnsignedTxJson } from './utils'
-// import { walletConstants } from './screenConstants'
-import { exit } from 'process' //correct
+import { integerToDecimal } from './utils'
+import { ava } from '@/AVA'
+
+type DelegatedAmount = {
+    stakeAmount: number
+    startTime: Date
+    endTime: Date
+}
+
+let delegationCount: number
+
+////////// MIRROR FUND /////////
+// fetches current validator info
+const fetchValidatorInfo = async (ctx: Context) => {
+    const validator = await ctx.pchain.getCurrentValidators()
+    return validator
+}
+
+// fetches pending validator info
+const fetchPendingValidatorInfo = async (ctx: Context) => {
+    const pendingValidator = await ctx.pchain.getPendingValidators()
+    return pendingValidator
+}
+
+// fetches the delegation stake (from both current and pending validator) for the current user
+const fetchDelegateStake = async (ctx: Context, validatorFunction: (ctx: Context) => {}) => {
+    const validatorsInfo = await validatorFunction(ctx)
+    const validatorData = (validatorsInfo as any)?.validators
+    const userStake = []
+    for (let i = 0; i < validatorData.length; i++) {
+        for (
+            let j = 0;
+            j < (validatorData[i].delegators && validatorData[i].delegators?.length);
+            j++
+        ) {
+            if (
+                validatorData[i].delegators[j] &&
+                validatorData[i].delegators[j].rewardOwner.addresses.includes(ctx.pAddressBech32)
+            ) {
+                const startDate = new Date(
+                    parseInt(validatorData[i]?.delegators[j]?.startTime) * 1000
+                )
+                const endDate = new Date(parseInt(validatorData[i]?.delegators[j]?.endTime) * 1000)
+                userStake.push({
+                    stakeAmount: parseFloat(validatorData[i]?.delegators[j]?.stakeAmount) / 1e9,
+                    startTime: startDate,
+                    endTime: endDate,
+                })
+            }
+        }
+    }
+    return userStake
+}
+
+// calculates the total amount of delegation
+const getTotalFromDelegation = (data: DelegatedAmount[]) => {
+    let total = 0
+
+    for (let i = 0; i < data.length; i++) {
+        total += data[i].stakeAmount
+        delegationCount++
+    }
+    return total
+}
 
 /**
- * @description checks if the address is registered with the addressBinder contract
- * @param ethAddressToCheck
- * @param network
- */ export async function isAddressRegistered(
-    ethAddressToCheck: string,
-    network: string
-): Promise<boolean> {
-    console.log('Checking Address Registration...')
-    const rpcUrl = getRpcUrl(network)
-    const addressBinderContractAddress = await getContractAddress(
-        network,
-        addressBinderContractName
+ * @description returns the mirror fund details
+ * @param ctx - context
+ * @returns - total mirror funds and funds with start and end time
+ */
+export async function fetchMirrorFunds(ctx: Context) {
+    console.log('Checking your Mirror Funds ...')
+    delegationCount = 0
+    // fetch from the contract
+    const rpcUrl = getIp()
+    const pChainStakeMirrorContractAddress = await getContractAddress(
+        ava.getHRP(),
+        pChainStakeMirror
     )
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-
-    const abi = getAddressBinderABI() as ethers.ContractInterface
-    const contract = new ethers.Contract(addressBinderContractAddress, abi, provider)
-
-    const result = await contract.cAddressToPAddress(ethAddressToCheck)
-
-    if (result !== '0x0000000000000000000000000000000000000000') {
-        console.log(
-            `${colorCodes.greenColor}Address associated with key ${ethAddressToCheck}: ${result}${colorCodes.resetColor}`
-        )
-        return true
-    } else {
-        console.log(
-            `${colorCodes.redColor}No address found for key ${ethAddressToCheck}${colorCodes.resetColor}`
-        )
-        return false
+    const abi = getPChainStakeMirrorABI() as ethers.ContractInterface
+    const contract = new ethers.Contract(pChainStakeMirrorContractAddress, abi, provider)
+    const stakedAmount = await contract.balanceOf(ctx.cAddressHex)
+    const stakedAmountInFLR = parseFloat(integerToDecimal(stakedAmount.toString(), 18))
+    // fetch for the chain
+    const delegationToCurrentValidator = await fetchDelegateStake(ctx, fetchValidatorInfo)
+    const delegationToPendingValidator = await fetchDelegateStake(ctx, fetchPendingValidatorInfo)
+    const totalDelegatedAmount =
+        getTotalFromDelegation(delegationToCurrentValidator) +
+        getTotalFromDelegation(delegationToPendingValidator)
+    const totalInFLR = parseFloat(totalDelegatedAmount.toString())
+    return {
+        'Total Mirrored Amount': `${totalInFLR} FLR`,
+        'Mirror Funds Details': {
+            ...delegationToCurrentValidator,
+            ...delegationToPendingValidator,
+        },
+        'Delegation Count': delegationCount,
+        'Total Current Amount': getTotalFromDelegation(delegationToCurrentValidator),
+        'Total Pending Amount': getTotalFromDelegation(delegationToPendingValidator),
     }
-} //To Check
-
-// /**
-//  * @description checks if there are any unclaimed rewards with the validatorRewardManager contract
-//  * @param ethAddressToCheck
-//  * @param network
-//  */ export async function isUnclaimedReward(
-//     ethAddressToCheck: string,
-//     network: string
-// ): Promise<boolean> {
-//     console.log('Checking your Rewards status...')
-//     const rpcUrl = getRpcUrl(network)
-//     const validatorRewardManagerContractAddress = await getContractAddress(
-//         network,
-//         validatorRewardManagerContractName
-//     )
-//     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-
-//     const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
-//     const contract = new ethers.Contract(validatorRewardManagerContractAddress, abi, provider)
-
-//     const rewards = await contract.getStateOfRewards(ethAddressToCheck)
-
-//     const totalRewardNumber: BigNumber = rewards[0]
-//     const claimedRewardNumber: BigNumber = rewards[1]
-//     const unclaimedRewards: BigNumber = totalRewardNumber.sub(claimedRewardNumber)
-
-//     if (unclaimedRewards.gt(BigNumber.from('0'))) {
-//         console.log(
-//             `${colorCodes.greenColor}You have unclaimed rewards worth ${unclaimedRewards}${colorCodes.resetColor}`
-//         )
-//         return true
-//     } else {
-//         console.log(`${colorCodes.redColor}No unclaimed rewards found ${colorCodes.resetColor}`)
-//         return false
-//     }
-// }
-
-// /**
-//  * @description cregisters address  with the addressBinder contract
-//  * @param {RegisterAddressInterface} addressParams
-//  */
-// export async function registerAddress(addressParams: RegisterAddressInterface) {
-//     const {
-//         publicKey,
-//         pAddress,
-//         cAddress,
-//         network,
-//         wallet,
-//         derivationPath,
-//         pvtKey,
-//         transactionId,
-//     } = addressParams
-
-//     const rpcUrl = getRpcUrl(network)
-//     const addressBinderContractAddress = await getContractAddress(
-//         network,
-//         addressBinderContractName
-//     )
-//     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-
-//     const abi = getAddressBinderABI() as ethers.ContractInterface
-//     const contract = new ethers.Contract(addressBinderContractAddress, abi, provider)
-
-//     const checksumAddress = ethers.utils.getAddress(cAddress)
-//     const nonce = await provider.getTransactionCount(checksumAddress)
-//     const config: NetworkConfig = getConfig(network)
-
-//     const pAddr = prefix0x(
-//         Buffer.from(bech32.fromWords(bech32.decode(pAddress.slice(2)).words)).toString('hex')
-//     )
-//     const publicKeyPrefixed = prefix0x(publicKey)
-//     const gasEstimate = await contract.estimateGas.registerAddresses(
-//         publicKeyPrefixed,
-//         pAddr,
-//         cAddress,
-//         { from: cAddress }
-//     )
-//     const gasPrice = await provider.getGasPrice()
-
-//     const populatedTx = await contract.populateTransaction.registerAddresses(
-//         publicKeyPrefixed,
-//         pAddr,
-//         cAddress
-//     )
-//     const unsignedTx = {
-//         ...populatedTx,
-//         nonce,
-//         chainId: config.networkID,
-//         gasPrice,
-//         gasLimit: gasEstimate,
-//     }
-
-//     await signContractTransaction(
-//         wallet,
-//         unsignedTx,
-//         contract,
-//         derivationPath,
-//         transactionId,
-//         pvtKey
-//     )
-// } //To Check
-
-// /**
-//  * @description claims rewards from the ValidatorRewardManager Contract
-//  * @param {ClaimRewardsInterface} rewardsParams
-//  */ export async function claimRewards(rewardsParams: ClaimRewardsInterface) {
-//     const {
-//         claimAmount,
-//         cAddress,
-//         network,
-//         wallet,
-//         derivationPath,
-//         pvtKey,
-//         transactionId,
-//     } = rewardsParams
-
-//     const rewardAmount: BigNumber = BigNumber.from(claimAmount).mul(ethers.constants.WeiPerEther)
-//     if (
-//         rewardAmount.gt(await getUnclaimedRewards(cAddress, network)) ||
-//         !rewardAmount.gt(BigNumber.from('0'))
-//     ) {
-//         throw new Error('Incorrect amount to claim')
-//     }
-
-//     const rpcUrl = getRpcUrl(network)
-//     const validatorRewardManagerContractAddress = await getContractAddress(
-//         network,
-//         validatorRewardManagerContractName
-//     )
-//     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-
-//     const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
-//     const contract = new ethers.Contract(validatorRewardManagerContractAddress, abi, provider)
-
-//     const checksumAddress = ethers.utils.getAddress(cAddress)
-//     const nonce = await provider.getTransactionCount(checksumAddress)
-//     const config: NetworkConfig = getConfig(network)
-
-//     let gasEstimate
-//     try {
-//         gasEstimate = await contract.estimateGas.claim(cAddress, cAddress, rewardAmount, false, {
-//             from: cAddress,
-//         })
-//     } catch {
-//         console.log(`${colorCodes.redColor}Incorrect arguments passed${colorCodes.resetColor}`)
-//         exit()
-//     }
-
-//     const gasPrice = await provider.getGasPrice()
-
-// const populatedTx = await contract.populateTransaction.claim(
-//     cAddress,
-//     cAddress,
-//     rewardAmount,
-//     false
-// )
-//     const unsignedTx = {
-//         ...populatedTx,
-//         nonce,
-//         chainId: config.networkID,
-//         gasPrice,
-//         gasLimit: gasEstimate,
-//     }
-//     return unsignedTx
-// }
-
-// function createUnsignedJsonObject(txHash: string): UnsignedTxJson {
-//     const signatureRequest: SignatureRequest = {
-//         message: txHash.slice(2),
-//         signer: '',
-//     }
-
-//     const unsignedTxJson: UnsignedTxJson = {
-//         transactionType: contractTransactionName,
-//         serialization: '',
-//         signatureRequests: [signatureRequest],
-//         unsignedTransactionBuffer: '',
-//         usedFee: '',
-//         txDetails: '',
-//     }
-
-//     return unsignedTxJson
-// }
-
-function getRpcUrl(network: string): string {
-    const config: NetworkConfig = getConfig(network)
-    return `${config.protocol}://${config.ip}/ext/C/rpc`
 }
 
-function getConfig(network: string): NetworkConfig {
-    let networkConfig: NetworkConfig
-    if (network == 'flare' || network === undefined) {
-        networkConfig = flare
-    } else if (network == 'costwo') {
-        networkConfig = costwo
-    } else if (network == 'localflare') {
-        networkConfig = localflare
-    } else throw Error('Invalid network')
-    return networkConfig
-}
-
-async function getContractAddress(network: string, contractName: string): Promise<string> {
-    const rpcUrl = getRpcUrl(network)
+export async function getContractAddress(network: string, contractName: string): Promise<string> {
+    const rpcUrl = getIp()
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
 
     const abi = getFlareContractRegistryABI() as ethers.ContractInterface
@@ -275,76 +131,17 @@ async function getContractAddress(network: string, contractName: string): Promis
     throw new Error('Contract Address not found')
 }
 
-// function readUnsignedEVMObject(id: string): ethers.utils.UnsignedTransaction {
-//     const fname = `${forDefiDirectory}/${forDefiUnsignedTxnDirectory}/${id}.unsignedEVMObject.json`
-//     if (!fs.existsSync(fname)) {
-//         throw new Error(`unsigned EVM Object file ${fname} does not exist`)
-//     }
-//     const serialization = fs.readFileSync(fname).toString()
-//     let file = JSON.parse(serialization)
-//     file.gasPrice = BigNumber.from(file.gasPrice.hex)
-//     file.gasLimit = BigNumber.from(file.gasLimit.hex)
-//     return file as ethers.utils.UnsignedTransaction
-// }
+const getIp = () => {
+    let ip = ''
+    if (ava.getHRP() === 'costwo') {
+        ip = 'coston2'
+    } else if (ava.getHRP() === 'flare') {
+        ip = 'flare'
+    }
+    const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+    return rpcUrl
+}
 
-// function saveUnsignedEVMObject(unsignedTx: Object, id: string): void {
-//     const fname = `${forDefiDirectory}/${forDefiUnsignedTxnDirectory}/${id}.unsignedEVMObject.json`
-//     if (fs.existsSync(fname)) {
-//         throw new Error(`unsignedTx file ${fname} already exists`)
-//     }
-//     const serialization = JSON.stringify(unsignedTx, null, 2)
-//     fs.mkdirSync(`${forDefiDirectory}/${forDefiUnsignedTxnDirectory}`, { recursive: true })
-//     fs.writeFileSync(fname, serialization)
-// }
-
-// async function getUnclaimedRewards(ethAddress: string, network: string): Promise<BigNumber> {
-//     const rpcUrl = getRpcUrl(network)
-//     const validatorRewardManagerContractAddress = await getContractAddress(
-//         network,
-//         validatorRewardManagerContractName
-//     )
-//     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-
-//     const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
-//     const contract = new ethers.Contract(validatorRewardManagerContractAddress, abi, provider)
-
-//     const rewards = await contract.getStateOfRewards(ethAddress)
-
-//     const totalRewardNumber: BigNumber = rewards[0]
-//     const claimedRewardNumber: BigNumber = rewards[1]
-//     const unclaimedRewards: BigNumber = totalRewardNumber.sub(claimedRewardNumber)
-//     return unclaimedRewards
-// }
-
-// async function signContractTransaction(
-//     wallet: string,
-//     unsignedTx: Object,
-//     contract: ethers.Contract,
-//     derivationPath?: string,
-//     transactionId?: string,
-//     pvtKey?: string
-// ) {
-//     const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
-//     const txHash = ethers.utils.keccak256(serializedUnsignedTx)
-//     const unsignedTxObj = createUnsignedJsonObject(txHash)
-
-//     if (wallet === Object.keys(walletConstants)[0]) {
-//         if (!derivationPath) throw new Error('No derivation path passed')
-//         const sign = await ledgerSign(unsignedTxObj, derivationPath)
-//         const serializedSignedTx = ethers.utils.serializeTransaction(
-//             unsignedTx,
-//             prefix0x(sign.signature)
-//         )
-//         console.log('Submitting txn to the chain')
-//         await contract.provider.sendTransaction(serializedSignedTx)
-//     } else if (wallet === Object.keys(walletConstants)[1]) {
-//         if (!transactionId) throw new Error('No transaction Id passed')
-//         saveUnsignedTxJson(unsignedTxObj, transactionId)
-//         saveUnsignedEVMObject(unsignedTx, transactionId)
-//     } else if (wallet === Object.keys(walletConstants)[2]) {
-//         if (!pvtKey) throw new Error('No private key passed')
-//         const wallet = new ethers.Wallet(pvtKey)
-//         const signedTx = await wallet.signTransaction(unsignedTx)
-//         await contract.provider.sendTransaction(signedTx)
-//     }
-// }
+export function getDelCount() {
+    return delegationCount
+}

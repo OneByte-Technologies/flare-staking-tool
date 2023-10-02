@@ -94,6 +94,19 @@
                         <p>{{ stakingText }} FLR</p>
                     </div>
                 </div>
+                <div class="alt_breakdown">
+                    <div>
+                        <label>Total Mirror Funds</label>
+                        <p>{{ totalMirrorAmount }}</p>
+                        <label v-if="isBreakdown">Mirror Funds</label>
+                        <p v-if="isBreakdown">{{ amountFromCurrentValidator }} FLR</p>
+                    </div>
+
+                    <div v-if="isBreakdown">
+                        <label>Pending Mirror Funds</label>
+                        <p>{{ amountFromPendingValidator }} FLR</p>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- <NftCol class="nft_card"></NftCol> -->
@@ -113,11 +126,14 @@ import { BN } from 'avalanche/dist'
 import { ONEAVAX } from 'avalanche/dist/utils'
 import { bnToBig } from '@/helpers/helper'
 import { priceDict } from '@/store/types'
-import { WalletType } from '@/js/wallets/types'
+import { WalletType, WalletNameType } from '@/js/wallets/types'
 import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdownModal.vue'
-import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
 import { ethers } from 'ethers'
 import { mapGetters } from 'vuex'
+import { bech32 } from 'bech32'
+import { fetchMirrorFunds } from '@/views/wallet/FlareContract'
+import { ava, pChain, cChain } from '@/AVA'
+import { Context } from '@/views/wallet/Interfaces'
 @Component({
     components: {
         UtxosBreakdownModal,
@@ -137,6 +153,76 @@ export default class BalanceCard extends Vue {
 
     $refs!: {
         utxos_modal: UtxosBreakdownModal
+    }
+
+    totalMirrorAmount: string = ''
+    amountFromCurrentValidator: number = 0
+    amountFromPendingValidator: number = 0
+    pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
+    wallets = this.$store.state.activeWallet
+    ethersWallet = new ethers.Wallet(this.wallets.ethKey)
+    publicKey: string = this.ethersWallet.publicKey
+    cAddr: string = this.wallets.getEvmChecksumAddress()
+    cAddrBech: string = this.wallets.getEvmAddressBech()
+    avaxAssetID: string = pChain.getAVAXAssetID().toString()
+
+    ctx: Context = {
+        privkHex: this.wallets.ethKey,
+        privkCB58: '',
+        publicKey: this.publicKey, // Add the public key to the ctx object //Public Key in Buffer
+        rpcurl: this.getIp(),
+        web3: ethers, // Replace with the actual web3 instance
+        avalanche: ava, // Initialize with the correct value
+        cchain: cChain,
+        pchain: pChain,
+        cKeychain: cChain.keyChain(), // Replace with the actual cKeychain
+        pKeychain: pChain.keyChain(), // Replace with the actual pKeychain
+        pAddressBech32: this.pChainAddress,
+        cAddressBech32: this.cAddrBech,
+        cAddressHex: this.cAddr,
+        cChainBlockchainID: cChain.getBlockchainID(),
+        pChainBlockchainID: pChain.getBlockchainID(),
+        avaxAssetID: this.avaxAssetID,
+        config: {
+            protocol: 'https',
+            ip: this.getIp(),
+            port: 443,
+            networkID: ava.getNetworkID(),
+            hrp: ava.getHRP(),
+        },
+    }
+    mirrorFundDetail = {}
+    async mirrorFunds() {
+        try {
+            console.log('MirrorFunds ctx', this.ctx)
+            const mirrorFundsData = await fetchMirrorFunds(this.ctx)
+            // Handle the data as needed, e.g., update component data or state
+            console.log('MirrorFunds')
+            console.log(`Mirror fund details on the network "${ava.getHRP()}"`)
+            console.log(`${JSON.stringify(mirrorFundsData, null, 2)}`)
+            console.log('Mirror Funds Data:', mirrorFundsData)
+            this.totalMirrorAmount = mirrorFundsData['Total Mirrored Amount']
+            this.mirrorFundDetail = mirrorFundsData['Mirror Funds Details']
+            this.amountFromCurrentValidator = mirrorFundsData['Total Current Amount']
+            this.amountFromPendingValidator = mirrorFundsData['Total Pending Amount']
+        } catch (error) {
+            console.error('Error fetching Mirror Funds:', error)
+        }
+    }
+
+    mounted() {
+        this.mirrorFunds()
+    }
+
+    getIp() {
+        let ip = ''
+        if (ava.getHRP() === 'costwo') {
+            ip = 'coston2'
+        } else if (ava.getHRP() === 'flare') {
+            ip = 'flare'
+        }
+        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        return rpcUrl
     }
 
     updateBalance(): void {

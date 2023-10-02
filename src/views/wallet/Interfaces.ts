@@ -10,7 +10,7 @@ import { NetworkConfig } from './config'
 export interface Context {
     privkHex?: string
     privkCB58?: string
-    publicKey?: [Buffer, Buffer]
+    publicKey?: string
     rpcurl: string
     web3: any
     avalanche: Avalanche
