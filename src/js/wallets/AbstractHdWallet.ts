@@ -33,7 +33,7 @@ abstract class AbstractHdWallet extends AbstractWallet {
         this.chainId = avm.getBlockchainAlias() || avm.getBlockchainID()
         this.externalHelper = new HdHelper('m/0', accountHdKey, undefined, isPublic)
         this.internalHelper = new HdHelper('m/1', accountHdKey, undefined, isPublic)
-        this.platformHelper = new HdHelper('m/0', accountHdKey, 'P', isPublic)
+        this.platformHelper = new HdHelper('m/44', accountHdKey, 'P', isPublic)
         this.accountNodeXP = accountHdKey
 
         this.externalHelper.oninit().then((res) => {
