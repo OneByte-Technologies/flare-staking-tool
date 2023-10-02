@@ -47,11 +47,13 @@ const history_module: Module<HistoryState, RootState> = {
                 return false
             }
 
-            state.isUpdating = true
-            const txs = await getGlacierHistory(wallet, network.networkId, isMainnet, 30)
+            // TO DO Fetch transactions from glacier like service
+            // state.isUpdating = true
 
-            state.recentTransactions = txs
-            state.isUpdating = false
+            // const txs = await getGlacierHistory(wallet, network.networkId, isMainnet, 30)
+
+            // state.recentTransactions = txs
+            // state.isUpdating = false
         },
 
         async updateAllTransactionHistory({ state, rootState, rootGetters, dispatch }) {
@@ -78,15 +80,16 @@ const history_module: Module<HistoryState, RootState> = {
                 return false
             }
 
-            state.isUpdatingAll = true
-            try {
-                const txs = await getGlacierHistory(wallet, network.networkId, isMainnet)
-                state.allTransactions = txs
-            } catch (e) {
-                console.log(e)
-                state.isError = true
-            }
-            state.isUpdatingAll = false
+            // TO DO Fetch transactions from glacier like service
+            // state.isUpdatingAll = true
+            // try {
+            //     const txs = await getGlacierHistory(wallet, network.networkId, isMainnet)
+            //     state.allTransactions = txs
+            // } catch (e) {
+            //     console.log(e)
+            //     state.isError = true
+            // }
+            // state.isUpdatingAll = false
         },
     },
     getters: {

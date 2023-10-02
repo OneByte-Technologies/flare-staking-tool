@@ -45,9 +45,9 @@ export default class Wallet extends Vue {
 
     // Set the logout timestamp to now + TIMEOUT_DUR_MS
     resetTimer() {
-        console.log('reset timer')
+        // console.log('reset timer')
         this.logoutTimestamp = Date.now() + TIMEOUT_DUR_MS
-        console.log('logoutTimestamp logoutTimestamp', this.logoutTimestamp)
+        // console.log('logoutTimestamp logoutTimestamp', this.logoutTimestamp)
     }
 
     checkLogout() {
