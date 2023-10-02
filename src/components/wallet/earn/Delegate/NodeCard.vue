@@ -3,10 +3,6 @@
         <p class="node_id">{{ node.nodeID }}</p>
         <!--        <div class="meta_row"></div>-->
         <div>
-            <label>Fee</label>
-            <p>{{ node.fee.toFixed(2) }}%</p>
-        </div>
-        <div>
             <label>Uptime</label>
             <!--            <p>{{ uptimeText }}</p>-->
             <p style="font-size: 0.8rem">

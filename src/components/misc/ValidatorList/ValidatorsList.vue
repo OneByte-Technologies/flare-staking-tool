@@ -28,7 +28,7 @@
                             <Tooltip text="Number of Delegators"><fa icon="users"></fa></Tooltip>
                         </th>
                         <th>{{ $t('staking.delegate.list.end') }}</th>
-                        <th>{{ $t('staking.delegate.list.fee') }}</th>
+                        <!-- <th>{{ $t('staking.delegate.list.fee') }}</th> -->
                         <th></th>
                     </tr>
                 </thead>
