@@ -94,21 +94,21 @@
 
             <div class="header">
                 <div></div>
-                <div v-if="shouldDisplayPBalance()">
-                    <div class="addressBalance bal_cols" v-if="pBalanceText === '0'">
+                <div>
+                    <div class="addressBalance bal_cols" v-if="updatedBalance === '0'">
                         <p>{{ $t('keys.empty') }}</p>
                     </div>
                     <div class="addressBalance bal_cols" v-else>
                         <p>This key has:</p>
                         <div class="bal_rows">
                             <p>
-                                {{ pBalanceText }}
+                                {{ updatedBalance }}
                                 <b>FLR</b>
                             </p>
                         </div>
                     </div>
                 </div>
-                <div v-else>
+                <!-- <div v-else>
                     <p v-if="Object.keys(balances).length === 0" class="balance_empty">
                         {{ $t('keys.empty') }}
                     </p>
@@ -121,7 +121,7 @@
                             </p>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -174,24 +174,18 @@ export default class KeyRow extends Vue {
         modal_priv_key: PrivateKey
         modal_xpub: XpubModal
     }
-    get ava_asset(): AvaAsset | null {
-        let ava = this.$store.getters['Assets/AssetAVA']
-        return ava
-    }
-    get platformBalance() {
-        console.log('platformBalance: ', this.$store.getters['Assets/walletPlatformBalance'])
-        return this.$store.getters['Assets/walletPlatformBalance']
-    }
-    get platformUnlocked(): BN {
-        console.log('platformUnlocked: ', this.platformBalance.available)
-        return this.platformBalance.available
-    }
-    get pBalanceText() {
-        if (!this.ava_asset) return '0'
-        let denom = this.ava_asset.denomination
-        let bal = this.platformUnlocked
+    get updatedBalance() {
+        const ava = this.$store.getters['Assets/AssetAVA']
+        const platformBalance = this.$store.getters['Assets/walletPlatformBalance']
+        const platformUnlocked = platformBalance.available
+
+        if (!ava) return '0'
+
+        const denom = ava.denomination
+        const bal = platformUnlocked
         let bigBal = Big(bal.toString())
         bigBal = bigBal.div(Math.pow(10, denom))
+
         if (bigBal.lt(Big('1'))) {
             return bigBal.toLocaleString(9)
         } else {
@@ -297,12 +291,12 @@ export default class KeyRow extends Vue {
         }
         return null
     }
-    shouldDisplayPBalance() {
-        return (
-            this.walletType === 'singleton' &&
-            (this.wallet as SingletonWallet).keyChain.hrp === 'costwo'
-        )
-    }
+    // shouldDisplayPBalance() {
+    //     return (
+    //         this.walletType === 'singleton' &&
+    //         (this.wallet as SingletonWallet).keyChain.hrp === 'costwo'
+    //     )
+    // }
 
     remove() {
         this.$emit('remove', this.wallet)
