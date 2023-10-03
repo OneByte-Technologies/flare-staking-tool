@@ -436,13 +436,13 @@ abstract class AbstractWallet {
 
         // If reward address isn't given use index 0 address
         if (!rewardAddress) {
-            rewardAddress = this.getPlatformRewardAddress()
+            rewardAddress = this.basePChainAddress
         }
 
         // For change address use first available on the platform chain
         const changeAddress = this.getChangeAddressPlatform()
 
-        const stakeReturnAddr = this.getCurrentAddressPlatform()
+        const stakeReturnAddr = this.basePChainAddress
 
         // Convert dates to unix time
         const startTime = new BN(Math.round(start.getTime() / 1000))
@@ -490,6 +490,11 @@ abstract class AbstractWallet {
         return res
     }
 
+    get basePChainAddress(): string {
+        const addr = this.getAllAddressesP()
+        return addr[0]
+    }
+
     /**
      * Create and issue an AddDelegatorTx
      * @param nodeID
@@ -523,10 +528,10 @@ abstract class AbstractWallet {
 
         // If reward address isn't given use index 0 address
         if (!rewardAddress) {
-            rewardAddress = this.getPlatformRewardAddress()
+            rewardAddress = this.basePChainAddress
         }
 
-        const stakeReturnAddr = this.getPlatformRewardAddress()
+        const stakeReturnAddr = this.basePChainAddress
 
         // For change address use first available on the platform chain
         const changeAddress = this.getChangeAddressPlatform()
