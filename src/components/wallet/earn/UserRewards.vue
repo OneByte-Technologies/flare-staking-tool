@@ -31,6 +31,7 @@
             </div>
             <div class="claimbutton">
                 <v-btn
+                    v-if="canClaim"
                     @click="claimRewards"
                     :disabled="!isRewardValid()"
                     :class="[
