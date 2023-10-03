@@ -7,15 +7,15 @@
                         <div class="address-container" style="margin-top: 0px">
                             <h4 class="light-heading">This is your original P Chain Address</h4>
                             <p class="address-style" style="padding-bottom: 0px">
-                                {{ pChainAddress }}
+                                {{ basePChainAddress }}
                             </p>
                         </div>
                         <div class="address-container">
                             <h4 class="light-heading">This is your encoded P Chain Address</h4>
-                            <p class="address-style">{{ pAddress }}</p>
+                            <p class="address-style">{{ encodePChainAddressToRegister }}</p>
                             <input
                                 type="text"
-                                v-model="pAddress"
+                                v-model="encodePChainAddressToRegister"
                                 style="width: 100%"
                                 placeholder="P chain address"
                             />
@@ -125,16 +125,27 @@ export default class AddressBinder extends Vue {
     isInsufficientFunds: boolean = false
     bindingError: string = ''
     bindindDetailedError: string = ''
-    pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform() //old
-    wallet = this.$store.state.activeWallet //old
-    ethersWallet = new ethers.Wallet(this.wallet.ethKey) //old
+    ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey) //old
     pubKey: string = this.ethersWallet.publicKey //old
     cChainAddress: string = ''
-    pAddress =
-        '0x' +
-        Buffer.from(bech32.fromWords(bech32.decode(this.pChainAddress.slice(2)).words)).toString(
-            'hex'
+
+    get wallet(): WalletType {
+        return this.$store.state.activeWallet
+    }
+
+    get basePChainAddress(): string {
+        const addr = this.wallet.getAllAddressesP()
+        return addr[0]
+    }
+
+    get encodePChainAddressToRegister(): string {
+        return (
+            '0x' +
+            Buffer.from(
+                bech32.fromWords(bech32.decode(this.basePChainAddress.slice(2)).words)
+            ).toString('hex')
         )
+    }
 
     async bindAddress() {
         this.isAddressBindingPending = true
@@ -145,18 +156,21 @@ export default class AddressBinder extends Vue {
             this.cChainAddress = cAddress
             const rpcUrl: string = this.getIp()
             const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-            const contractAddress: string = defaultContractAddresses.AddressBinder.costwo //change to dynamic
+            const contractAddress = await this.getContractAddress(
+                ava.getHRP(),
+                addressBinderContractName
+            )
             const abi = getAddressBinderABI() as ethers.ContractInterface
             const contract = new ethers.Contract(contractAddress, abi, provider)
             const nonce = await provider.getTransactionCount(cAddress)
 
             const gasEstimate = await contract.estimateGas.registerAddresses(
                 this.pubKey,
-                this.pAddress,
+                this.encodePChainAddressToRegister,
                 cAddress,
                 { from: cAddress }
             )
-            console.log('P-chain Address acc to tx', this.pAddress)
+            console.log('P-chain Address acc to tx', this.encodePChainAddressToRegister)
             console.log('Gas Estimate', gasEstimate)
             const gasPrice = await provider.getGasPrice()
             console.log('Gas Price', gasPrice)
@@ -174,7 +188,7 @@ export default class AddressBinder extends Vue {
 
             const populatedTx = await contract.populateTransaction.registerAddresses(
                 this.pubKey,
-                this.pAddress,
+                this.encodePChainAddressToRegister,
                 cAddress
             )
             console.log('populated tx', populatedTx)
@@ -190,9 +204,6 @@ export default class AddressBinder extends Vue {
             const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
             const txId = await contract.provider.sendTransaction(signedTx)
             console.log('txId', txId)
-            const checkAddress: string = defaultContractAddresses.AddressBinder.flare
-            const abi2 = getAddressBinderABI() as ethers.ContractInterface
-            const contract2 = new ethers.Contract(contractAddress, abi, provider)
             const result = await contract.cAddressToPAddress(cAddress)
 
             if (result !== '0x0000000000000000000000000000000000000000') {
