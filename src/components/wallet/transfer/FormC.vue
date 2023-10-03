@@ -78,7 +78,7 @@
                 </v-btn>
                 <template v-else>
                     <v-btn
-                        class="button_primary checkout"
+                        class="button_secondary checkout"
                         depressed
                         block
                         @click="submit"
@@ -112,7 +112,7 @@
                 <v-btn
                     style="margin: 14px 0"
                     :disabled="!canSendAgain"
-                    class="button_primary"
+                    class="button_secondary"
                     small
                     block
                     @click="startAgain"

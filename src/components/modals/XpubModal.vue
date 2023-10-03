@@ -1,7 +1,7 @@
 <template>
     <modal ref="modal" title="Extended Public Key (Beta)" class="modal_main">
         <div class="singleton_modal_body">
-            <p>This extended public key is used to derive all your X and P chain addresses.</p>
+            <p>This extended public key is used to derive all your P chain address.</p>
             <p class="key_raw">
                 Path:
                 <b>m/44'/60'/0'</b>
