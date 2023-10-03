@@ -1,35 +1,33 @@
 /*eslint-disable */
 import { ethers } from 'ethers'
-import {defaultContractAddresses, getAddressBinderABI} from '../views/wallet/FlareContractConstants'
+import {
+    defaultContractAddresses,
+    getAddressBinderABI,
+    getFlareContractRegistryABI,
+    addressBinderContractName,
+} from '../views/wallet/FlareContractConstants'
 import { ava } from '@/AVA'
 
-// Set up a provider
-// const providerUrl = 'https://coston2-api.flare.network/ext/C/rpc' // Replace with your provider URL
-// const provider = new ethers.providers.JsonRpcProvider(providerUrl)
+function getIp(): string {
+    let ip: string = ''
 
-// const getIp() {
-//     let ip = ''
-//     if (ava.getHRP() === 'costwo') {
-//         ip = 'coston2'
-//     } else if (ava.getHRP() === 'flare') {
-//         ip = 'flare'
-//     }
-//     const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
-//     return rpcUrl
-// }
-
-
-
-export async function checkIsRegistered( userAddress : string): Promise<Boolean> {
-    let ip = ''
     if (ava.getHRP() === 'costwo') {
         ip = 'coston2'
     } else if (ava.getHRP() === 'flare') {
         ip = 'flare'
     }
+
     const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+    return rpcUrl
+}
+
+export async function checkIsRegistered(userAddress: string): Promise<Boolean> {
+    const rpcUrl: string = getIp()
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-    const contractAddress: string = defaultContractAddresses.AddressBinder.flare
+    const contractAddress: string = await getContractAddress(
+        ava.getHRP(),
+        addressBinderContractName
+    )
     const abi = getAddressBinderABI() as ethers.ContractInterface
     const contract = new ethers.Contract(contractAddress, abi, provider)
     const result = await contract.cAddressToPAddress(userAddress)
@@ -45,4 +43,24 @@ export async function checkIsRegistered( userAddress : string): Promise<Boolean>
     }
 }
 
+async function getContractAddress(network: string, contractName: string): Promise<string> {
+    const rpcUrl: string = getIp()
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
 
+    const abi = getFlareContractRegistryABI() as ethers.ContractInterface
+    if (network != 'flare' && network != 'costwo') throw new Error('Invalid network passed')
+    const contract = new ethers.Contract(
+        defaultContractAddresses.flareContractRegistryAddress[network],
+        abi,
+        provider
+    )
+
+    const result = await contract.getContractAddressByName(contractName)
+
+    if (result !== '0x0000000000000000000000000000000000000000') return result
+
+    const defaultAddress = defaultContractAddresses[contractName]?.[network]
+    if (defaultAddress) return defaultAddress
+
+    throw new Error('Contract Address not found')
+}
