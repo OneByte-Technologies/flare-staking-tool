@@ -29,7 +29,7 @@ module.exports = {
             start_url: '/',
         },
         workboxOptions: {
-            exclude: [/_redirects/],
+            exclude: [/_redirects/, /_headers/],
         },
         iconPaths: {
             favicon16: 'img/icons/favicon-16x16.png',
