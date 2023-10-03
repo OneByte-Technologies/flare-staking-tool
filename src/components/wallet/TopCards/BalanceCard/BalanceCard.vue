@@ -164,7 +164,7 @@ export default class BalanceCard extends Vue {
     totalMirrorAmount: string = ''
     amountFromCurrentValidator: number = 0
     amountFromPendingValidator: number = 0
-    pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
+    pChainAddress = this.basePChainAddress
     wallets = this.$store.state.activeWallet
     ethersWallet = new ethers.Wallet(this.wallets.ethKey)
     publicKey: string = this.ethersWallet.publicKey
@@ -445,8 +445,13 @@ export default class BalanceCard extends Vue {
         }
     }
 
-    get wallet(): WalletType | null {
+    get wallet(): WalletType {
         return this.$store.state.activeWallet
+    }
+
+    get basePChainAddress(): string {
+        const addr = this.wallet.getAllAddressesP()
+        return addr[0]
     }
 
     get isUpdateBalance(): boolean {

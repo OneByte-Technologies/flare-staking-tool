@@ -132,7 +132,6 @@
                                 depressed
                                 :loading="isLoading"
                                 block
-                                :disabled="canDelegate"
                             >
                                 {{ $t('staking.delegate.submit') }}
                             </v-btn>
@@ -405,6 +404,11 @@ export default class AddDelegator extends Vue {
         return this.estimatedReward.times(this.avaxPrice)
     }
 
+    get basePChainAddress(): string {
+        const addr = this.wallet.getAllAddressesP()
+        return addr[0]
+    }
+
     get avaxPrice(): Big {
         return Big(this.$store.state.prices.usd)
     }
@@ -419,8 +423,7 @@ export default class AddDelegator extends Vue {
     }
 
     get rewardAddressLocal() {
-        let wallet: MnemonicWallet = this.$store.state.activeWallet
-        return wallet.getPlatformRewardAddress()
+        return this.basePChainAddress
     }
 
     formCheck(): boolean {
