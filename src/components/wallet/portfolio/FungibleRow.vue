@@ -48,6 +48,8 @@ import Big from 'big.js'
 export default class FungibleRow extends Vue {
     @Prop() asset!: AvaAsset
 
+    totBal: string = ''
+
     get iconUrl(): string | null {
         if (!this.asset) return null
 
