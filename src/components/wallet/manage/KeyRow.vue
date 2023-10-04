@@ -108,20 +108,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div v-else>
-                    <p v-if="Object.keys(balances).length === 0" class="balance_empty">
-                        {{ $t('keys.empty') }}
-                    </p>
-                    <div class="addressBalance bal_cols" v-else>
-                        <p>This key has:</p>
-                        <div class="bal_rows">
-                            <p v-for="bal in balances" :key="bal.id">
-                                {{ bal.toString() }}
-                                <b>{{ bal.symbol }}</b>
-                            </p>
-                        </div>
-                    </div>
-                </div> -->
             </div>
         </div>
     </div>
@@ -147,6 +133,7 @@ import { SingletonWallet } from '../../../js/wallets/SingletonWallet'
 import MnemonicPhrase from '@/js/wallets/MnemonicPhrase'
 import XpubModal from '@/components/modals/XpubModal.vue'
 import { AbstractHdWallet } from '@/js/wallets/AbstractHdWallet'
+import { bnToBig } from '@/helpers/helper'
 
 interface IKeyBalanceDict {
     [key: string]: AvaAsset
@@ -174,23 +161,17 @@ export default class KeyRow extends Vue {
         modal_priv_key: PrivateKey
         modal_xpub: XpubModal
     }
-    get updatedBalance() {
-        const ava = this.$store.getters['Assets/AssetAVA']
-        const platformBalance = this.$store.getters['Assets/walletPlatformBalance']
-        const platformUnlocked = platformBalance.available
+    get updatedBalance(): string {
+        let ava = this.$store.getters['Assets/AssetAVA']
+        if (!ava) return '?'
 
-        if (!ava) return '0'
+        let evmUnlocked = this.wallet
+            ? this.wallet.ethBalance.div(new BN(Math.pow(10, 9).toString()))
+            : new BN(0)
+        let totalBalance = ava.getTotalAmount().add(evmUnlocked)
+        let totalBalanceBig = bnToBig(totalBalance, ava.denomination)
 
-        const denom = ava.denomination
-        const bal = platformUnlocked
-        let bigBal = Big(bal.toString())
-        bigBal = bigBal.div(Math.pow(10, denom))
-
-        if (bigBal.lt(Big('1'))) {
-            return bigBal.toLocaleString(9)
-        } else {
-            return bigBal.toLocaleString(3)
-        }
+        return totalBalanceBig.toLocaleString(ava.denomination)
     }
 
     get isVolatile() {
@@ -291,12 +272,6 @@ export default class KeyRow extends Vue {
         }
         return null
     }
-    // shouldDisplayPBalance() {
-    //     return (
-    //         this.walletType === 'singleton' &&
-    //         (this.wallet as SingletonWallet).keyChain.hrp === 'costwo'
-    //     )
-    // }
 
     remove() {
         this.$emit('remove', this.wallet)
