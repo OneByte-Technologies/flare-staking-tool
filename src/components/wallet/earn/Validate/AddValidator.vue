@@ -328,8 +328,7 @@ export default class AddValidator extends Vue {
     }
 
     get rewardAddressLocal() {
-        let wallet: MnemonicWallet = this.$store.state.activeWallet
-        return wallet.getPlatformRewardAddress()
+        return this.basePChainAddress
     }
 
     rewardSelect(val: 'local' | 'custom') {
@@ -469,6 +468,11 @@ export default class AddValidator extends Vue {
 
     get avaxPrice(): Big {
         return Big(this.$store.state.prices.usd)
+    }
+
+    get basePChainAddress(): string {
+        const addr = this.wallet.getAllAddressesP()
+        return addr[0]
     }
 
     updateFormData() {

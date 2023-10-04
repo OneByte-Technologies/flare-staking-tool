@@ -24,9 +24,12 @@ module.exports = {
         },
     },
     pwa: {
-        name: 'AVAX Wallet',
+        name: 'Flare Wallet',
         manifestOptions: {
             start_url: '/',
+        },
+        workboxOptions: {
+            exclude: [/_redirects/, /_headers/],
         },
         iconPaths: {
             favicon16: 'img/icons/favicon-16x16.png',

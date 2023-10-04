@@ -164,17 +164,21 @@ export default class BalanceCard extends Vue {
     totalMirrorAmount: string = ''
     amountFromCurrentValidator: number = 0
     amountFromPendingValidator: number = 0
-    pChainAddress: string = this.$store.state.activeWallet.getCurrentAddressPlatform()
+    pChainAddress = this.basePChainAddress
     wallets = this.$store.state.activeWallet
-    ethersWallet = new ethers.Wallet(this.wallets.ethKey)
-    publicKey: string = this.ethersWallet.publicKey
     cAddr: string = this.wallets.getEvmChecksumAddress()
     cAddrBech: string = this.wallets.getEvmAddressBech()
     avaxAssetID: string = pChain.getAVAXAssetID().toString()
 
+    get publicKey(): string {
+        if (this.wallet.type === 'ledger') return this.wallets.publicKey
+        const ethersWallet = new ethers.Wallet(this.wallets.ethKey)
+        return ethersWallet.publicKey
+    }
+
     ctx: Context = {
-        privkHex: this.wallets.ethKey,
-        privkCB58: '',
+        privkHex: this.wallet.type === 'ledger' ? undefined : this.wallets.ethKey,
+        privkCB58: this.wallet.type === 'ledger' ? undefined : '',
         publicKey: this.publicKey, // Add the public key to the ctx object //Public Key in Buffer
         rpcurl: this.getIp(),
         web3: ethers, // Replace with the actual web3 instance
@@ -445,8 +449,13 @@ export default class BalanceCard extends Vue {
         }
     }
 
-    get wallet(): WalletType | null {
+    get wallet(): WalletType {
         return this.$store.state.activeWallet
+    }
+
+    get basePChainAddress(): string {
+        const addr = this.wallet.getAllAddressesP()
+        return addr[0]
     }
 
     get isUpdateBalance(): boolean {

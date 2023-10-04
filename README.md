@@ -7,19 +7,19 @@ This is the frontend Vue.js application for the Flare (FLR) Wallet.
 -   Yarn (https://classic.yarnpkg.com/en/docs/install/)
 -   Recent version of npm (7.4.0)
 -   Node v16
--   Gecko, Avalanche client in Golang (https://github.com/ava-labs/avalanchego)
+-   Gecko, Flare client in Golang (https://github.com/flare-foundation/go-flare)
 
 ## Installation
 
-1. Clone the repo `git clone https://github.com/ava-labs/avalanche-wallet.git`
-2. Go to root of the project `cd avalanche-wallet`
+1. Clone the repo `git clone https://github.com/OneByte-Technologies/flare-staking-tool.git`
+2. Go to root of the project `cd flare-staking-tool`
 3. Install javascript dependencies with `yarn install`.
 
 ## Running The Project
 
-In order for the wallet to work, it needs the Avalanche network to operate on. By default the wallet will connect to the Avalanche mainnet.
+In order for the wallet to work, it needs the Flare network to operate on. By default the wallet will connect to the Flare Mainnet.
 
-1. If you want to connect to a local network, make sure you have installed and able to run a AvlaancheGo node properly.
+1. If you want to connect to a local network, make sure you have installed and able to run a go-flare node properly.
 2. Run the project with hot reloading `yarn serve`
 
 When you go to the website on your browser, you might get a warning saying
@@ -32,22 +32,22 @@ When you go to the website on your browser, you might get a warning saying
 
 ## Changing the Network
 
-By default the wallet will connect to the Avalanche tmainnet. You can change to another network by clicking the button labeled `TestNet` on the navigation bar and selecting another network, or add a custom network.
+By default the wallet will connect to the Flare Mainnet. You can change to another network by clicking the button labeled `Mainnet` or `Coston2` on the navigation bar and selecting another network, or add a custom network.
 
 ## Explorer API
 
 A valid explorer API is required to correctly display balances for Mnemonic and Ledger type wallets.
-The wallet uses the Avalanche Explorer API to display wallet transaction history.
+The wallet uses the Flare Explorer API to display wallet transaction history.
 
 WARNING: This history might be out of order and incomplete.
 
 ## Browser Support
 
-We suggest using Google Chrome to view the Avalanche Wallet website.
+We suggest using Google Chrome to view the Flare Wallet website.
 
 ### Firefox and https
 
-Firefox does not allow https requests to localhost. But the Avalanche Wallet uses https by default, so we will need to change this to http. Make this switch by editing the `vue.config.js` file in the root directory and change
+Firefox does not allow https requests to localhost. But the Flare Wallet uses https by default, so we will need to change this to http. Make this switch by editing the `vue.config.js` file in the root directory and change
 
 ```
 devServer: {
@@ -75,37 +75,27 @@ The wallet can encrypt your private keys into a secure file encrypted by a passw
 }
 ```
 
-# Language Setting
-
-Saved into local storage as a 2 letter code.
-
-```
-"lang": "en"
-```
-
 # Dependencies
 
-##### Avalanche Node (https://github.com/ava-labs/avalanchego)
+##### Flare Node (https://github.com/flare-foundation/go-flare)
 
 To get utxos and to send transactions.
 
-#### Explorer API Node (https://github.com/ava-labs/ortelius)
+<!-- #### Explorer API Node (https://github.com/ava-labs/ortelius) -->
 
-To check if an address was used before, and to get activity history.
+<!-- To check if an address was used before, and to get activity history. -->
 
 # Default Connections
 
-The wallet needs to connect to an Avalanche node, and an explorer node to operate properly.
+The wallet needs to connect to a Flare node, and an explorer node to operate properly.
 
-By default, there are two network options to connect to: `Mainnet` and `Fuji`.
+By default, there are two network options to connect to: `Mainnet` and `Coston2`.
 
 ##### Mainnet
 
--   Avalanche API: `https://api.avax.network:443`
--   Explorer API: `https://explorerapi.avax.network`
+-   Flare API: `https://flare-api.flare.networ:443`
 
-##### Fuji (Testnet)
+##### Coston2 (Testnet)
 
--   Avalanche API: `https://api.avax-test.network:443`
--   Explorer API: `https://explorerapi.avax-test.network`
+-   Flare API: `https://coston2-api.flare.network:443`
 
