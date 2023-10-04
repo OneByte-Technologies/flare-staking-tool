@@ -165,9 +165,9 @@ class HdHelper {
         const currentAddrBuf = bintools.parseAddress(currentAddr, this.chainId)
         const currentUtxos = result.getUTXOIDs([currentAddrBuf])
 
-        if (currentUtxos.length > 0) {
-            this.incrementIndex()
-        }
+        // if (currentUtxos.length > 0) {
+        //     this.incrementIndex()
+        // }
         this.isFetchUtxo = false
         return result
     }
