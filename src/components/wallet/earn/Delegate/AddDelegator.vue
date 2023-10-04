@@ -91,10 +91,10 @@
             </transition-group>
             <div>
                 <div v-if="!isSuccess" class="summary">
-                    <CurrencySelect
+                    <!-- <CurrencySelect
                         v-model="currency_type"
                         currency="currency_sel"
-                    ></CurrencySelect>
+                    ></CurrencySelect> -->
                     <div>
                         <label>{{ $t('staking.delegate.summary.duration') }} *</label>
                         <p>{{ stakingDurationText }}</p>
