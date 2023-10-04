@@ -149,8 +149,6 @@ import {
 } from '@avalabs/avalanche-wallet-sdk'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForExportP } from '@/helpers/utxoSelection/selectMaxUtxoForExportP'
-import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
-import { ethers } from 'ethers'
 
 const IMPORT_DELAY = 5000 // in ms
 const BALANCE_DELAY = 2000 // in ms

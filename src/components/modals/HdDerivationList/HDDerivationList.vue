@@ -1,27 +1,8 @@
 <template>
     <div class="list_cont no_scroll_bar">
         <v-tabs grow>
-            <v-tab>Internal</v-tab>
-            <v-tab>External</v-tab>
             <v-tab>Platform</v-tab>
-            <v-tab-item>
-                <HdChainTable
-                    :addresses="addrsInternal"
-                    :balance-dict="keyBalancesInternal"
-                    :wallet="wallet"
-                    :path="1"
-                    :helper="internalHelper"
-                ></HdChainTable>
-            </v-tab-item>
-            <v-tab-item>
-                <HdChainTable
-                    :addresses="addrsExternal"
-                    :balance-dict="keyBalancesExternal"
-                    :wallet="wallet"
-                    :path="0"
-                    :helper="externalHelper"
-                ></HdChainTable>
-            </v-tab-item>
+
             <v-tab-item>
                 <HdChainTable
                     :addresses="addrsPlatform"

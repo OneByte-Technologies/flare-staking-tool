@@ -253,7 +253,6 @@ import { WalletType } from '@/js/wallets/types'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
-import { addValidatorTx } from '@/components/utils/pChain/addValidatorTx'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -328,8 +327,7 @@ export default class AddValidator extends Vue {
     }
 
     get rewardAddressLocal() {
-        let wallet: MnemonicWallet = this.$store.state.activeWallet
-        return wallet.getPlatformRewardAddress()
+        return this.basePChainAddress
     }
 
     rewardSelect(val: 'local' | 'custom') {
@@ -471,6 +469,11 @@ export default class AddValidator extends Vue {
         return Big(this.$store.state.prices.usd)
     }
 
+    get basePChainAddress(): string {
+        const addr = this.wallet.getAllAddressesP()
+        return addr[0]
+    }
+
     updateFormData() {
         this.formNodeId = this.nodeId.trim()
         this.formAmt = this.stakeAmt
@@ -580,7 +583,6 @@ export default class AddValidator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
-            await addValidatorTx(this.formNodeId)
             this.isLoading = false
             this.onTxSubmit(txId)
         } catch (err) {

@@ -37,8 +37,6 @@ import { BN } from 'avalanche'
 import { bnToBig } from '../../../helpers/helper'
 import { priceDict } from '../../../store/types'
 import { WalletType } from '@/js/wallets/types'
-import { getBalance as getPBalance } from '@/components/utils/pChain/getBalance'
-import { ethers } from 'ethers'
 
 import Big from 'big.js'
 
