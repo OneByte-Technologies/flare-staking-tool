@@ -253,7 +253,6 @@ import { WalletType } from '@/js/wallets/types'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
-import { addValidatorTx } from '@/components/utils/pChain/addValidatorTx'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -584,7 +583,6 @@ export default class AddValidator extends Vue {
                 this.formRewardAddr,
                 this.formUtxos
             )
-            await addValidatorTx(this.formNodeId)
             this.isLoading = false
             this.onTxSubmit(txId)
         } catch (err) {
