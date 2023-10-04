@@ -20,12 +20,6 @@
                         </thead>
                         <tbody>
                             <UTXORow
-                                v-for="utxo in avmUTXOs"
-                                :key="utxo.getUTXOID()"
-                                :utxo="utxo"
-                                v-show="chain === 'X'"
-                            ></UTXORow>
-                            <UTXORow
                                 v-for="utxo in platformUTXOs"
                                 :key="utxo.getUTXOID()"
                                 :utxo="utxo"
@@ -64,7 +58,7 @@ import UTXORow from '@/components/modals/UtxosBreakdown/AVMUTXORow.vue'
     components: { UTXORow, Modal },
 })
 export default class UtxosBreakdownModal extends Vue {
-    chain = 'X'
+    chain = 'P'
 
     $refs!: {
         modal: Modal
@@ -98,11 +92,7 @@ export default class UtxosBreakdownModal extends Vue {
     }
 
     get isEmpty() {
-        if (this.chain === 'X') {
-            return this.avmUTXOs.length === 0
-        } else {
-            return this.platformUTXOs.length === 0
-        }
+        return this.platformUTXOs.length === 0
     }
 
     sortFnc<UTXO extends AVMUTXO | PlatformUTXO>(a: UTXO, b: UTXO) {
