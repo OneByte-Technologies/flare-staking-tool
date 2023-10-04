@@ -20,17 +20,10 @@
                         </thead>
                         <tbody>
                             <UTXORow
-                                v-for="utxo in avmUTXOs"
-                                :key="utxo.getUTXOID()"
-                                :utxo="utxo"
-                                v-show="chain === 'X'"
-                            ></UTXORow>
-                            <UTXORow
                                 v-for="utxo in platformUTXOs"
                                 :key="utxo.getUTXOID()"
                                 :utxo="utxo"
                                 v-show="chain === 'P'"
-                                :is-x="false"
                             ></UTXORow>
                             <tr v-if="isEmpty" class="empty_row">
                                 <td colspan="7">
@@ -64,7 +57,7 @@ import UTXORow from '@/components/modals/UtxosBreakdown/AVMUTXORow.vue'
     components: { UTXORow, Modal },
 })
 export default class UtxosBreakdownModal extends Vue {
-    chain = 'X'
+    chain = 'P'
 
     $refs!: {
         modal: Modal
