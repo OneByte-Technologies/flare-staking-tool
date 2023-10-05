@@ -94,7 +94,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         this.ethApp = ethApp
         this.type = 'ledger'
         this.version = version
-        this.ethHdNode = hdEth  
+        this.ethHdNode = hdEth
 
         if (hdEth) {
             const ethKey = hdEth
@@ -876,7 +876,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
     async getUTXOs(): Promise<void> {
         // TODO: Move to shared file
-        this.isFetchUtxos = true
+        // this.isFetchUtxos = true
         // If we are waiting for helpers to initialize delay the call
         const isInit =
             this.externalHelper.isInit && this.internalHelper.isInit && this.platformHelper.isInit
