@@ -94,7 +94,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         this.ethApp = ethApp
         this.type = 'ledger'
         this.version = version
-        this.ethHdNode = hdEth
+        this.ethHdNode = hdEth  
 
         if (hdEth) {
             const ethKey = hdEth
@@ -113,7 +113,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         const prov = await getLedgerProvider(t)
         const version = await prov.getVersion(t)
 
-        const xpub = await prov.getXPUB(t, AVA_ACCOUNT_PATH)
+        const xpub = await prov.getXPUB(t, LEDGER_ETH_ACCOUNT_PATH)
         const hd = new HDKey()
         hd.publicKey = xpub.pubKey
         hd.chainCode = xpub.chainCode

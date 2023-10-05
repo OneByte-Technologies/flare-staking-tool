@@ -398,7 +398,7 @@ class HdHelper {
             return this.addressCache[index]
         }
 
-        const derivationPath: string = `${this.changePath}/${index.toString()}`
+        // const derivationPath: string = `${this.changePath}/${index.toString()}`
         // let key: HDKey = this.masterKey.derive(derivationPath) as HDKey;
 
         // Get key from cache, if not generate it
@@ -406,7 +406,7 @@ class HdHelper {
         if (this.hdCache[index]) {
             key = this.hdCache[index]
         } else {
-            key = this.masterKey.derive(derivationPath) as HDKey
+            key = this.masterKey
             this.hdCache[index] = key
         }
 
