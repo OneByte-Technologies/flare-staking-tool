@@ -184,11 +184,11 @@ const platform_module: Module<PlatformState, RootState> = {
             const stakeAmt = validator.validatorStake
 
             // 5 times the validator's stake
-            const relativeMaxStake = stakeAmt.mul(new BN(5))
+            const relativeMaxStake = stakeAmt.mul(new BN(16))
 
             // absolute max stake
             const mult = new BN(10).pow(new BN(6 + 9))
-            const absMaxStake = new BN(3).mul(mult)
+            const absMaxStake = new BN(200).mul(mult)
 
             if (relativeMaxStake.lt(absMaxStake)) {
                 return relativeMaxStake
