@@ -202,6 +202,8 @@ export default class BalanceCard extends Vue {
         },
     }
     mirrorFundDetail = {}
+
+    @Watch('isUpdateBalance')
     async mirrorFunds() {
         try {
             const mirrorFundsData = await fetchMirrorFunds(this.ctx)
@@ -219,9 +221,6 @@ export default class BalanceCard extends Vue {
 
     mounted() {
         this.mirrorFunds()
-        setInterval(() => {
-            this.mirrorFunds()
-        }, 30000)
     }
 
     formatNumberWithCommas(number: number) {
