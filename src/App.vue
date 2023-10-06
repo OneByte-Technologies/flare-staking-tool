@@ -2,6 +2,7 @@
     <v-app>
         <v-main>
             <template>
+                <DebugModeManager></DebugModeManager>
                 <UrlBanner></UrlBanner>
                 <navbar v-show="isNavbar"></navbar>
                 <div class="main_cols" :wallet_view="!isNavbar">
@@ -32,10 +33,12 @@ import TestNetBanner from '@/components/TestNetBanner'
 import NetworkLoadingBlock from '@/components/misc/NetworkLoadingBlock'
 import UpgradeToAccountModal from '@/components/modals/SaveAccount/UpgradeToAccountModal'
 import LedgerWalletLoading from '@/components/modals/LedgerWalletLoading'
+import DebugModeManager from '@/components/misc/DebugModeManager'
 import UrlBanner from '@/components/misc/UrlBanner'
 
 export default {
     components: {
+        DebugModeManager,
         UrlBanner,
         LedgerWalletLoading,
         UpgradeToAccountModal,
