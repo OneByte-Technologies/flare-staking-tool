@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "wallet",
-    "version": "0.1.4",
+    "version": "0.0.1",
     "scripts": {
         "build": "vue-cli-service build",
         "cypress": "cypress run",
@@ -35,6 +35,7 @@
         "@web3modal/wagmi": "^3.0.1",
         "avalanche": "npm:@flarenetwork/flarejs",
         "axios": "0.21.2",
+        "babel-plugin-transform-remove-console": "^6.9.4",
         "bech32": "^2.0.0",
         "big.js": "5.2.2",
         "bip32-path": "0.4.2",
