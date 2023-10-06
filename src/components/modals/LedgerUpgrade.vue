@@ -16,15 +16,7 @@
                     <a href="https://www.ledger.com/ledger-live/download" target="_blank">
                         Ledger Live
                     </a>
-                    app manager. The minimum version required to use the app is version {{ minV }},
-                    more instructions can be found
-                    <a
-                        target="_blank"
-                        href="https://support.avax.network/en/articles/6150237-how-to-use-a-ledger-nano-s-or-nano-x-with-avalanche"
-                    >
-                        here
-                    </a>
-                    .
+                    app manager. The minimum version required to use the app is version {{ minV }}
                 </small>
             </p>
         </div>
