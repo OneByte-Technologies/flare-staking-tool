@@ -4,6 +4,7 @@
             <img
                 ref="bg"
                 src="@/assets/paper_wallet/bg.png"
+                @load="onImageLoad"
                 :style="{
                     display: 'none',
                     height: `${height}px`,
@@ -69,7 +70,9 @@ export default class PaperWallet extends Vue {
         let modal = this.$refs.modal
         // @ts-ignore
         modal.open()
+    }
 
+    onImageLoad() {
         setTimeout(() => {
             this.setSizes()
         }, 200)
