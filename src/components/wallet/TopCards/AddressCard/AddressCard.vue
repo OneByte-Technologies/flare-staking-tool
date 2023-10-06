@@ -11,7 +11,7 @@
         <p class="addr_info">{{ addressMsg }}</p>
         <div class="bottom">
             <div class="col_qr">
-                <canvas ref="qr"></canvas>
+                <!-- <canvas ref="qr"></canvas> -->
             </div>
             <div class="bottom_rest">
                 <p class="subtitle">{{ addressLabel }}</p>

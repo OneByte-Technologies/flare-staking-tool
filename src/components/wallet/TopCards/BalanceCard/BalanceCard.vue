@@ -100,7 +100,7 @@
                     <div>
                         <label v-if="!isBreakdown">Total Mirror Funds</label>
                         <p v-if="!isBreakdown">
-                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }}
+                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR
                         </p>
                         <label v-if="isBreakdown">Mirror Funds</label>
                         <p v-if="isBreakdown">

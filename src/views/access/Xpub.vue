@@ -37,6 +37,7 @@
                     View Wallet Balances
                 </v-btn>
             </form>
+            <router-link to="/access" class="link">Cancel</router-link>
         </div>
     </div>
 </template>
@@ -97,6 +98,9 @@ h1 {
 }
 .pass {
     background-color: var(--bg) !important;
+}
+.link {
+    color: var(--link-secondary);
 }
 
 .desc {

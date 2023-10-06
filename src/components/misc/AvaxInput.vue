@@ -19,10 +19,17 @@
                     <b>{{ $t('misc.balance') }}:</b>
                     {{ balance.toLocaleString() }}
                 </p>
-                <p>
-                    <b>$</b>
-                    {{ amountUSD.toLocaleString(2) }}
-                </p>
+                <div
+                    class="tooltip"
+                    v-on:mouseenter="showTooltip = true"
+                    v-on:mouseleave="showTooltip = false"
+                >
+                    <font-awesome-icon icon="info" />
+                    <div class="tooltip-text" v-show="showTooltip">
+                        <span style="padding-left: 4px">$</span>
+                        <span style="padding-left: 4px">{{ amountUSD.toLocaleString(2) }}</span>
+                    </div>
+                </div>
             </div>
             <div></div>
         </div>
@@ -51,7 +58,7 @@ export default class AvaxInput extends Vue {
     max?: BN | null
 
     @Prop() balance?: Big | null
-
+    showTooltip: boolean = false
     maxOut(ev: MouseEvent) {
         ev.preventDefault()
         ev.stopPropagation()
@@ -105,6 +112,30 @@ export default class AvaxInput extends Vue {
         background-color: var(--bg-light);
         //border-radius: 3px;
     }
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer; /* Add cursor pointer for hover effect */
+}
+
+.tooltip-text {
+    position: absolute;
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+    top: 20px; /* Adjust the top position to control tooltip placement */
+    left: 0; /* Adjust the left position to control tooltip placement */
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
 
 .balance {

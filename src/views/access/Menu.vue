@@ -106,6 +106,9 @@ hr {
         object-fit: contain;
     }
 }
+.link {
+    color: var(--link-secondary);
+}
 
 .menus {
     width: 440px;
