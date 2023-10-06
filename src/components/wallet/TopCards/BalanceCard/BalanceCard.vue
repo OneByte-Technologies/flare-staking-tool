@@ -204,13 +204,8 @@ export default class BalanceCard extends Vue {
     mirrorFundDetail = {}
     async mirrorFunds() {
         try {
-            console.log('MirrorFunds ctx', this.ctx)
             const mirrorFundsData = await fetchMirrorFunds(this.ctx)
             // Handle the data as needed, e.g., update component data or state
-            console.log('MirrorFunds')
-            console.log(`Mirror fund details on the network "${ava.getHRP()}"`)
-            console.log(`${JSON.stringify(mirrorFundsData, null, 2)}`)
-            console.log('Mirror Funds Data:', mirrorFundsData)
             this.totalMirrorAmount = parseFloat(
                 mirrorFundsData['Total Mirrored Amount']
             ).toLocaleString()
@@ -224,6 +219,9 @@ export default class BalanceCard extends Vue {
 
     mounted() {
         this.mirrorFunds()
+        setInterval(() => {
+            this.mirrorFunds()
+        }, 30000)
     }
 
     formatNumberWithCommas(number: number) {

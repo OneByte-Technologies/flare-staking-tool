@@ -77,7 +77,6 @@ const getTotalFromDelegation = (data: DelegatedAmount[]) => {
  * @returns - total mirror funds and funds with start and end time
  */
 export async function fetchMirrorFunds(ctx: Context) {
-    console.log('Checking your Mirror Funds ...')
     delegationCount = 0
     // fetch from the contract
     const rpcUrl = getIp()

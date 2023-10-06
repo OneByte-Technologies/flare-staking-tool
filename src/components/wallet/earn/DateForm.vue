@@ -33,7 +33,7 @@ export default class DateForm extends Vue {
     localStart = this.startDateMin
     localEnd = this.endDateMin
     @Prop() maxEndDate?: string
-    @Prop() disableDateRestriction?: boolean
+    @Prop() minStakingDurationForValidators?: boolean
     // @Watch('localStart')
     // startChange(val: string) {
     //     this.setStartDate(val)
@@ -91,7 +91,7 @@ export default class DateForm extends Vue {
         this.localEnd = this.endDateMax
     }
     get startDateOffset() {
-        return this.disableDateRestriction === true ? DAY_MS * 0 : DAY_MS * 14
+        return this.minStakingDurationForValidators === true ? DAY_MS * 60 : DAY_MS * 14
     }
 
     get stakeDuration(): number {
