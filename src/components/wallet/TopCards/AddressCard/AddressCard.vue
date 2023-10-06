@@ -387,10 +387,10 @@ export default class AddressCard extends Vue {
     display: grid;
     grid-template-columns: 1fr;
     column-gap: 14px;
-    padding-right: 18px;
+    padding-right: 16px;
     margin-top: 4px;
     margin-bottom: 4px;
-    padding-left: 8px;
+    padding-left: 16px;
     flex-grow: 1;
 
     // canvas {
