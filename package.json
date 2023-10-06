@@ -3,7 +3,7 @@
     "name": "wallet",
     "version": "0.1.4",
     "scripts": {
-        "build": "vue-cli-service build --mode development",
+        "build": "vue-cli-service build",
         "cypress": "cypress run",
         "format": "prettier '**/*.{js,ts,vue,json}' --write",
         "lint": "vue-cli-service lint",
