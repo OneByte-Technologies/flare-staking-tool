@@ -160,7 +160,7 @@ export default class BalanceCard extends Vue {
     $refs!: {
         utxos_modal: UtxosBreakdownModal
     }
-
+    refresh: number = 0
     totalMirrorAmount: string = ''
     amountFromCurrentValidator: number = 0
     amountFromPendingValidator: number = 0
@@ -179,14 +179,14 @@ export default class BalanceCard extends Vue {
     ctx: Context = {
         privkHex: this.wallet.type === 'ledger' ? undefined : this.wallets.ethKey,
         privkCB58: this.wallet.type === 'ledger' ? undefined : '',
-        publicKey: this.publicKey, // Add the public key to the ctx object //Public Key in Buffer
+        publicKey: this.publicKey,
         rpcurl: this.getIp(),
         web3: ethers, // Replace with the actual web3 instance
-        avalanche: ava, // Initialize with the correct value
+        avalanche: ava,
         cchain: cChain,
         pchain: pChain,
-        cKeychain: cChain.keyChain(), // Replace with the actual cKeychain
-        pKeychain: pChain.keyChain(), // Replace with the actual pKeychain
+        cKeychain: cChain.keyChain(),
+        pKeychain: pChain.keyChain(),
         pAddressBech32: this.pChainAddress,
         cAddressBech32: this.cAddrBech,
         cAddressHex: this.cAddr,
@@ -203,10 +203,11 @@ export default class BalanceCard extends Vue {
     }
     mirrorFundDetail = {}
 
-    @Watch('isUpdateBalance')
+    @Watch('refresh')
     async mirrorFunds() {
         try {
             const mirrorFundsData = await fetchMirrorFunds(this.ctx)
+            console.log('Mirror Funds Data', mirrorFundsData)
             // Handle the data as needed, e.g., update component data or state
             this.totalMirrorAmount = parseFloat(
                 mirrorFundsData['Total Mirrored Amount']
@@ -217,10 +218,6 @@ export default class BalanceCard extends Vue {
         } catch (error) {
             console.error('Error fetching Mirror Funds:', error)
         }
-    }
-
-    mounted() {
-        this.mirrorFunds()
     }
 
     formatNumberWithCommas(number: number) {
@@ -372,6 +369,7 @@ export default class BalanceCard extends Vue {
     }
 
     get platformBalance() {
+        this.refresh++
         return this.$store.getters['Assets/walletPlatformBalance']
     }
 

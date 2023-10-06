@@ -27,6 +27,7 @@ const fetchValidatorInfo = async (ctx: Context) => {
 // fetches pending validator info
 const fetchPendingValidatorInfo = async (ctx: Context) => {
     const pendingValidator = await ctx.pchain.getPendingValidators()
+    console.log('Pending Validators', pendingValidator)
     return pendingValidator
 }
 
@@ -92,9 +93,9 @@ export async function fetchMirrorFunds(ctx: Context) {
     // fetch for the chain
     const delegationToCurrentValidator = await fetchDelegateStake(ctx, fetchValidatorInfo)
     const delegationToPendingValidator = await fetchDelegateStake(ctx, fetchPendingValidatorInfo)
-    const totalDelegatedAmount =
-        getTotalFromDelegation(delegationToCurrentValidator) +
-        getTotalFromDelegation(delegationToPendingValidator)
+    const currentAmt = getTotalFromDelegation(delegationToCurrentValidator)
+    const pendingAmt = getTotalFromDelegation(delegationToPendingValidator)
+    const totalDelegatedAmount = currentAmt + pendingAmt
     const totalInFLR = parseFloat(totalDelegatedAmount.toString())
     return {
         'Total Mirrored Amount': `${totalInFLR} FLR`,
@@ -103,8 +104,8 @@ export async function fetchMirrorFunds(ctx: Context) {
             ...delegationToPendingValidator,
         },
         'Delegation Count': delegationCount,
-        'Total Current Amount': getTotalFromDelegation(delegationToCurrentValidator),
-        'Total Pending Amount': getTotalFromDelegation(delegationToPendingValidator),
+        'Total Current Amount': currentAmt,
+        'Total Pending Amount': pendingAmt,
     }
 }
 

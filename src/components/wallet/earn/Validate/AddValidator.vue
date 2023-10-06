@@ -57,7 +57,7 @@
                             <p class="desc">
                                 {{ $t('staking.validate.reward.desc') }}
                             </p>
-                            <div class="reward_tabs">
+                            <!-- <div class="reward_tabs">
                                 <button
                                     @click="rewardSelect('local')"
                                     :selected="rewardDestination === 'local'"
@@ -71,7 +71,7 @@
                                 >
                                     {{ $t('staking.delegate.form.reward.chip_2') }}
                                 </button>
-                            </div>
+                            </div> -->
                             <QrInput
                                 style="height: 40px; border-radius: 2px"
                                 v-model="rewardIn"
