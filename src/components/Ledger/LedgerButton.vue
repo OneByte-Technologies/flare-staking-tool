@@ -1,18 +1,21 @@
 <template>
-    <button class="button_primary" @click="submit" :disabled="disabled">
-        <template v-if="!isLoading">
-            Ledger (Recommended)
+    <div>
+        <button class="button_primary" @click="showModal" :disabled="disabled">
+            <template v-if="!isLoading">
+                Ledger (Recommended)
 
-            <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span>
-            <ImageDayNight
-                day="/img/access_icons/day/ledger.svg"
-                night="/img/access_icons/night/ledger.svg"
-                class="ledger_img"
-                v-else
-            ></ImageDayNight>
-        </template>
-        <Spinner v-else class="spinner"></Spinner>
-    </button>
+                <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span>
+                <ImageDayNight
+                    day="/img/access_icons/day/ledger.svg"
+                    night="/img/access_icons/night/ledger.svg"
+                    class="ledger_img"
+                    v-else
+                ></ImageDayNight>
+            </template>
+            <Spinner v-else class="spinner"></Spinner>
+        </button>
+        <LedgerCard ref="modal"></LedgerCard>
+    </div>
 </template>
 <script lang="ts">
 import 'reflect-metadata'
@@ -25,7 +28,7 @@ import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 // @ts-ignore
 import Eth from '@ledgerhq/hw-app-eth'
 import Transport from '@ledgerhq/hw-transport'
-
+import LedgerCard from './LedgerCard.vue'
 import Spinner from '@/components/misc/Spinner.vue'
 import LedgerBlock from '@/components/modals/LedgerBlock.vue'
 import { LedgerWallet } from '@/js/wallets/LedgerWallet'
@@ -43,13 +46,22 @@ const UnsupportedBrowsers = ['firefox', 'safari']
         ImageDayNight,
         Spinner,
         LedgerBlock,
+        LedgerCard,
     },
 })
 export default class LedgerButton extends Vue {
+    $refs!: {
+        modal: LedgerCard
+    }
+    isClose: boolean = false
     isLoading: boolean = false
     version?: string = undefined
     destroyed() {
         this.$store.commit('Ledger/closeModal')
+    }
+
+    showModal() {
+        this.$refs.modal.open()
     }
 
     get browser() {
@@ -170,6 +182,8 @@ export default class LedgerButton extends Vue {
             }, 1000)
         })
     }
+
+    async selectAddrModal() {}
 
     showWalletLoading() {
         this.$store.commit('Ledger/closeModal')
