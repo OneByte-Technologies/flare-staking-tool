@@ -5,6 +5,7 @@
                 <label>Please select a standard for Derivation and your Address</label>
                 <v-select
                     v-model="selectedStandard"
+                    @change="onSelectStandard"
                     :items="standard"
                     label="Please select a standard for derivation path"
                 ></v-select>
@@ -22,21 +23,18 @@
     </div>
 </template>
 <script lang="ts">
-import Modal from '../modals/Modal.vue'
 import 'reflect-metadata'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import TransportU2F from '@ledgerhq/hw-transport-u2f'
 //@ts-ignore
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb'
 // @ts-ignore
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 // @ts-ignore
-import Eth from '@ledgerhq/hw-app-eth'
 import Transport from '@ledgerhq/hw-transport'
 import Spinner from '@/components/misc/Spinner.vue'
 import LedgerBlock from '@/components/modals/LedgerBlock.vue'
 import { LedgerWallet } from '@/js/wallets/LedgerWallet'
-import { AVA_ACCOUNT_PATH, LEDGER_ETH_ACCOUNT_PATH } from '@/js/wallets/MnemonicWallet'
 import { LEDGER_EXCHANGE_TIMEOUT } from '@/store/modules/ledger/types'
 import ImageDayNight from '@/components/misc/ImageDayNight.vue'
 import { getLedgerProvider } from '@avalabs/avalanche-wallet-sdk'
@@ -116,6 +114,7 @@ export default class LedgerCard extends Vue {
     }
     res: string[] = []
     async init() {
+        this.res = []
         try {
             let transport = await this.getTransport()
             transport.setExchangeTimeout(LEDGER_EXCHANGE_TIMEOUT)
@@ -161,6 +160,9 @@ export default class LedgerCard extends Vue {
         this.init()
     }
 
+    async onSelectStandard() {
+        this.init()
+    }
     async submit() {
         try {
             let transport = await this.getTransport()
