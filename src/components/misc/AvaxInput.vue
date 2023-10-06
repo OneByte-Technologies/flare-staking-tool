@@ -20,7 +20,7 @@
                         <fa icon="wallet"></fa>
                     </Tooltip>
                 </p>
-                <p>
+                <p class="usd-conversion">
                     <b>$</b>
                     {{ amountUSD.toLocaleString(2) }}
                 </p>
@@ -94,6 +94,9 @@ export default class AvaxInput extends Vue {
     width: 100%;
     height: 40px;
 
+    input {
+        overflow: hidden;
+    }
     .amt_in {
         color: var(--primary-color);
         font-size: 15px;
@@ -130,6 +133,13 @@ export default class AvaxInput extends Vue {
     p {
         text-align: left;
         padding: 2px 0px;
+    }
+
+    .usd-conversion {
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     p:last-child {

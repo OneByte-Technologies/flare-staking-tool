@@ -675,8 +675,8 @@ export default class AddDelegator extends Vue {
 
 .cols {
     display: grid;
-    grid-template-columns: max-content 1fr 340px;
-    column-gap: 2vw;
+    grid-template-columns: 1.2fr 1fr 0.8fr;
+    column-gap: 1.5vw;
 }
 
 .ins_col {
