@@ -1,23 +1,34 @@
 <template>
     <div>
-        <div ref="modal" class="modal_main">
-            <div>
-                <label>Please select a standard for Derivation and your Address</label>
-                <v-select
-                    v-model="selectedStandard"
-                    @change="onSelectStandard"
-                    :items="standard"
-                    label="Please select a standard for derivation path"
-                ></v-select>
-                <v-select
-                    v-model="selectedAddress"
-                    :items="res"
-                    label="Please select an address"
-                ></v-select>
-                <v-card-action>
-                    <v-btn @click="submit">Submit</v-btn>
-                    <router-link to="/access" class="link">Cancel</router-link>
-                </v-card-action>
+        <div>
+            <div class="page-title">Please select a standard for derivation and your address</div>
+            <v-select
+                class="ledger-input"
+                v-model="selectedStandard"
+                @change="onSelectStandard"
+                :items="standard"
+                label="Please select a standard for derivation path"
+                filled
+            ></v-select>
+            <v-select
+                class="ledger-input"
+                v-model="selectedAddress"
+                :items="addressList"
+                :placeholder="placeholder"
+                :readonly="isFetchingAddresses"
+                :loading="isFetchingAddresses"
+                filled
+            ></v-select>
+            <v-btn
+                class="ava_button button_primary"
+                :disabled="!selectedAddress"
+                @click="submit"
+                depressed
+            >
+                Access Wallet
+            </v-btn>
+            <div style="margin-top: 12px">
+                <router-link to="/access" class="link">Cancel</router-link>
             </div>
         </div>
     </div>
@@ -53,31 +64,27 @@ const UnsupportedBrowsers = ['firefox', 'safari']
 export default class LedgerCard extends Vue {
     selectedStandard: string = 'BIP44'
     selectedAddress: string = ''
+    isFetchingAddresses: boolean = true
+    version?: string = undefined
+    addressList: string[] = []
 
     get path() {
-        if (this.selectedStandard === 'BIP44') {
-            let res: string[] = []
-            for (let i = 0; i < 5; i++) {
-                const pathStr = `m/44'/60'/0'/0/${i}`
-                res.push(pathStr)
-            }
-            return res
-        } else {
-            let res: string[] = []
-            for (let i = 0; i < 5; i++) {
-                const pathStr = `m/44'/60'/${i}'/0/0`
-                res.push(pathStr)
-            }
-            return res
+        let pathArr: string[] = []
+        for (let i = 0; i < 5; i++) {
+            const pathStr =
+                this.selectedStandard === 'BIP44' ? `m/44'/60'/0'/0/${i}` : `m/44'/60'/${i}'/0/0`
+            pathArr.push(pathStr)
         }
+        return pathArr
     }
 
     get standard() {
         return ['BIP44', 'Ledger Live']
     }
 
-    isLoading: boolean = false
-    version?: string = undefined
+    get placeholder() {
+        return this.isFetchingAddresses ? 'Fetching addresses...' : 'Please select an address'
+    }
 
     get browser() {
         return detect()
@@ -112,9 +119,9 @@ export default class LedgerCard extends Vue {
         }
         return transport
     }
-    res: string[] = []
     async init() {
-        this.res = []
+        this.addressList = []
+        this.isFetchingAddresses = true
         try {
             let transport = await this.getTransport()
             transport.setExchangeTimeout(LEDGER_EXCHANGE_TIMEOUT)
@@ -124,17 +131,14 @@ export default class LedgerCard extends Vue {
 
             // Close the initial prompt modal if exists
             this.$store.commit('Ledger/setIsUpgradeRequired', false)
-            this.isLoading = true
 
             if (!this.version) {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
-                this.isLoading = false
                 throw new Error('')
             }
 
             if (this.version < MIN_LEDGER_V) {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
-                this.isLoading = false
                 throw new Error('')
             }
 
@@ -144,7 +148,7 @@ export default class LedgerCard extends Vue {
             )
             for (let i = 0; i < 5; i++) {
                 const addr = derivedAddress[i].ethAddress
-                this.res.push(addr)
+                this.addressList.push(addr)
             }
 
             const selectedDerivedAddress = derivedAddress.find(
@@ -154,6 +158,7 @@ export default class LedgerCard extends Vue {
         } catch (e) {
             this.onerror(e)
         }
+        this.isFetchingAddresses = false
     }
 
     mounted() {
@@ -163,6 +168,7 @@ export default class LedgerCard extends Vue {
     async onSelectStandard() {
         this.init()
     }
+
     async submit() {
         try {
             let transport = await this.getTransport()
@@ -173,17 +179,14 @@ export default class LedgerCard extends Vue {
 
             // Close the initial prompt modal if exists
             this.$store.commit('Ledger/setIsUpgradeRequired', false)
-            this.isLoading = true
 
             if (!this.version) {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
-                this.isLoading = false
                 throw new Error('')
             }
 
             if (this.version < MIN_LEDGER_V) {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
-                this.isLoading = false
                 throw new Error('')
             }
             const dp = await this.init()
@@ -239,11 +242,9 @@ export default class LedgerCard extends Vue {
     }
     onsuccess() {
         this.$store.commit('Ledger/setIsWalletLoading', false)
-        this.isLoading = false
         this.version = undefined
     }
     onerror(err: any) {
-        this.isLoading = false
         this.version = undefined
         this.$store.commit('Ledger/closeModal')
         console.error(err)
@@ -260,6 +261,24 @@ export default class LedgerCard extends Vue {
 .spinner {
     width: 100% !important;
     color: inherit;
+}
+
+.page-title {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.ledger-input {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.link {
+    color: var(--link-secondary);
+}
+
+.v-text-field:hover {
+    border: none;
 }
 
 .ledger_img {
