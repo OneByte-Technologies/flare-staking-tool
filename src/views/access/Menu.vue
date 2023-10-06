@@ -27,16 +27,29 @@
                     ></ImageDayNight>
                 </router-link>
 
-                <router-link to="/access/ledger" class="menu_option button_primary">
+                <router-link
+                    v-if="!disabled"
+                    to="/access/ledger"
+                    class="menu_option button_primary"
+                >
                     Ledger (Recommended)
 
-                    <!-- <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span> -->
+                    <span v-if="disabled" class="no_firefox">
+                        {{ browserName }} is not supported
+                    </span>
                     <ImageDayNight
                         day="/img/access_icons/day/ledger.svg"
                         night="/img/access_icons/night/ledger.svg"
                         class="ledger_img"
                     ></ImageDayNight>
                 </router-link>
+                <div v-else class="disabled_button menu_option button_primary">
+                    Ledger (Recommended)
+
+                    <span v-if="disabled" class="no_firefox">
+                        {{ browserName }} is not supported
+                    </span>
+                </div>
                 <router-link to="/access/xpub" class="menu_option button_primary">
                     XPUB (Readonly)
                     <span><fa icon="glasses"></fa></span>
@@ -56,6 +69,9 @@ import { Vue, Component } from 'vue-property-decorator'
 import AccountsFound from '@/components/Access/AccountsFound.vue'
 import ToS from '@/components/misc/ToS.vue'
 import ImageDayNight from '@/components/misc/ImageDayNight.vue'
+const { detect } = require('detect-browser')
+
+const UnsupportedBrowsers = ['firefox', 'safari']
 
 @Component({
     components: {
@@ -64,7 +80,22 @@ import ImageDayNight from '@/components/misc/ImageDayNight.vue'
         AccountsFound,
     },
 })
-export default class Menu extends Vue {}
+export default class Menu extends Vue {
+    get browser() {
+        return detect()
+    }
+
+    get browserName() {
+        return this.browser ? this.browser.name[0].toUpperCase() + this.browser.name.slice(1) : ''
+    }
+
+    get disabled() {
+        // If unsupported return true
+        return true
+        // if (this.browser && UnsupportedBrowsers.includes(this.browser.name)) return true
+        // return false
+    }
+}
 </script>
 
 <style scoped lang="scss">
@@ -76,6 +107,11 @@ export default class Menu extends Vue {}
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.disabled_button {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 img {
@@ -123,6 +159,11 @@ hr {
     width: 440px;
     max-width: 100%;
     margin-top: 1em;
+}
+
+.no_firefox {
+    font-size: 0.8em;
+    color: var(--primary-color-light);
 }
 
 @include main.mobile-device {
