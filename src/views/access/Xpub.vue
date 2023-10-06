@@ -125,5 +125,6 @@ h1 {
 .ava_button {
     width: 100%;
     margin-top: 22px;
+    margin-bottom: 16px;
 }
 </style>

@@ -15,21 +15,15 @@
         <p class="ticker">FLR</p>
         <div v-if="balance" class="balance">
             <div>
-                <p>
-                    <b>{{ $t('misc.balance') }}:</b>
-                    {{ balance.toLocaleString() }}
+                <p v-if="balanceText">
+                    <Tooltip :text="balanceText">
+                        <fa icon="wallet"></fa>
+                    </Tooltip>
                 </p>
-                <div
-                    class="tooltip"
-                    v-on:mouseenter="showTooltip = true"
-                    v-on:mouseleave="showTooltip = false"
-                >
-                    <font-awesome-icon icon="info" />
-                    <div class="tooltip-text" v-show="showTooltip">
-                        <span style="padding-left: 4px">$</span>
-                        <span style="padding-left: 4px">{{ amountUSD.toLocaleString(2) }}</span>
-                    </div>
-                </div>
+                <p>
+                    <b>$</b>
+                    {{ amountUSD.toLocaleString(2) }}
+                </p>
             </div>
             <div></div>
         </div>
@@ -39,6 +33,7 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop, Model } from 'vue-property-decorator'
 import { Big, bnToBig } from '@avalabs/avalanche-wallet-sdk'
+import Tooltip from '@/components/misc/Tooltip.vue'
 //@ts-ignore
 import { BigNumInput } from '@avalabs/vue_components'
 import { BN } from 'avalanche'
@@ -47,6 +42,7 @@ import { priceDict } from '../../store/types'
 @Component({
     components: {
         BigNumInput,
+        Tooltip,
     },
 })
 export default class AvaxInput extends Vue {
@@ -58,7 +54,6 @@ export default class AvaxInput extends Vue {
     max?: BN | null
 
     @Prop() balance?: Big | null
-    showTooltip: boolean = false
     maxOut(ev: MouseEvent) {
         ev.preventDefault()
         ev.stopPropagation()
@@ -68,6 +63,11 @@ export default class AvaxInput extends Vue {
 
     amount_in(val: BN) {
         this.$emit('change', val)
+    }
+
+    get balanceText(): String {
+        if (!this.balance) return ''
+        return this.$t('misc.balance') + ': ' + this.balance.toLocaleString()
     }
 
     get amountUSD(): Big {
@@ -112,30 +112,6 @@ export default class AvaxInput extends Vue {
         background-color: var(--bg-light);
         //border-radius: 3px;
     }
-}
-.tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: pointer; /* Add cursor pointer for hover effect */
-}
-
-.tooltip-text {
-    position: absolute;
-    background-color: black;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 12px;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s;
-    top: 20px; /* Adjust the top position to control tooltip placement */
-    left: 0; /* Adjust the left position to control tooltip placement */
-}
-
-.tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
 }
 
 .balance {
@@ -194,9 +170,11 @@ export default class AvaxInput extends Vue {
 p {
     text-align: center;
 }
+
 .max_but {
     font-size: 13px;
     opacity: 0.4;
+
     &:hover {
         opacity: 1;
     }

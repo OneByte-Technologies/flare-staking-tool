@@ -12,10 +12,6 @@ import { BootstrapVue } from 'bootstrap-vue'
 import vuetify from './plugins/vuetify'
 // @ts-ignore
 import i18n from './plugins/i18n.js'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faInfo } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faInfo)
 // @ts-ignore
 // import posthogPlugin from './plugins/posthog.js'
 
@@ -28,7 +24,6 @@ Vue.use(BootstrapVue)
 Vue.use(VueMeta)
 
 Vue.component('datetime', Datetime)
-Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
 

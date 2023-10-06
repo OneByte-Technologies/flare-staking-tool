@@ -155,7 +155,7 @@ import { Context } from '@/views/wallet/Interfaces'
     },
 })
 export default class BalanceCard extends Vue {
-    isBreakdown = true
+    isBreakdown = false
 
     $refs!: {
         utxos_modal: UtxosBreakdownModal

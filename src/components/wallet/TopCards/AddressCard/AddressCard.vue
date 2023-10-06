@@ -10,9 +10,9 @@
         ></paper-wallet>
         <p class="addr_info">{{ addressMsg }}</p>
         <div class="bottom">
-            <div class="col_qr">
-                <!-- <canvas ref="qr"></canvas> -->
-            </div>
+            <!-- <div class="col_qr"> -->
+            <!-- <canvas ref="qr"></canvas> -->
+            <!-- </div> -->
             <div class="bottom_rest">
                 <p class="subtitle">{{ addressLabel }}</p>
 
@@ -381,11 +381,11 @@ export default class AddressCard extends Vue {
     padding: 12px 16px;
 }
 
-$qr_width: 110px;
+// $qr_width: 110px;
 
 .bottom {
     display: grid;
-    grid-template-columns: $qr_width 1fr;
+    grid-template-columns: 1fr;
     column-gap: 14px;
     padding-right: 18px;
     margin-top: 4px;
@@ -393,11 +393,11 @@ $qr_width: 110px;
     padding-left: 8px;
     flex-grow: 1;
 
-    canvas {
-        width: $qr_width;
-        height: $qr_width;
-        background-color: transparent;
-    }
+    // canvas {
+    //     width: $qr_width;
+    //     height: $qr_width;
+    //     background-color: transparent;
+    // }
 
     .bottom_rest {
         padding-top: 4px;
