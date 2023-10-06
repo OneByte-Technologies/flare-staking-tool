@@ -143,7 +143,7 @@ export default class LedgerCard extends Vue {
                 this.path
             )
             for (let i = 0; i < 5; i++) {
-                const addr = derivedAddress[i].ethAddress
+                const addr = '0x' + derivedAddress[i].ethAddress
                 this.res.push(addr)
             }
 
