@@ -67,12 +67,17 @@ export default class PaperWallet extends Vue {
     height = 100
 
     open() {
-        let modal = this.$refs.modal
+        // let modal = this.$refs.modal
         // @ts-ignore
-        modal.open()
+        // modal.open()
     }
 
     onImageLoad() {
+
+        let modal = this.$refs.modal
+        // @ts-ignore
+        modal.open()
+
         setTimeout(() => {
             this.setSizes()
         }, 200)
