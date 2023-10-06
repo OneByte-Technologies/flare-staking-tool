@@ -109,17 +109,17 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         return this.ethApp.transport
     }
 
-    static async fromTransport(t: Transport) {
+    static async fromTransport(t: Transport, derivationPath: string) {
         const prov = await getLedgerProvider(t)
         const version = await prov.getVersion(t)
 
-        const xpub = await prov.getXPUB(t, LEDGER_ETH_ACCOUNT_PATH)
+        const xpub = await prov.getXPUB(t, derivationPath)
         const hd = new HDKey()
         hd.publicKey = xpub.pubKey
         hd.chainCode = xpub.chainCode
 
         const eth = new Eth(t, 'w0w')
-        const ethRes = await eth.getAddress(LEDGER_ETH_ACCOUNT_PATH, false, true)
+        const ethRes = await eth.getAddress(derivationPath, false, true)
         const hdEth = new HDKey()
         // @ts-ignore
         hdEth.publicKey = BufferAvax.from(ethRes.publicKey, 'hex')
@@ -1018,7 +1018,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
     }
 }
 
-interface derivedAddresses {
+export interface derivedAddresses {
     ethAddress: string
     derivationPath: string
 }
