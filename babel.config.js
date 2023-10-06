@@ -3,6 +3,5 @@ module.exports = {
     plugins: [
         ['@babel/proposal-decorators', { legacy: true }],
         ['@babel/proposal-class-properties', { loose: true }],
-        ['transform-remove-console']
     ],
 }
