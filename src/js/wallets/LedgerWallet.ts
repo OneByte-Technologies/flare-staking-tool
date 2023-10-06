@@ -129,6 +129,31 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         return new LedgerWallet(prov, hd, version, hdEth, eth)
     }
 
+    static async getDerivedAddresses(
+        t: Transport,
+        derivationPaths: string[] = []
+    ): Promise<derivedAddresses[]> {
+        const results: derivedAddresses[] = []
+        const eth = new Eth(t, 'w0w')
+
+        const hdEth = new HDKey()
+
+        for (let i = 0; i < derivationPaths.length; i++) {
+            const ethRes = await eth.getAddress(derivationPaths[i], false, true)
+            // @ts-ignore
+            hdEth.publicKey = BufferAvax.from(ethRes.publicKey, 'hex')
+            const ethPublic = importPublic(hdEth.publicKey)
+            const ethAddress = publicToAddress(ethPublic).toString('hex')
+            const derivedAddress: derivedAddresses = {
+                ethAddress: ethAddress,
+                derivationPath: derivationPaths[i],
+            }
+            results.push(derivedAddress)
+        }
+
+        return results
+    }
+
     // Returns an array of derivation paths that need to sign this transaction
     // Used with signTransactionHash and signTransactionParsable
     getTransactionPaths<UnsignedTx extends AVMUnsignedTx | PlatformUnsignedTx>(
@@ -991,6 +1016,11 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         // throw 'Not Implemented'
         return await WalletHelper.sendErc20(this, to, amount, gasPrice, gasLimit, token)
     }
+}
+
+interface derivedAddresses {
+    ethAddress: string
+    derivationPath: string
 }
 
 export { LedgerWallet }
