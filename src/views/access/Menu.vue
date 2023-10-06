@@ -33,10 +33,6 @@
                     class="menu_option button_primary"
                 >
                     Ledger (Recommended)
-
-                    <span v-if="disabled" class="no_firefox">
-                        {{ browserName }} is not supported
-                    </span>
                     <ImageDayNight
                         day="/img/access_icons/day/ledger.svg"
                         night="/img/access_icons/night/ledger.svg"
@@ -54,7 +50,6 @@
                     XPUB (Readonly)
                     <span><fa icon="glasses"></fa></span>
                 </router-link>
-                <!--            <TorusGoogle class="option button_primary" text="Google"></TorusGoogle>-->
             </div>
         </div>
 
@@ -65,7 +60,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-// import LedgerButton from '@/components/Ledger/LedgerButton.vue'
 import AccountsFound from '@/components/Access/AccountsFound.vue'
 import ToS from '@/components/misc/ToS.vue'
 import ImageDayNight from '@/components/misc/ImageDayNight.vue'
@@ -91,9 +85,8 @@ export default class Menu extends Vue {
 
     get disabled() {
         // If unsupported return true
-        return true
-        // if (this.browser && UnsupportedBrowsers.includes(this.browser.name)) return true
-        // return false
+        if (this.browser && UnsupportedBrowsers.includes(this.browser.name)) return true
+        return false
     }
 }
 </script>
@@ -163,7 +156,7 @@ hr {
 
 .no_firefox {
     font-size: 0.8em;
-    color: var(--primary-color-light);
+    color: var(--primary-color);
 }
 
 @include main.mobile-device {
