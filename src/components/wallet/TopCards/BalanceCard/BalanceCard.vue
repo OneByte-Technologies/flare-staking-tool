@@ -100,7 +100,7 @@
                     <div>
                         <label v-if="!isBreakdown">Total Mirror Funds</label>
                         <p v-if="!isBreakdown">
-                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }}
+                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR
                         </p>
                         <label v-if="isBreakdown">Mirror Funds</label>
                         <p v-if="isBreakdown">
@@ -155,7 +155,7 @@ import { Context } from '@/views/wallet/Interfaces'
     },
 })
 export default class BalanceCard extends Vue {
-    isBreakdown = true
+    isBreakdown = false
 
     $refs!: {
         utxos_modal: UtxosBreakdownModal

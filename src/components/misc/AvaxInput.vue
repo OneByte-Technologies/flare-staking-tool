@@ -15,9 +15,10 @@
         <p class="ticker">FLR</p>
         <div v-if="balance" class="balance">
             <div>
-                <p>
-                    <b>{{ $t('misc.balance') }}:</b>
-                    {{ balance.toLocaleString() }}
+                <p v-if="balanceText">
+                    <Tooltip :text="balanceText">
+                        <fa icon="wallet"></fa>
+                    </Tooltip>
                 </p>
                 <p>
                     <b>$</b>
@@ -32,6 +33,7 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop, Model } from 'vue-property-decorator'
 import { Big, bnToBig } from '@avalabs/avalanche-wallet-sdk'
+import Tooltip from '@/components/misc/Tooltip.vue'
 //@ts-ignore
 import { BigNumInput } from '@avalabs/vue_components'
 import { BN } from 'avalanche'
@@ -40,6 +42,7 @@ import { priceDict } from '../../store/types'
 @Component({
     components: {
         BigNumInput,
+        Tooltip,
     },
 })
 export default class AvaxInput extends Vue {
@@ -61,6 +64,11 @@ export default class AvaxInput extends Vue {
 
     amount_in(val: BN) {
         this.$emit('change', val)
+    }
+
+    get balanceText(): String {
+        if (!this.balance) return ''
+        return this.$t('misc.balance') + ': ' + this.balance.toLocaleString()
     }
 
     get amountUSD(): Big {
@@ -163,9 +171,11 @@ export default class AvaxInput extends Vue {
 p {
     text-align: center;
 }
+
 .max_but {
     font-size: 13px;
     opacity: 0.4;
+
     &:hover {
         opacity: 1;
     }
