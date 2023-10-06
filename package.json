@@ -35,7 +35,6 @@
         "@web3modal/wagmi": "^3.0.1",
         "avalanche": "npm:@flarenetwork/flarejs",
         "axios": "0.21.2",
-        "babel-plugin-transform-remove-console": "^6.9.4",
         "bech32": "^2.0.0",
         "big.js": "5.2.2",
         "bip32-path": "0.4.2",
