@@ -73,7 +73,6 @@ export default class PaperWallet extends Vue {
     }
 
     onImageLoad() {
-
         setTimeout(() => {
             this.setSizes()
         }, 200)
@@ -82,7 +81,6 @@ export default class PaperWallet extends Vue {
             // this.setSizes()
             this.initBg()
         }, 500)
-
     }
 
     get address() {
