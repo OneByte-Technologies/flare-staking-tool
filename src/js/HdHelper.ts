@@ -51,9 +51,10 @@ class HdHelper {
         chainId: ChainAlias = 'X',
         isPublic: boolean = false
     ) {
-        this.changePath = changePath
+        this.changePath = changePath // "m/0"
         this.isFetchUtxo = false
-        this.isInit = false
+        this.isInit = true
+        this.hdIndex = 0
 
         this.chainId = chainId
         const hrp = getPreferredHRP(ava.getNetworkID())
@@ -69,20 +70,20 @@ class HdHelper {
         this.addressCache = {}
         this.hdCache = {}
         this.masterKey = masterKey
-        this.hdIndex = 0
         this.isPublic = isPublic
-        // this.oninit()
+        //this.oninit()
     }
 
     async oninit() {
-        await this.findHdIndex()
+        // await this.findHdIndex()
+        return
     }
 
     // When the wallet connects to a different network
     // Clear internal data and scan again
     async onNetworkChange() {
         this.clearCache()
-        this.isInit = false
+        this.isInit = true
         const hrp = getPreferredHRP(ava.getNetworkID())
         if (this.chainId === 'X') {
             this.keyChain = new AVMKeyChain(hrp, this.chainId)
@@ -91,90 +92,99 @@ class HdHelper {
             this.keyChain = new PlatformVMKeyChain(hrp, this.chainId)
             this.utxoSet = new PlatformUTXOSet()
         }
-        this.hdIndex = 0
-        await this.oninit()
+        //await this.oninit()
     }
 
-    // Increments the hd index by one and adds the key
-    // returns the new keypair
-    incrementIndex(): number {
-        const newIndex: number = this.hdIndex + 1
+    // // Increments the hd index by one and adds the key
+    // // returns the new keypair
+    // incrementIndex(): number {
+    //     const newIndex: number = this.hdIndex + 1
 
-        if (!this.isPublic) {
-            if (this.chainId === 'X') {
-                const keychain = this.keyChain as AVMKeyChain
-                const newKey = this.getKeyForIndex(newIndex) as AVMKeyPair
-                keychain.addKey(newKey)
-            } else {
-                const keychain = this.keyChain as PlatformVMKeyChain
-                const newKey = this.getKeyForIndex(newIndex) as PlatformVMKeyPair
-                keychain.addKey(newKey)
-            }
-        }
+    //     if (!this.isPublic) {
+    //         if (this.chainId === 'X') {
+    //             const keychain = this.keyChain as AVMKeyChain
+    //             const newKey = this.getKeyForIndex(newIndex) as AVMKeyPair
+    //             keychain.addKey(newKey)
+    //         } else {
+    //             const keychain = this.keyChain as PlatformVMKeyChain
+    //             const newKey = this.getKeyForIndex(newIndex) as PlatformVMKeyPair
+    //             keychain.addKey(newKey)
+    //         }
+    //     }
 
-        this.hdIndex = newIndex
+    //     this.hdIndex = newIndex
 
-        // Update websocket addresses with the new one
-        updateFilterAddresses()
+    //     // Update websocket addresses with the new one
+    //     updateFilterAddresses()
 
-        return newIndex
-    }
+    //     return newIndex
+    // }
 
-    async findHdIndex() {
-        // Check if explorer is available
+    // async findHdIndex() {
+    //     // Check if explorer is available
 
-        // @ts-ignore
-        const network: AvaNetwork = store.state.Network.selectedNetwork
-        const explorerUrl = network.explorerUrl
-        // Commented below code to resolve balance issue for new wallets
-        // if (explorerUrl) {
-        //     this.hdIndex = await this.findAvailableIndexExplorer()
-        // } else {
-        //     this.hdIndex = await this.findAvailableIndexNode()
-        // }
+    //     // @ts-ignore
+    //     const network: AvaNetwork = store.state.Network.selectedNetwork
+    //     const explorerUrl = network.explorerUrl
+    //     // Commented below code to resolve balance issue for new wallets
+    //     // if (explorerUrl) {
+    //     //     this.hdIndex = await this.findAvailableIndexExplorer()
+    //     // } else {
+    //     //     this.hdIndex = await this.findAvailableIndexNode()
+    //     // }
 
-        this.hdIndex = await this.findAvailableIndexNode()
+    //     this.hdIndex = await this.findAvailableIndexNode()
 
-        if (!this.isPublic) {
-            this.updateKeychain()
-        }
-        this.isInit = true
-    }
+    //     if (!this.isPublic) {
+    //         this.updateKeychain()
+    //     }
+    //     this.isInit = true
+    // }
 
-    // Fetches the utxos for the current keychain
-    // and increments the index if last index has a utxo
     async updateUtxos(): Promise<AVMUTXOSet | PlatformUTXOSet> {
-        this.isFetchUtxo = true
-
-        if (!this.isInit) {
-            console.error('HD Index not found yet.')
-        }
-
-        const addrs: string[] = this.getAllDerivedAddresses()
-        let result: AVMUTXOSet | PlatformUTXOSet
-
-        if (this.chainId === 'X') {
-            result = await avmGetAllUTXOs(addrs)
-        } else {
-            result = await platformGetAllUTXOs(addrs)
-        }
-        this.utxoSet = result // we can use local copy of utxos as cache for some functions
-
-        // If the hd index is full, increment
-        const currentAddr = this.getCurrentAddress()
-        const currentAddrBuf = bintools.parseAddress(currentAddr, this.chainId)
-        const currentUtxos = result.getUTXOIDs([currentAddrBuf])
-
-        // if (currentUtxos.length > 0) {
-        //     this.incrementIndex()
-        // }
-        this.isFetchUtxo = false
+        const result = await platformGetAllUTXOs([this.getCurrentAddressPlatform()])
+        this.utxoSet = result
         return result
     }
 
+    getCurrentAddressPlatform(): string {
+        return this.getKeyForIndex(0).getAddressString()
+    }
+
+    // // Fetches the utxos for the current keychain
+    // // and increments the index if last index has a utxo
+    // async updateUtxos(): Promise<AVMUTXOSet | PlatformUTXOSet> {
+    //     this.isFetchUtxo = true
+
+    //     // if (!this.isInit) {
+    //     //     console.error('HD Index not found yet.')
+    //     // }
+
+    //     const addrs: string[] = this.getAllDerivedAddresses()
+    //     let result: AVMUTXOSet | PlatformUTXOSet
+
+    //     if (this.chainId === 'X') {
+    //         result = await avmGetAllUTXOs(addrs)
+    //     } else {
+    //         result = await platformGetAllUTXOs(addrs)
+    //     }
+    //     this.utxoSet = result // we can use local copy of utxos as cache for some functions
+
+    //     // If the hd index is full, increment
+    //     const currentAddr = this.getCurrentAddress()
+    //     const currentAddrBuf = bintools.parseAddress(currentAddr, this.chainId)
+    //     const currentUtxos = result.getUTXOIDs([currentAddrBuf])
+
+    //     // if (currentUtxos.length > 0) {
+    //     //     this.incrementIndex()
+    //     // }
+    //     this.isFetchUtxo = false
+    //     return result
+    // }
+
     // Returns more addresses than the current index
     getExtendedAddresses() {
-        const hdIndex = this.hdIndex
+        const hdIndex = 0
         return this.getAllDerivedAddresses(hdIndex + INDEX_RANGE)
     }
 
@@ -350,7 +360,7 @@ class HdHelper {
     }
 
     getCurrentAddress(): string {
-        const index = this.hdIndex
+        const index = this.hdIndex // 0
         return this.getAddressForIndex(index)
     }
 
@@ -374,7 +384,7 @@ class HdHelper {
         if (this.hdCache[index]) {
             key = this.hdCache[index]
         } else {
-            key = this.masterKey.derive(derivationPath) as HDKey
+            key = this.masterKey
             this.hdCache[index] = key
         }
 
@@ -398,7 +408,7 @@ class HdHelper {
             return this.addressCache[index]
         }
 
-        const derivationPath: string = `${this.changePath}/${index.toString()}`
+        // const derivationPath: string = `${this.changePath}/${index.toString()}`
         // let key: HDKey = this.masterKey.derive(derivationPath) as HDKey;
 
         // Get key from cache, if not generate it
@@ -406,7 +416,7 @@ class HdHelper {
         if (this.hdCache[index]) {
             key = this.hdCache[index]
         } else {
-            key = this.masterKey.derive(derivationPath) as HDKey
+            key = this.masterKey
             this.hdCache[index] = key
         }
 

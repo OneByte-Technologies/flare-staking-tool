@@ -88,7 +88,7 @@ export default class MnemonicWallet extends AbstractHdWallet implements IAvaHdWa
     constructor(mnemonic: string) {
         const seed: globalThis.Buffer = bip39.mnemonicToSeedSync(mnemonic)
         const masterHdKey: HDKey = HDKey.fromMasterSeed(seed)
-        const accountHdKey = masterHdKey.derive(AVA_ACCOUNT_PATH)
+        const accountHdKey = masterHdKey.derive(ETH_ACCOUNT_PATH + '/0/0')
         const ethAccountKey = masterHdKey.derive(ETH_ACCOUNT_PATH + '/0/0')
 
         super(accountHdKey, ethAccountKey, false)
