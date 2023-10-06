@@ -54,6 +54,7 @@ export default class AvaxInput extends Vue {
     max?: BN | null
 
     @Prop() balance?: Big | null
+
     maxOut(ev: MouseEvent) {
         ev.preventDefault()
         ev.stopPropagation()
