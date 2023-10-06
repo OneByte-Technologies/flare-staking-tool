@@ -57,6 +57,12 @@ export default class LedgerCard extends Vue {
 
     get path() {
         if (this.selectedStandard === 'BIP44') {
+            let res: string[] = []
+            for (let i = 0; i < 5; i++) {
+                const pathStr = `m/44'/60'/0'/0/${i}`
+                res.push(pathStr)
+            }
+            return res
         } else {
             let res: string[] = []
             for (let i = 0; i < 5; i++) {
@@ -185,7 +191,9 @@ export default class LedgerCard extends Vue {
             } catch (e) {
                 this.onerror(e)
             }
-        } catch (err) {}
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     async waitForConfig(t: Transport) {
