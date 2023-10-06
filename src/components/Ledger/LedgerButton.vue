@@ -1,19 +1,21 @@
 <template>
-    <button class="button_primary" @click="showModal" :disabled="disabled">
-        <template v-if="!isLoading">
-            Ledger (Recommended)
+    <div>
+        <button class="button_primary" @click="showModal" :disabled="disabled">
+            <template v-if="!isLoading">
+                Ledger (Recommended)
 
-            <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span>
-            <ImageDayNight
-                day="/img/access_icons/day/ledger.svg"
-                night="/img/access_icons/night/ledger.svg"
-                class="ledger_img"
-                v-else
-            ></ImageDayNight>
-        </template>
-        <Spinner v-else class="spinner"></Spinner>
-    </button>
-    <LedgerCard refs="modal"></LedgerCard>
+                <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span>
+                <ImageDayNight
+                    day="/img/access_icons/day/ledger.svg"
+                    night="/img/access_icons/night/ledger.svg"
+                    class="ledger_img"
+                    v-else
+                ></ImageDayNight>
+            </template>
+            <Spinner v-else class="spinner"></Spinner>
+        </button>
+        <LedgerCard ref="modal"></LedgerCard>
+    </div>
 </template>
 <script lang="ts">
 import 'reflect-metadata'
