@@ -26,7 +26,17 @@
                         night="/img/access_icons/night/keystore.svg"
                     ></ImageDayNight>
                 </router-link>
-                <LedgerButton class="menu_option button_primary"></LedgerButton>
+
+                <router-link to="/access/ledger" class="menu_option button_primary">
+                    Ledger (Recommended)
+
+                    <!-- <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span> -->
+                    <ImageDayNight
+                        day="/img/access_icons/day/ledger.svg"
+                        night="/img/access_icons/night/ledger.svg"
+                        class="ledger_img"
+                    ></ImageDayNight>
+                </router-link>
                 <router-link to="/access/xpub" class="menu_option button_primary">
                     XPUB (Readonly)
                     <span><fa icon="glasses"></fa></span>

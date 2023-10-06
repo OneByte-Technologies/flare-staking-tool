@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="button_primary" @click="showModal" :disabled="disabled">
+        <button class="button_primary" @click="submit" :disabled="disabled">
             <template v-if="!isLoading">
                 Ledger (Recommended)
 
@@ -183,7 +183,7 @@ export default class LedgerButton extends Vue {
         })
     }
 
-    async selectAddrModal() {}
+    selectAddrModal() {}
 
     showWalletLoading() {
         this.$store.commit('Ledger/closeModal')

@@ -1,28 +1,23 @@
 <template>
     <div>
-        <modal ref="modal" title="Ledger Account Selection" class="modal_main">
-            <v-dialog max-width="600px">
-                <v-btn icon @click="closeModal">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-card-title>Ledger Account Selection</v-card-title>
-                <v-card-text>
-                    <v-select
-                        v-model="selectedStandard"
-                        :items="$options"
-                        label="Please select a standard for derivation path"
-                    ></v-select>
-                    <v-select
-                        v-model="selectedAddress"
-                        :items="address"
-                        label="Please select an address"
-                    ></v-select>
-                </v-card-text>
+        <div ref="modal" class="modal_main">
+            <div>
+                <label>Please select a standard for Derivation and your Address</label>
+                <v-select
+                    v-model="selectedStandard"
+                    :items="standard"
+                    label="Please select a standard for derivation path"
+                ></v-select>
+                <v-select
+                    v-model="selectedAddress"
+                    :items="address"
+                    label="Please select an address"
+                ></v-select>
                 <v-card-action>
                     <v-btn @click="submit">Submit</v-btn>
                 </v-card-action>
-            </v-dialog>
-        </modal>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -36,15 +31,9 @@ import Modal from '../modals/Modal.vue'
     },
 })
 export default class LedgerCard extends Vue {
-    isClose: boolean = false
-    selectedStandard: string = ''
+    selectedStandard: string = 'BIP44'
     selectedAddress: string = ''
-    data() {
-        return {
-            isClose: false,
-            options: ['BIP44', 'Ledger Live'],
-        }
-    }
+
     async submit() {}
 
     get address() {
@@ -63,6 +52,10 @@ export default class LedgerCard extends Vue {
             }
             return res
         }
+    }
+
+    get standard() {
+        return ['BIP44', 'Ledger Live']
     }
 
     open(): void {
