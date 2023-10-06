@@ -73,7 +73,6 @@ export default class PaperWallet extends Vue {
     }
 
     onImageLoad() {
-
         let modal = this.$refs.modal
         // @ts-ignore
         modal.open()
