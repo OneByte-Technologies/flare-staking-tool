@@ -17,6 +17,7 @@ import Advanced from '@/views/wallet/Advanced.vue' // your vuex store
 import Activity from '@/views/wallet/Activity.vue' // your vuex store
 import Account from '@/views/access/Account.vue' // your vuex store
 import Legal from '@/views/Legal.vue'
+import LedgerCard from '@/components/Ledger/LedgerCard.vue'
 
 Vue.use(VueRouter)
 
@@ -78,6 +79,10 @@ const routes = [
             {
                 path: 'xpub',
                 component: Xpub,
+            },
+            {
+                path: 'ledger',
+                component: LedgerCard,
             },
         ],
         component: Access,
