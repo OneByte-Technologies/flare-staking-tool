@@ -100,8 +100,7 @@
 
 <script lang="ts">
 import { WalletType, WalletNameType } from '@/js/wallets/types'
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { issueC } from '@/helpers/issueTx'
+import { Vue, Component } from 'vue-property-decorator'
 import {
     defaultContractAddresses,
     getAddressBinderABI,
@@ -110,10 +109,9 @@ import {
 } from './FlareContractConstants'
 import { ethers } from 'ethers'
 import { bech32 } from 'bech32'
-import { cChain } from '@/AVA'
-import { KeyChain } from 'avalanche/dist/apis/evm'
 import { ava } from '@/AVA'
 import Tooltip from '@/components/misc/Tooltip.vue'
+import { BN } from 'avalanche'
 
 @Component({
     components: { Tooltip },
@@ -125,9 +123,17 @@ export default class AddressBinder extends Vue {
     isInsufficientFunds: boolean = false
     bindingError: string = ''
     bindindDetailedError: string = ''
-    ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey) //old
-    pubKey: string = this.ethersWallet.publicKey //old
     cChainAddress: string = ''
+
+    get ethersWallet(): any {
+        return new ethers.Wallet(this.$store.state.activeWallet.ethKey)
+    }
+
+    get pubKey(): string {
+        return this.$store.state.activeWallet.type === 'ledger'
+            ? this.$store.state.activeWallet.publicKey
+            : this.ethersWallet.publicKey
+    }
 
     get wallet(): WalletType {
         return this.$store.state.activeWallet
@@ -174,7 +180,7 @@ export default class AddressBinder extends Vue {
             console.log('Gas Estimate', gasEstimate)
             const gasPrice = await provider.getGasPrice()
             console.log('Gas Price', gasPrice)
-            const balance = await this.getEthBalance()
+            const balance = ethers.BigNumber.from((await this.getEthBalance()).toString())
             const gasCost = gasEstimate.mul(gasPrice) // Calculate the gas cost
             const hasEnoughFunds = balance.gte(gasCost)
 
@@ -189,7 +195,7 @@ export default class AddressBinder extends Vue {
             const populatedTx = await contract.populateTransaction.registerAddresses(
                 this.pubKey,
                 this.encodePChainAddressToRegister,
-                cAddress
+                cAddress.toLowerCase()
             )
             console.log('populated tx', populatedTx)
             const chainId = ava.getNetworkID()
@@ -201,7 +207,23 @@ export default class AddressBinder extends Vue {
                 gasLimit: gasEstimate,
             }
             console.log('unsignedtx', unsignedTx)
-            const signedTx = await this.ethersWallet.signTransaction(unsignedTx)
+            let signedTx
+
+            if (this.wallet.type === 'ledger') {
+                const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
+                const txHash = ethers.utils.keccak256(serializedUnsignedTx).slice(2)
+                const txBuffer = Buffer.from(txHash, 'hex')
+                let signature = ''
+                try {
+                    signature = await this.wallet.signContractLedger(txBuffer)
+                } catch (e) {
+                    console.log(e)
+                }
+
+                signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
+            } else {
+                signedTx = await this.ethersWallet.signTransaction(unsignedTx)
+            }
             const txId = await contract.provider.sendTransaction(signedTx)
             console.log('txId', txId)
             const result = await contract.cAddressToPAddress(cAddress)
@@ -243,11 +265,9 @@ export default class AddressBinder extends Vue {
         })
     }
 
-    getEthBalance() {
-        const rpcUrl: string = this.getIp()
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const ethersWallet = new ethers.Wallet(this.$store.state.activeWallet.ethKey, provider)
-        return ethersWallet.getBalance()
+    async getEthBalance() {
+        const bal: BN = await this.$store.state.activeWallet.getEthBalance()
+        return bal
     }
 
     privateKeyC(): string | null {
@@ -279,7 +299,7 @@ export default class AddressBinder extends Vue {
         } else {
             this.cChainAddress = wallet.getEvmChecksumAddress()
         }
-        return this.cChainAddress
+        return this.cChainAddress.toLowerCase()
     }
 
     get activeWallet(): WalletType | null {

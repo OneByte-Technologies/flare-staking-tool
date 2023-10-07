@@ -67,6 +67,7 @@ export default class LedgerCard extends Vue {
     isFetchingAddresses: boolean = true
     version?: string = undefined
     addressList: string[] = []
+    derivedAddress: derivedAddresses[] = []
 
     get path() {
         let pathArr: string[] = []
@@ -146,25 +147,25 @@ export default class LedgerCard extends Vue {
                 throw new Error('')
             }
             console.log('calculating addresses')
-            let derivedAddress: derivedAddresses[] = await LedgerWallet.getDerivedAddresses(
-                transport,
-                this.path
-            )
+            this.derivedAddress = await LedgerWallet.getDerivedAddresses(transport, this.path)
             for (let i = 0; i < 5; i++) {
-                const addr = '0x' + derivedAddress[i].ethAddress
+                const addr = '0x' + this.derivedAddress[i].ethAddress
                 this.addressList.push(addr)
             }
-
-            const selectedDerivedAddress = derivedAddress.find(
-                (item) => item.ethAddress == this.selectedAddress
-            )
-            console.log('returning derivation path')
             this.isFetchingAddresses = false
-            return selectedDerivedAddress?.derivationPath
         } catch (e) {
             this.isFetchingAddresses = false
             this.onerror(e)
         }
+    }
+
+    findDp() {
+        const selectedDerivedAddress = this.derivedAddress.find(
+            (item) => item.ethAddress === this.selectedAddress.slice(2)
+        )
+        console.log('returning derivation path')
+
+        return selectedDerivedAddress?.derivationPath
     }
 
     mounted() {
@@ -196,7 +197,7 @@ export default class LedgerCard extends Vue {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
                 throw new Error('')
             }
-            const dp = await this.init()
+            const dp = this.findDp()
             console.log('creating wallet using requested address')
             let wallet = await LedgerWallet.fromTransport(transport, dp!)
             try {
