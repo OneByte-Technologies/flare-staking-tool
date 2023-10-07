@@ -154,11 +154,12 @@ export default class LedgerCard extends Vue {
             const selectedDerivedAddress = derivedAddress.find(
                 (item) => item.ethAddress == this.selectedAddress
             )
+            this.isFetchingAddresses = false
             return selectedDerivedAddress?.derivationPath
         } catch (e) {
+            this.isFetchingAddresses = false
             this.onerror(e)
         }
-        this.isFetchingAddresses = false
     }
 
     mounted() {
