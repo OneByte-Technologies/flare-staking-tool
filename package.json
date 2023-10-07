@@ -1,9 +1,10 @@
 {
     "private": true,
     "name": "wallet",
-    "version": "0.1.4",
+    "version": "0.0.1",
     "scripts": {
         "build": "vue-cli-service build",
+        "build:dev": "vue-cli-service build --fix --mode development",
         "cypress": "cypress run",
         "format": "prettier '**/*.{js,ts,vue,json}' --write",
         "lint": "vue-cli-service lint",

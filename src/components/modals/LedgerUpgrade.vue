@@ -6,25 +6,17 @@
                 <li>Enter your PIN and access your device.</li>
                 <li>
                     Ensure you have installed the
-                    <b>Avalanche App v{{ minV }}</b>
+                    <b>Flare App v{{ minV }}</b>
                     or above and open it on your device.
                 </li>
             </ol>
             <p style="margin-top: 12px !important">
                 <small>
-                    If you do not have the Avalanche app on your ledger, please add it through the
+                    If you do not have the Flare app on your ledger, please add it through the
                     <a href="https://www.ledger.com/ledger-live/download" target="_blank">
                         Ledger Live
                     </a>
-                    app manager. The minimum version required to use the app is version {{ minV }},
-                    more instructions can be found
-                    <a
-                        target="_blank"
-                        href="https://support.avax.network/en/articles/6150237-how-to-use-a-ledger-nano-s-or-nano-x-with-avalanche"
-                    >
-                        here
-                    </a>
-                    .
+                    app manager. The minimum version required to use the app is version {{ minV }}
                 </small>
             </p>
         </div>
