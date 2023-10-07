@@ -109,21 +109,9 @@ import {
 } from './FlareContractConstants'
 import { ethers } from 'ethers'
 import { bech32 } from 'bech32'
-import { cChain } from '@/AVA'
-import { KeyChain } from 'avalanche/dist/apis/evm'
 import { ava } from '@/AVA'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { BN } from 'avalanche'
-import { Tx as EVMTx, UnsignedTx as EVMUnsignedTx } from 'avalanche/dist/apis/evm/tx'
-import {
-    ExportChainsC,
-    ExportChainsP,
-    ExportChainsX,
-    UtxoHelper,
-    TxHelper,
-    GasHelper,
-    chainIdFromAlias,
-} from '@avalabs/avalanche-wallet-sdk'
 
 @Component({
     components: { Tooltip },
@@ -219,28 +207,23 @@ export default class AddressBinder extends Vue {
                 gasLimit: gasEstimate,
             }
             console.log('unsignedtx', unsignedTx)
-            // let signedTx
-            // if (this.$store.state.activeWallet.type === 'ledger') {
-            //     const unsignedTxEVM = await TxHelper.buildCustomEvmTx(
-            //         cAddress.toLowerCase(),
-            //         new BN(gasPrice.toString()),
-            //         Number(gasEstimate.toString()),
-            //         populatedTx.data,
-            //         contractAddress,
-            //         undefined,
-            //         nonce
-            //     )
-            //     signedTxEVM = this.wallet.signC(unsignedTx)
-            //     )
-            // } else {
-            //     signedTx = await this.ethersWallet.signTransaction(unsignedTx)
-            // }
+            let signedTx
 
-            // if (this.$store.state.activeWallet.type === 'ledger') {
-            //     const paths = this.wallet.signPath
-            // } else {
-            //     signedTx = await this.ethersWallet.signTransaction(unsignedTx)
-            // }
+            if (this.wallet.type === 'ledger') {
+                const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
+                const txHash = ethers.utils.keccak256(serializedUnsignedTx).slice(2)
+                const txBuffer = Buffer.from(txHash, 'hex')
+                let signature = ''
+                try {
+                    signature = await this.wallet.signContractLedger(txBuffer)
+                } catch (e) {
+                    console.log(e)
+                }
+
+                signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
+            } else {
+                signedTx = await this.ethersWallet.signTransaction(unsignedTx)
+            }
             const txId = await contract.provider.sendTransaction(signedTx)
             console.log('txId', txId)
             const result = await contract.cAddressToPAddress(cAddress)

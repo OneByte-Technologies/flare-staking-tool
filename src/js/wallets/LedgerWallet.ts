@@ -485,7 +485,6 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         UnsignedTx extends PlatformUnsignedTx | EVMUnsignedTx,
         SignedTx extends AVMTx | PlatformTx | EvmTx
     >(unsignedTx: UnsignedTx, paths: string[], chainId: ChainIdType): Promise<SignedTx> {
-        console.log('in parseable')
         const cKeyChain = avalanche.CChain().keyChain()
         const txHashes = unsignedTx.prepareUnsignedHashes(cKeyChain)
         const tx = unsignedTx.getTransaction()
@@ -520,7 +519,6 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
                 messages: messages,
                 info: null,
             })
-            console.log('till modal')
             const ledgerSignedTx = await this.provider.signHash(
                 this.getTransport(),
                 messageBuffer,
@@ -840,6 +838,37 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         return txSigned
     }
 
+    async signContractLedger(unsignedTxHash: Buffer): Promise<string> {
+        const paths = [this.signPath]
+
+        const title = `Sign Smart Contract Transaction`
+
+        const bip32Paths = this.pathsToUniqueBipPaths(paths)
+
+        const accountPath = bippath.fromString(`${this.accountPath}`)
+
+        try {
+            store.commit('Ledger/openModal', {
+                title: title,
+                info: null,
+            })
+            const ledgerSignedTx = await this.provider.signHash(
+                this.getTransport(),
+                unsignedTxHash,
+                accountPath,
+                bip32Paths
+            )
+            store.commit('Ledger/closeModal')
+            const sigMap = ledgerSignedTx.signatures
+            const sig = sigMap.get(`${this.signPath}`)?.toString('hex')
+            return sig!
+        } catch (e) {
+            store.commit('Ledger/closeModal')
+            console.error(e)
+            throw e
+        }
+    }
+
     async signEvm(tx: Transaction) {
         const rawUnsignedTx = rlp.encode([
             bnToRlp(tx.nonce),
@@ -1005,7 +1034,6 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
      */
     async verifyAddress(index: number, internal = false, chainAlias?: ChainIdType) {
         const hrp = avalanche.getHRP()
-        // const change = internal ? '1' : '0'
         const path = `${this.accountPath}/${this.signPath}`
         const chainId = chainAlias ? chainIdFromAlias(chainAlias) : undefined
         return await this.provider.getAddress(this.getTransport(), bippath.fromString(path), {
