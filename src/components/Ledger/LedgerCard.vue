@@ -105,7 +105,9 @@ export default class LedgerCard extends Vue {
         let transport
 
         try {
+            console.log(' Transport Starts here')
             transport = await TransportWebHID.create()
+            console.log(' Transport WebHID created')
             return transport
         } catch (e) {
             console.log('Web HID not supported.')
@@ -113,8 +115,10 @@ export default class LedgerCard extends Vue {
 
         //@ts-ignore
         if (window.USB) {
+            console.log('USB WINDOW')
             transport = await TransportWebUSB.create()
         } else {
+            console.log('U2F Create')
             transport = await TransportU2F.create()
         }
         return transport
@@ -141,7 +145,7 @@ export default class LedgerCard extends Vue {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
                 throw new Error('')
             }
-
+            console.log('calculating addresses')
             let derivedAddress: derivedAddresses[] = await LedgerWallet.getDerivedAddresses(
                 transport,
                 this.path
@@ -154,6 +158,7 @@ export default class LedgerCard extends Vue {
             const selectedDerivedAddress = derivedAddress.find(
                 (item) => item.ethAddress == this.selectedAddress
             )
+            console.log('returning derivation path')
             return selectedDerivedAddress?.derivationPath
         } catch (e) {
             this.onerror(e)
@@ -171,6 +176,7 @@ export default class LedgerCard extends Vue {
 
     async submit() {
         try {
+            console.log('SUBMIT BUTTON PRESSED')
             let transport = await this.getTransport()
             transport.setExchangeTimeout(LEDGER_EXCHANGE_TIMEOUT)
 
@@ -190,6 +196,7 @@ export default class LedgerCard extends Vue {
                 throw new Error('')
             }
             const dp = await this.init()
+            console.log('creating wallet using requested address')
             let wallet = await LedgerWallet.fromTransport(transport, dp!)
             try {
                 await this.loadWallet(wallet)
