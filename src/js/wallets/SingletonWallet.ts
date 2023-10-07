@@ -269,6 +269,11 @@ class SingletonWallet extends AbstractWallet implements AvaWalletCore, UnsafeWal
         return await WalletHelper.mintNft(this, mintUtxo, payload, quantity)
     }
 
+    async signContractLedger(unsignedTx: Buffer): Promise<string> {
+        console.log('Function not supported')
+        return ''
+    }
+
     async sendEth(to: string, amount: BN, gasPrice: BN, gasLimit: number) {
         return await WalletHelper.sendEth(this, to, amount, gasPrice, gasLimit)
     }

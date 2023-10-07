@@ -67,6 +67,7 @@ export default class LedgerCard extends Vue {
     isFetchingAddresses: boolean = true
     version?: string = undefined
     addressList: string[] = []
+    derivedAddress: derivedAddresses[] = []
 
     get path() {
         let pathArr: string[] = []
@@ -105,7 +106,9 @@ export default class LedgerCard extends Vue {
         let transport
 
         try {
+            console.log(' Transport Starts here')
             transport = await TransportWebHID.create()
+            console.log(' Transport WebHID created')
             return transport
         } catch (e) {
             console.log('Web HID not supported.')
@@ -113,8 +116,10 @@ export default class LedgerCard extends Vue {
 
         //@ts-ignore
         if (window.USB) {
+            console.log('USB WINDOW')
             transport = await TransportWebUSB.create()
         } else {
+            console.log('U2F Create')
             transport = await TransportU2F.create()
         }
         return transport
@@ -141,25 +146,26 @@ export default class LedgerCard extends Vue {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
                 throw new Error('')
             }
-
-            let derivedAddress: derivedAddresses[] = await LedgerWallet.getDerivedAddresses(
-                transport,
-                this.path
-            )
+            console.log('calculating addresses')
+            this.derivedAddress = await LedgerWallet.getDerivedAddresses(transport, this.path)
             for (let i = 0; i < 5; i++) {
-                const addr = '0x' + derivedAddress[i].ethAddress
+                const addr = '0x' + this.derivedAddress[i].ethAddress
                 this.addressList.push(addr)
             }
-
-            const selectedDerivedAddress = derivedAddress.find(
-                (item) => item.ethAddress == this.selectedAddress
-            )
             this.isFetchingAddresses = false
-            return selectedDerivedAddress?.derivationPath
         } catch (e) {
             this.isFetchingAddresses = false
             this.onerror(e)
         }
+    }
+
+    findDp() {
+        const selectedDerivedAddress = this.derivedAddress.find(
+            (item) => item.ethAddress === this.selectedAddress.slice(2)
+        )
+        console.log('returning derivation path')
+
+        return selectedDerivedAddress?.derivationPath
     }
 
     mounted() {
@@ -172,6 +178,7 @@ export default class LedgerCard extends Vue {
 
     async submit() {
         try {
+            console.log('SUBMIT BUTTON PRESSED')
             let transport = await this.getTransport()
             transport.setExchangeTimeout(LEDGER_EXCHANGE_TIMEOUT)
 
@@ -190,7 +197,8 @@ export default class LedgerCard extends Vue {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
                 throw new Error('')
             }
-            const dp = await this.init()
+            const dp = this.findDp()
+            console.log('creating wallet using requested address')
             let wallet = await LedgerWallet.fromTransport(transport, dp!)
             try {
                 await this.loadWallet(wallet)

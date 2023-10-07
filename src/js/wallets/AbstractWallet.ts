@@ -50,6 +50,7 @@ abstract class AbstractWallet {
     isFetchUtxos: boolean
     isInit: boolean
 
+    abstract signContractLedger(unsignedTx: Buffer): Promise<string>
     abstract getEvmAddressBech(): string
     abstract getEvmAddress(): string
     abstract getCurrentAddressAvm(): string

@@ -212,6 +212,11 @@ export default class MnemonicWallet extends AbstractHdWallet implements IAvaHdWa
         return unsignedTx.sign(keyChain)
     }
 
+    async signContractLedger(unsignedTx: Buffer): Promise<string> {
+        console.log('Function not supported')
+        return ''
+    }
+
     async signEvm(tx: Transaction) {
         const keyBuff = Buffer.from(this.ethKey, 'hex')
         return tx.sign(keyBuff)
