@@ -3,7 +3,7 @@
         <div class="qr_body" ref="qr_body">
             <img
                 ref="bg"
-                src="@/assets/paper_wallet/bg.png"
+                src="@/assets/paper_wallet/image.png"
                 @load="onImageLoad"
                 :style="{
                     display: 'none',
