@@ -41,7 +41,7 @@
                         class="print_but"
                     ></button>
                     <button
-                        v-if="walletType === 'ledger'"
+                        v-if="walletType === 'ledger' && chainNow === 'C'"
                         :tooltip="$t('create.verify')"
                         @click="verifyLedgerAddress"
                         class="ledger_but"
