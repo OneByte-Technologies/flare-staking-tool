@@ -4,6 +4,9 @@
 <script>
 export default {
     mounted() {
+        // Reveal app version
+        console.log(`App Version: ${process.env.VUE_APP_VERSION}`)
+
         // Function to enable debug mode and store the timestamp in local storage
         const enableDebugMode = () => {
             const debugData = {
