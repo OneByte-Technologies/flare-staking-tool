@@ -2,7 +2,7 @@
     <div class="node_card">
         <p class="node_id">{{ node.nodeID }}</p>
         <!--        <div class="meta_row"></div>-->
-        <div>
+        <div v-if="activeNetwork">
             <label>Uptime</label>
             <!--            <p>{{ uptimeText }}</p>-->
             <p style="font-size: 0.8rem">
@@ -83,6 +83,11 @@ export default class NodeCard extends Vue {
 
     get vscoutURL() {
         return `https://validators.towolabs.com/validator/${this.node.nodeID}`
+    }
+
+    get activeNetwork() {
+        let activeNet: AvaNetwork = this.$store.state.Network.selectedNetwork
+        return activeNet.networkId === 14
     }
 }
 </script>

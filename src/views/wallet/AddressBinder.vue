@@ -83,9 +83,9 @@
                                 <fa icon="times-circle" style="margin-right: 4px"></fa>
                                 <span>{{ bindingError }}</span>
                                 <Tooltip
-                                    v-if="bindindDetailedError"
+                                    v-if="bindingDetailedError"
                                     style="display: inline-block; margin-left: 4px"
-                                    :text="bindindDetailedError"
+                                    :text="bindingDetailedError"
                                 >
                                     <fa icon="question-circle"></fa>
                                 </Tooltip>
@@ -122,7 +122,7 @@ export default class AddressBinder extends Vue {
     isAddressBindingPending = false
     isInsufficientFunds: boolean = false
     bindingError: string = ''
-    bindindDetailedError: string = ''
+    bindingDetailedError: string = ''
     cChainAddress: string = ''
 
     get ethersWallet(): any {
@@ -156,7 +156,7 @@ export default class AddressBinder extends Vue {
     async bindAddress() {
         this.isAddressBindingPending = true
         this.bindingError = ''
-        this.bindindDetailedError = ''
+        this.bindingDetailedError = ''
         try {
             const cAddress = this.wallet.getEvmChecksumAddress()
             this.cChainAddress = cAddress
@@ -229,7 +229,7 @@ export default class AddressBinder extends Vue {
             await this.awaitTimeout(2500)
             const result = await contract.cAddressToPAddress(cAddress)
 
-            if (result !== '0x0000000000000000000000000000000000000000') {
+            if (result && result !== '0x0000000000000000000000000000000000000000') {
                 console.log('Success. You are registered')
                 this.registered = true
                 this.onSuccess()
@@ -242,7 +242,7 @@ export default class AddressBinder extends Vue {
             const genericError =
                 'Something went wrong while binding your address. Please try again.'
             this.bindingError = e?.reason || genericError
-            this.bindindDetailedError = e?.error?.message || ''
+            this.bindingDetailedError = e?.error?.message || ''
         }
         this.isAddressBindingPending = false
     }

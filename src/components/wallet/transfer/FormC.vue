@@ -104,10 +104,15 @@
                     {{ $t('transfer.c_chain.success.desc') }}
                 </p>
                 <div>
-                    <label>{{ $t('transfer.c_chain.success.label1') }}</label>
-                    <p class="confirm_data" style="word-break: break-all">
-                        {{ txHash }}
-                    </p>
+                    <label>{{ $t('transfer.c_chain.success.label2') }}</label>
+                    <a
+                        :href="txExplorer"
+                        class="confirm_data"
+                        style="word-break: break-all"
+                        target="_blank"
+                    >
+                        {{ txExplorer }}
+                    </a>
                 </div>
                 <v-btn
                     style="margin: 14px 0"
@@ -174,6 +179,7 @@ export default class FormC extends Vue {
     formCollectible: iErc721SelectInput | null = null
 
     txHash = ''
+    txExplorer = ''
 
     $refs!: {
         token_in: EVMInputDropdown
@@ -462,6 +468,12 @@ export default class FormC extends Vue {
         this.isLoading = false
         this.isSuccess = true
         this.txHash = txId
+
+        if (this.$store.state.Network.selectedNetwork === 14) {
+            this.txExplorer = `https://flare-explorer.flare.network/tx/${this.txHash}`
+        } else {
+            this.txExplorer = `https://coston2-explorer.flare.network//tx/${this.txHash}`
+        }
 
         this.$store.dispatch('Notifications/add', {
             title: this.$t('transfer.success_title'),

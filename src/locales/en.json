@@ -170,7 +170,8 @@
             "cancel": "Cancel",
             "success": {
                 "desc": "Transaction Sent",
-                "label1": "Transaction Hash"
+                "label1": "Transaction Hash",
+                "label2": "View in Explorer"
             },
             "reset": "Start Again"
         }
