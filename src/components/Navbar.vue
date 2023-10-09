@@ -35,7 +35,6 @@
         </div>
 
         <div class="mobile_right">
-            <DayNightToggle class="action_but"></DayNightToggle>
             <network-menu></network-menu>
             <v-btn @click="isDrawer = !isDrawer" icon class="mobile_drawer">
                 <fa icon="bars"></fa>
@@ -114,12 +113,16 @@ export default class Navbar extends Vue {
     isDrawer: boolean = false
     // popupOpen: boolean = false
 
+    $refs!: {
+        logout: ConfirmLogout
+    }
     get isAuth(): boolean {
         return this.$store.state.isAuth
     }
 
     logout(): void {
         // @ts-ignore
+        this.isDrawer = false
         this.$refs.logout.open()
     }
 
