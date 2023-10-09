@@ -62,6 +62,7 @@ import {
     faUnlink,
     faFileCsv,
     faGlasses,
+    faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 
 import { faBtc, faGoogle } from '@fortawesome/free-brands-svg-icons'
@@ -127,7 +128,8 @@ library.add(
     faVideo,
     faUnlink,
     faFileCsv,
-    faGlasses
+    faGlasses,
+    faWallet
 )
 
 Vue.component('fa', FontAwesomeIcon)

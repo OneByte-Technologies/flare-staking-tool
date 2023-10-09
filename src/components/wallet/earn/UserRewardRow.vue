@@ -19,11 +19,11 @@
             </div>
             <div>
                 <label>{{ $t('earn.rewards.row.stake') }}</label>
-                <p class="reward">{{ stakeBig.toLocaleString() }} AVAX</p>
+                <p class="reward">{{ stakeBig.toLocaleString() }} FLR</p>
             </div>
             <div style="text-align: right">
                 <label>{{ $t('earn.rewards.row.reward') }}</label>
-                <p class="reward">{{ rewardBig.toLocaleString() }} AVAX</p>
+                <p class="reward">{{ rewardBig.toLocaleString() }} FLR</p>
             </div>
         </div>
     </div>

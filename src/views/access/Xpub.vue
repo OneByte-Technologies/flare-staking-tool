@@ -2,9 +2,9 @@
     <div class="access_card">
         <div class="content">
             <h1>XPUB (Readonly)</h1>
-            <p class="desc">Show AVAX balances.</p>
+            <p class="desc">Show FLR balances.</p>
             <form @submit.prevent="access">
-                <p class="_label">X & P-Chain Extended Public Key</p>
+                <p class="_label">P-Chain Extended Public Key</p>
                 <v-text-field
                     class="pass"
                     label="xpub..."
@@ -37,6 +37,7 @@
                     View Wallet Balances
                 </v-btn>
             </form>
+            <router-link to="/access" class="link">Cancel</router-link>
         </div>
     </div>
 </template>
@@ -98,6 +99,9 @@ h1 {
 .pass {
     background-color: var(--bg) !important;
 }
+.link {
+    color: var(--link-secondary);
+}
 
 .desc {
     font-size: 0.9em;
@@ -121,5 +125,6 @@ h1 {
 .ava_button {
     width: 100%;
     margin-top: 22px;
+    margin-bottom: 16px;
 }
 </style>

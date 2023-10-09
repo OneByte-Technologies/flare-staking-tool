@@ -45,7 +45,9 @@ export default class Wallet extends Vue {
 
     // Set the logout timestamp to now + TIMEOUT_DUR_MS
     resetTimer() {
+        // console.log('reset timer')
         this.logoutTimestamp = Date.now() + TIMEOUT_DUR_MS
+        // console.log('logoutTimestamp logoutTimestamp', this.logoutTimestamp)
     }
 
     checkLogout() {
@@ -63,6 +65,7 @@ export default class Wallet extends Vue {
         this.intervalId = setInterval(() => {
             this.checkLogout()
         }, 1000)
+        this.$store.dispatch('updateIsRegistered')
     }
 
     unload(event: BeforeUnloadEvent) {
@@ -80,7 +83,7 @@ export default class Wallet extends Vue {
         let view = this.$refs.wallet_view as HTMLDivElement
 
         // @ts-ignore
-        this.$posthog.capture('UserLoggedIn')
+        // this.$posthog.capture('UserLoggedIn')
 
         view.addEventListener('mousemove', this.resetTimer)
         view.addEventListener('mousedown', this.resetTimer)

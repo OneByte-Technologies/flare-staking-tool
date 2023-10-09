@@ -1,6 +1,5 @@
 <template>
     <div class="chain_select">
-        <button @click="setChain('X')" :active="chain === 'X'">X</button>
         <button @click="setChain('P')" :active="chain === 'P'">P</button>
         <button @click="setChain('C')" :active="chain === 'C'" v-if="isEVMSupported">C</button>
     </div>
@@ -28,7 +27,7 @@ export default class ChainSelect extends Vue {
 <style scoped lang="scss">
 .chain_select {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     font-size: 13px;
     color: var(--primary-color-light);
     background-color: var(--bg-wallet);

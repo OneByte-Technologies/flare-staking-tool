@@ -52,7 +52,7 @@ import {
     SelectCredentialClass as EVMSelectCredentialClass,
 } from 'avalanche/dist/apis/evm'
 
-import { Credential, SigIdx, Signature, UTXOResponse, Address } from 'avalanche/dist/common'
+import { Credential, SigIdx, Signature } from 'avalanche/dist/common'
 import { getPreferredHRP, PayloadBase } from 'avalanche/dist/utils'
 import { AbstractHdWallet } from '@/js/wallets/AbstractHdWallet'
 import { WalletNameType } from '@/js/wallets/types'
@@ -77,7 +77,9 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
     provider: LedgerProvider
     ethApp: Eth
     type: WalletNameType
-
+    accountPath: string
+    signPath: string
+    publicKey: string
     ethAddress: string
     version: string
     ethHdNode: HDKey
@@ -87,9 +89,12 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         hdkey: HDKey,
         version: string,
         hdEth: HDKey,
-        ethApp: Eth
+        ethApp: Eth,
+        derivationPath: string
     ) {
         super(hdkey, hdEth)
+        this.accountPath = derivationPath.slice(0, -4)
+        this.signPath = derivationPath.slice(-3)
         this.provider = provider
         this.ethApp = ethApp
         this.type = 'ledger'
@@ -99,9 +104,11 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         if (hdEth) {
             const ethKey = hdEth
             const ethPublic = importPublic(ethKey.publicKey)
+            this.publicKey = '0x' + ethKey.publicKey.toString('hex')
             this.ethAddress = publicToAddress(ethPublic).toString('hex')
         } else {
             this.ethAddress = ''
+            this.publicKey = ''
         }
     }
 
@@ -109,24 +116,49 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         return this.ethApp.transport
     }
 
-    static async fromTransport(t: Transport) {
+    static async fromTransport(t: Transport, derivationPath: string) {
         const prov = await getLedgerProvider(t)
         const version = await prov.getVersion(t)
 
-        const xpub = await prov.getXPUB(t, AVA_ACCOUNT_PATH)
+        const xpub = await prov.getXPUB(t, derivationPath)
         const hd = new HDKey()
         hd.publicKey = xpub.pubKey
         hd.chainCode = xpub.chainCode
 
         const eth = new Eth(t, 'w0w')
-        const ethRes = await eth.getAddress(LEDGER_ETH_ACCOUNT_PATH, false, true)
+        const ethRes = await eth.getAddress(derivationPath, false, true)
         const hdEth = new HDKey()
         // @ts-ignore
         hdEth.publicKey = BufferAvax.from(ethRes.publicKey, 'hex')
         // @ts-ignore
         hdEth.chainCode = BufferAvax.from(ethRes.chainCode, 'hex')
 
-        return new LedgerWallet(prov, hd, version, hdEth, eth)
+        return new LedgerWallet(prov, hd, version, hdEth, eth, derivationPath)
+    }
+
+    static async getDerivedAddresses(
+        t: Transport,
+        derivationPaths: string[] = []
+    ): Promise<derivedAddresses[]> {
+        const results: derivedAddresses[] = []
+        const eth = new Eth(t, 'w0w')
+
+        const hdEth = new HDKey()
+
+        for (let i = 0; i < derivationPaths.length; i++) {
+            const ethRes = await eth.getAddress(derivationPaths[i], false, true)
+            // @ts-ignore
+            hdEth.publicKey = BufferAvax.from(ethRes.publicKey, 'hex')
+            const ethPublic = importPublic(hdEth.publicKey)
+            const ethAddress = publicToAddress(ethPublic).toString('hex')
+            const derivedAddress: derivedAddresses = {
+                ethAddress: ethAddress,
+                derivationPath: derivationPaths[i],
+            }
+            results.push(derivedAddress)
+        }
+
+        return results
     }
 
     // Returns an array of derivation paths that need to sign this transaction
@@ -136,75 +168,77 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         chainId: ChainIdType
     ): { paths: string[]; isAvaxOnly: boolean } {
         // TODO: This is a nasty fix. Remove when AJS is updated.
-        unsignedTx.toBuffer()
-        const tx = unsignedTx.getTransaction()
-        const txType = tx.getTxType()
+        // unsignedTx.toBuffer()
+        // const tx = unsignedTx.getTransaction()
+        // const txType = tx.getTxType()
 
-        const ins = tx.getIns()
-        let operations: TransferableOperation[] = []
+        // const ins = tx.getIns()
+        // let operations: TransferableOperation[] = []
 
-        // Try to get operations, it will fail if there are none, ignore and continue
-        try {
-            operations = (tx as OperationTx).getOperations()
-        } catch (e) {
-            console.log(e)
-        }
+        // // Try to get operations, it will fail if there are none, ignore and continue
+        // try {
+        //     operations = (tx as OperationTx).getOperations()
+        // } catch (e) {
+        //     console.log(e)
+        // }
 
-        let items = ins
-        if (
-            (txType === AVMConstants.IMPORTTX && chainId === 'X') ||
-            (txType === PlatformVMConstants.IMPORTTX && chainId === 'P')
-        ) {
-            items = ((tx as AVMImportTx) || PlatformImportTx).getImportInputs()
-        }
+        // let items = ins
+        // if (
+        //     (txType === AVMConstants.IMPORTTX && chainId === 'X') ||
+        //     (txType === PlatformVMConstants.IMPORTTX && chainId === 'P')
+        // ) {
+        //     items = ((tx as AVMImportTx) || PlatformImportTx).getImportInputs()
+        // }
 
-        const hrp = getPreferredHRP(ava.getNetworkID())
-        const paths: string[] = []
+        // const hrp = getPreferredHRP(ava.getNetworkID())
+        // const paths: string[] = []
 
-        let isAvaxOnly = true
+        // let isAvaxOnly = true
 
-        // Collect derivation paths for source addresses
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i]
+        // // Collect derivation paths for source addresses
+        // for (let i = 0; i < items.length; i++) {
+        //     const item = items[i]
 
-            const assetId = bintools.cb58Encode(item.getAssetID())
-            // @ts-ignore
-            if (assetId !== store.state.Assets.AVA_ASSET_ID) {
-                isAvaxOnly = false
-            }
+        //     const assetId = bintools.cb58Encode(item.getAssetID())
+        //     // @ts-ignore
+        //     if (assetId !== store.state.Assets.AVA_ASSET_ID) {
+        //         isAvaxOnly = false
+        //     }
 
-            const sigidxs: SigIdx[] = item.getInput().getSigIdxs()
-            const sources = sigidxs.map((sigidx) => sigidx.getSource())
-            const addrs: string[] = sources.map((source) => {
-                return bintools.addressToString(hrp, chainId, source)
-            })
+        //     const sigidxs: SigIdx[] = item.getInput().getSigIdxs()
+        //     const sources = sigidxs.map((sigidx) => sigidx.getSource())
+        //     const addrs: string[] = sources.map((source) => {
+        //         return bintools.addressToString(hrp, chainId, source)
+        //     })
 
-            for (let j = 0; j < addrs.length; j++) {
-                const srcAddr = addrs[j]
-                const pathStr = this.getPathFromAddress(srcAddr) // returns change/index
+        //     for (let j = 0; j < addrs.length; j++) {
+        //         const srcAddr = addrs[j]
+        //         const pathStr = this.getPathFromAddress(srcAddr) // returns change/index
 
-                paths.push(pathStr)
-            }
-        }
+        //         paths.push(pathStr)
+        //     }
+        // }
 
         // Do the Same for operational inputs, if there are any...
-        for (let i = 0; i < operations.length; i++) {
-            const op = operations[i]
-            const sigidxs: SigIdx[] = op.getOperation().getSigIdxs()
-            const sources = sigidxs.map((sigidx) => sigidx.getSource())
-            const addrs: string[] = sources.map((source) => {
-                return bintools.addressToString(hrp, chainId, source)
-            })
+        // for (let i = 0; i < operations.length; i++) {
+        //     const op = operations[i]
+        //     const sigidxs: SigIdx[] = op.getOperation().getSigIdxs()
+        //     const sources = sigidxs.map((sigidx) => sigidx.getSource())
+        //     const addrs: string[] = sources.map((source) => {
+        //         return bintools.addressToString(hrp, chainId, source)
+        //     })
 
-            for (let j = 0; j < addrs.length; j++) {
-                const srcAddr = addrs[j]
-                const pathStr = this.getPathFromAddress(srcAddr) // returns change/index
+        //     for (let j = 0; j < addrs.length; j++) {
+        //         const srcAddr = addrs[j]
+        //         const pathStr = this.getPathFromAddress(srcAddr) // returns change/index
 
-                paths.push(pathStr)
-            }
-        }
+        //         paths.push(pathStr)
+        //     }
+        // }
 
-        return { paths, isAvaxOnly }
+        // return { paths, isAvaxOnly }
+
+        return { paths: [this.signPath], isAvaxOnly: true }
     }
 
     pathsToUniqueBipPaths(paths: string[]) {
@@ -408,7 +442,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             const bip32Paths = this.pathsToUniqueBipPaths(paths)
 
             // Sign the msg with ledger
-            const accountPathSource = chainId === 'C' ? ETH_ACCOUNT_PATH : AVA_ACCOUNT_PATH
+            const accountPathSource = this.accountPath
             const accountPath = bippath.fromString(`${accountPathSource}`)
             const sigMap = await this.provider.signHash(
                 this.getTransport(),
@@ -448,9 +482,11 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
     // Used for signing transactions that are parsable
     async signTransactionParsable<
-        UnsignedTx extends AVMUnsignedTx | PlatformUnsignedTx | EVMUnsignedTx,
+        UnsignedTx extends PlatformUnsignedTx | EVMUnsignedTx,
         SignedTx extends AVMTx | PlatformTx | EvmTx
     >(unsignedTx: UnsignedTx, paths: string[], chainId: ChainIdType): Promise<SignedTx> {
+        const cKeyChain = avalanche.CChain().keyChain()
+        const txHashes = unsignedTx.prepareUnsignedHashes(cKeyChain)
         const tx = unsignedTx.getTransaction()
         const txType = tx.getTxType()
         const parseableTxs = {
@@ -463,17 +499,14 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
         const bip32Paths = this.pathsToUniqueBipPaths(paths)
 
-        const accountPath =
-            chainId === 'C'
-                ? bippath.fromString(`${ETH_ACCOUNT_PATH}`)
-                : bippath.fromString(`${AVA_ACCOUNT_PATH}`)
-        const txbuff = unsignedTx.toBuffer()
+        const accountPath = bippath.fromString(`${this.accountPath}`)
 
+        //const txbuff = unsignedTx.toBuffer()
+
+        const messageBuffer = Buffer.from(txHashes[0].message, 'hex')
         const outputAddrs = getTxOutputAddresses<UnsignedTx>(unsignedTx)
-
         // Get their paths, for owned ones
         const changePaths = this.getAddressPaths(outputAddrs)
-
         const messages = this.getTransactionMessages<UnsignedTx>(
             unsignedTx,
             chainId,
@@ -483,15 +516,14 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         try {
             store.commit('Ledger/openModal', {
                 title: title,
-                messages: messages,
+                messages: messages.filter(({ title }) => title !== 'Output'),
                 info: null,
             })
-            const ledgerSignedTx = await this.provider.signTx(
+            const ledgerSignedTx = await this.provider.signHash(
                 this.getTransport(),
-                Buffer.from(txbuff),
+                messageBuffer,
                 accountPath,
-                bip32Paths,
-                changePaths
+                bip32Paths
             )
 
             const sigMap = ledgerSignedTx.signatures
@@ -499,9 +531,9 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
             let signedTx
             switch (chainId) {
-                case 'X':
-                    signedTx = new AVMTx(unsignedTx as AVMUnsignedTx, creds)
-                    break
+                // case 'X':
+                //     signedTx = new AVMTx(unsignedTx as AVMUnsignedTx, creds)
+                //     break
                 case 'P':
                     signedTx = new PlatformTx(unsignedTx as PlatformUnsignedTx, creds)
                     break
@@ -554,7 +586,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
                 messages.push({
                     title: 'Output',
-                    value: `${addr} - ${amt.toString()} AVAX`,
+                    value: `${addr} - ${amt.toString()} FLR`,
                 })
             }
         } else {
@@ -573,7 +605,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
                         if (!changePath || changeAddr !== addr)
                             messages.push({
                                 title: 'Output',
-                                value: `${addr} - ${amt.toString()} AVAX`,
+                                value: `${addr} - ${amt.toString()} FLR`,
                             })
                     })
             }
@@ -622,7 +654,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             messages.push({ title: 'NodeID', value: nodeID })
             messages.push({ title: 'Start Time', value: startTime })
             messages.push({ title: 'End Time', value: endTime })
-            messages.push({ title: 'Total Stake', value: `${stakeAmt} AVAX` })
+            messages.push({ title: 'Total Stake', value: `${stakeAmt} FLR` })
             messages.push({
                 title: 'Stake',
                 value: `${stakeAmt} to ${this.platformHelper.getCurrentAddress()}`,
@@ -659,7 +691,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             (txType === EVMConstants.EXPORTTX && chainId === 'C') ||
             (txType === EVMConstants.IMPORTTX && chainId === 'C')
         ) {
-            messages.push({ title: 'Fee', value: `${0.001} AVAX` })
+            messages.push({ title: 'Fee', value: `${0.001} FLR` })
         }
 
         return messages
@@ -737,21 +769,20 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             paths.length
         )
 
-        let signedTx
-        if (canSign) {
-            signedTx = await this.signTransactionParsable<AVMUnsignedTx, AVMTx>(
-                unsignedTx,
-                paths,
-                chainId
-            )
-        } else {
-            signedTx = await this.signTransactionHash<AVMUnsignedTx, AVMTx>(
-                unsignedTx,
-                paths,
-                chainId
-            )
-        }
-
+        // let signedTx
+        // if (canSign) {
+        //     // signedTx = await this.signTransactionParsable<AVMUnsignedTx, AVMTx>(
+        //     //     unsignedTx,
+        //     //     paths,
+        //     //     chainId
+        //     // )
+        // } else {
+        const signedTx = await this.signTransactionHash<AVMUnsignedTx, AVMTx>(
+            unsignedTx,
+            paths,
+            chainId
+        )
+        // }
         store.commit('Ledger/closeModal')
         return signedTx
     }
@@ -768,20 +799,20 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             paths.length
         )
 
-        let signedTx
-        if (canSign) {
-            signedTx = await this.signTransactionParsable<PlatformUnsignedTx, PlatformTx>(
-                unsignedTx,
-                paths,
-                chainId
-            )
-        } else {
-            signedTx = await this.signTransactionHash<PlatformUnsignedTx, PlatformTx>(
-                unsignedTx,
-                paths,
-                chainId
-            )
-        }
+        // let signedTx
+        // if (canSign) {
+        const signedTx = await this.signTransactionParsable<PlatformUnsignedTx, PlatformTx>(
+            unsignedTx,
+            paths,
+            chainId
+        )
+        // } else {
+        //     signedTx = await this.signTransactionHash<PlatformUnsignedTx, PlatformTx>(
+        //         unsignedTx,
+        //         paths,
+        //         chainId
+        //     )
+        // }
 
         store.commit('Ledger/closeModal')
         return signedTx
@@ -791,20 +822,51 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         // TODO: Might need to upgrade paths array to:
         //  paths = Array(utxoSet.getAllUTXOs().length).fill('0/0'),
         const tx = unsignedTx.getTransaction()
-        const typeId = tx.getTxType()
+        // const typeId = tx.getTxType()
 
-        let paths = ['0/0']
-        if (typeId === EVMConstants.EXPORTTX) {
-            const ins = (tx as EVMExportTx).getInputs()
-            paths = ins.map((input) => '0/0')
-        } else if (typeId === EVMConstants.IMPORTTX) {
-            const ins = (tx as EVMImportTx).getImportInputs()
-            paths = ins.map((input) => '0/0')
-        }
+        const paths = [this.signPath]
+        // if (typeId === EVMConstants.EXPORTTX) {
+        //     const ins = (tx as EVMExportTx).getInputs()
+        //     paths = ins.map((input) => '0/0')
+        // } else if (typeId === EVMConstants.IMPORTTX) {
+        //     const ins = (tx as EVMImportTx).getImportInputs()
+        //     paths = ins.map((input) => '0/0')
+        // }
 
         const txSigned = (await this.signTransactionParsable(unsignedTx, paths, 'C')) as EvmTx
         store.commit('Ledger/closeModal')
         return txSigned
+    }
+
+    async signContractLedger(unsignedTxHash: Buffer): Promise<string> {
+        const paths = [this.signPath]
+
+        const title = `Sign Smart Contract Transaction`
+
+        const bip32Paths = this.pathsToUniqueBipPaths(paths)
+
+        const accountPath = bippath.fromString(`${this.accountPath}`)
+
+        try {
+            store.commit('Ledger/openModal', {
+                title: title,
+                info: null,
+            })
+            const ledgerSignedTx = await this.provider.signHash(
+                this.getTransport(),
+                unsignedTxHash,
+                accountPath,
+                bip32Paths
+            )
+            store.commit('Ledger/closeModal')
+            const sigMap = ledgerSignedTx.signatures
+            const sig = sigMap.get(`${this.signPath}`)?.toString('hex')
+            return sig!
+        } catch (e) {
+            store.commit('Ledger/closeModal')
+            console.error(e)
+            throw e
+        }
     }
 
     async signEvm(tx: Transaction) {
@@ -830,7 +892,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
                 info: null,
             })
             const signature = await this.ethApp.signTransaction(
-                LEDGER_ETH_ACCOUNT_PATH,
+                `${this.accountPath}/${this.signPath}`,
                 rawUnsignedTx.toString('hex')
             )
             store.commit('Ledger/closeModal')
@@ -877,7 +939,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
 
     async getUTXOs(): Promise<void> {
         // TODO: Move to shared file
-        this.isFetchUtxos = true
+        // this.isFetchUtxos = true
         // If we are waiting for helpers to initialize delay the call
         const isInit =
             this.externalHelper.isInit && this.internalHelper.isInit && this.platformHelper.isInit
@@ -972,8 +1034,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
      */
     async verifyAddress(index: number, internal = false, chainAlias?: ChainIdType) {
         const hrp = avalanche.getHRP()
-        const change = internal ? '1' : '0'
-        const path = `${AVA_ACCOUNT_PATH}/${change}/${index}`
+        const path = `${this.accountPath}/${this.signPath}`
         const chainId = chainAlias ? chainIdFromAlias(chainAlias) : undefined
         return await this.provider.getAddress(this.getTransport(), bippath.fromString(path), {
             show: true,
@@ -992,6 +1053,11 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         // throw 'Not Implemented'
         return await WalletHelper.sendErc20(this, to, amount, gasPrice, gasLimit, token)
     }
+}
+
+export interface derivedAddresses {
+    ethAddress: string
+    derivationPath: string
 }
 
 export { LedgerWallet }

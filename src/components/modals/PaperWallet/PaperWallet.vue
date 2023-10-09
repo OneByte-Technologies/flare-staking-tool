@@ -3,7 +3,8 @@
         <div class="qr_body" ref="qr_body">
             <img
                 ref="bg"
-                src="@/assets/paper_wallet/bg.png"
+                src="@/assets/paper_wallet/image.png"
+                @load="onImageLoad"
                 :style="{
                     display: 'none',
                     height: `${height}px`,
@@ -60,6 +61,7 @@ export default class PaperWallet extends Vue {
     mnemonicImg: HTMLImageElement | null = null
 
     @Prop() wallet!: MnemonicWallet
+    @Prop() walletAddress!: string
     // Height and Width of the img and canvas
     width = 100
     height = 100
@@ -68,7 +70,9 @@ export default class PaperWallet extends Vue {
         let modal = this.$refs.modal
         // @ts-ignore
         modal.open()
+    }
 
+    onImageLoad() {
         setTimeout(() => {
             this.setSizes()
         }, 200)
@@ -123,7 +127,7 @@ export default class PaperWallet extends Vue {
 
         // Top Address
         const wrapChar = 25
-        let addr = this.address
+        let addr = this.walletAddress
         let addr1 = addr.substr(0, wrapChar)
         let addr2 = addr.substr(wrapChar)
 
@@ -181,7 +185,7 @@ export default class PaperWallet extends Vue {
     buildQr() {
         let parent = this
         QRCode.toDataURL(
-            this.address,
+            this.walletAddress,
             {
                 width: this.designPxToReal(100),
             },

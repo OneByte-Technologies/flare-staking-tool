@@ -42,7 +42,7 @@
                 <div class="header_cols">
                     <div class="detail">
                         <p class="addressVal">
-                            <b>{{ walletTitle }}</b>
+                            <b>{{ walletKey }}</b>
                         </p>
                         <Tooltip :text="$t('keys.tooltip')" v-if="isVolatile">
                             <fa icon="exclamation-triangle" class="volatile_alert"></fa>
@@ -95,15 +95,15 @@
             <div class="header">
                 <div></div>
                 <div>
-                    <p v-if="Object.keys(balances).length === 0" class="balance_empty">
-                        {{ $t('keys.empty') }}
-                    </p>
+                    <div class="addressBalance bal_cols" v-if="updatedBalance === '0'">
+                        <p>{{ $t('keys.empty') }}</p>
+                    </div>
                     <div class="addressBalance bal_cols" v-else>
                         <p>This key has:</p>
                         <div class="bal_rows">
-                            <p v-for="bal in balances" :key="bal.id">
-                                {{ bal.toString() }}
-                                <b>{{ bal.symbol }}</b>
+                            <p>
+                                {{ updatedBalance }}
+                                <b>FLR</b>
                             </p>
                         </div>
                     </div>
@@ -124,15 +124,16 @@ import MnemonicPhraseModal from '@/components/modals/MnemonicPhraseModal.vue'
 import HdDerivationListModal from '@/components/modals/HdDerivationList/HdDerivationListModal.vue'
 import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import Tooltip from '@/components/misc/Tooltip.vue'
-
+import Big from 'big.js'
 import ExportKeys from '@/components/modals/ExportKeys.vue'
 import PrivateKey from '@/components/modals/PrivateKey.vue'
 import { WalletNameType, WalletType } from '@/js/wallets/types'
-
+import { BN } from 'avalanche/dist'
 import { SingletonWallet } from '../../../js/wallets/SingletonWallet'
 import MnemonicPhrase from '@/js/wallets/MnemonicPhrase'
 import XpubModal from '@/components/modals/XpubModal.vue'
 import { AbstractHdWallet } from '@/js/wallets/AbstractHdWallet'
+import { bnToBig } from '@/helpers/helper'
 
 interface IKeyBalanceDict {
     [key: string]: AvaAsset
@@ -151,6 +152,7 @@ interface IKeyBalanceDict {
 export default class KeyRow extends Vue {
     @Prop() wallet!: WalletType
     @Prop({ default: false }) is_default?: boolean
+    @Prop() walletKey?: string
 
     $refs!: {
         export_wallet: ExportKeys
@@ -158,6 +160,18 @@ export default class KeyRow extends Vue {
         modal_hd: HdDerivationListModal
         modal_priv_key: PrivateKey
         modal_xpub: XpubModal
+    }
+    get updatedBalance(): string {
+        let ava = this.$store.getters['Assets/AssetAVA']
+        if (!ava) return '?'
+
+        let evmUnlocked = this.wallet
+            ? this.wallet.ethBalance.div(new BN(Math.pow(10, 9).toString()))
+            : new BN(0)
+        let totalBalance = ava.getTotalAmount().add(evmUnlocked)
+        let totalBalanceBig = bnToBig(totalBalance, ava.denomination)
+
+        return totalBalanceBig.toLocaleString(ava.denomination)
     }
 
     get isVolatile() {

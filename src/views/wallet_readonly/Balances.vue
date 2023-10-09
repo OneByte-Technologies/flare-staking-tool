@@ -3,7 +3,7 @@
         <label>Total</label>
         <p class="total">{{ totalBalance.toLocaleString() }}</p>
         <div class="cols" v-if="isReady">
-            <div class="column">
+            <!-- <div class="column">
                 <h3>X-Chain</h3>
                 <div class="bal_row">
                     <div>
@@ -19,7 +19,7 @@
                         <p>{{ xMultisig }}</p>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="column">
                 <h3>P-Chain</h3>
                 <div class="bal_row">

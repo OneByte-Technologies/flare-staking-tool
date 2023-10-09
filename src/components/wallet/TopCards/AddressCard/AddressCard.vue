@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
     <div class="addr_card">
         <q-r-modal ref="qr_modal" :address="activeAddress"></q-r-modal>
@@ -5,12 +6,13 @@
             ref="print_modal"
             v-if="walletType === 'mnemonic'"
             :wallet="activeWallet"
+            :wallet-address="activeAddressPVM"
         ></paper-wallet>
         <p class="addr_info">{{ addressMsg }}</p>
         <div class="bottom">
-            <div class="col_qr">
-                <canvas ref="qr"></canvas>
-            </div>
+            <!-- <div class="col_qr"> -->
+            <!-- <canvas ref="qr"></canvas> -->
+            <!-- </div> -->
             <div class="bottom_rest">
                 <p class="subtitle">{{ addressLabel }}</p>
 
@@ -39,7 +41,7 @@
                         class="print_but"
                     ></button>
                     <button
-                        v-if="walletType === 'ledger'"
+                        v-if="walletType === 'ledger' && chainNow === 'C'"
                         :tooltip="$t('create.verify')"
                         @click="verifyLedgerAddress"
                         class="ledger_but"
@@ -78,6 +80,7 @@ import ChainSelect from '@/components/wallet/TopCards/AddressCard/ChainSelect.vu
 import { ChainIdType } from '@/constants'
 import { ava } from '@/AVA'
 import { getPreferredHRP } from 'avalanche/dist/utils'
+import { isMainnetNetworkID } from '@/store/modules/network/isMainnetNetworkID'
 @Component({
     components: {
         CopyText,
@@ -89,7 +92,7 @@ import { getPreferredHRP } from 'avalanche/dist/utils'
 export default class AddressCard extends Vue {
     colorLight: string = '#FFF'
     colorDark: string = '#242729'
-    chainNow: ChainIdType = 'X'
+    chainNow: ChainIdType = 'P'
     showBech = false // If true C-Chain shows the bech32 Address
     $refs!: {
         qr_modal: QRModal
@@ -128,8 +131,6 @@ export default class AddressCard extends Vue {
     get addressLabel(): string {
         switch (this.chainNow) {
             default:
-                return this.$t('top.address.title_x') as string
-            case 'P':
                 return this.$t('top.address.title_p') as string
             case 'C':
                 return this.showBech
@@ -141,21 +142,11 @@ export default class AddressCard extends Vue {
     get addressMsg(): string {
         switch (this.chainNow) {
             default:
-                return this.getAddressMsgX()
-            case 'P':
                 return this.$t('top.address.desc_p') as string
             case 'C':
                 return this.showBech
                     ? 'Used internally when moving funds to or from C-Chain'
                     : (this.$t('top.address.desc_c') as string)
-        }
-    }
-
-    getAddressMsgX() {
-        if (this.activeWallet?.type === 'singleton') {
-            return this.$t('top.address.desc_x_1') as string
-        } else {
-            return `${this.$t('top.address.desc_x_1')} ${this.$t('top.address.desc_x_2')}` as string
         }
     }
 
@@ -173,11 +164,13 @@ export default class AddressCard extends Vue {
     get activeWallet(): WalletType | null {
         return this.$store.state.activeWallet
     }
+
     get address() {
         let wallet = this.activeWallet
         if (!wallet) {
             return '-'
         }
+        console.log('address:', wallet.getCurrentAddressAvm()) // Add console.log here
         return wallet.getCurrentAddressAvm()
     }
 
@@ -210,14 +203,16 @@ export default class AddressCard extends Vue {
 
     get activeAddress(): string {
         switch (this.chainNow) {
-            case 'X':
-                return this.address
             case 'P':
                 return this.addressPVM
             case 'C':
                 return this.showBech ? this.addressEVMBech32 : this.addressEVM
         }
         return this.address
+    }
+    get activeAddressPVM(): string {
+        console.log('activeAddressPVM:', this.addressPVM) // Add console.log here
+        return this.addressPVM // Use the P-chain address here
     }
 
     get activeIdx(): number {
@@ -279,7 +274,7 @@ export default class AddressCard extends Vue {
                 wallet.verifyAddress(this.activeIdx, false, this.chainNow)
                 break
             case 'C':
-                wallet.ethApp.getAddress(`${LEDGER_ETH_ACCOUNT_PATH}`, true)
+                wallet.ethApp.getAddress(`${wallet.accountPath}/${wallet.signPath}`, true)
         }
     }
 
@@ -296,6 +291,7 @@ export default class AddressCard extends Vue {
     flex-direction: column;
     padding: 0 !important;
 }
+
 .buts {
     width: 100%;
     display: flex;
@@ -314,6 +310,7 @@ export default class AddressCard extends Vue {
 
         background-size: contain;
         background-position: center;
+
         &:hover {
             opacity: 1;
         }
@@ -323,12 +320,15 @@ export default class AddressCard extends Vue {
 .qr_but {
     background-image: url('/img/qr_icon.png');
 }
+
 .print_but {
     background-image: url('/img/faucet_icon.png');
 }
+
 .ledger_but {
     background-image: url('/img/ledger_icon.png');
 }
+
 .copy_but {
     color: var(--primary-color);
 }
@@ -348,6 +348,7 @@ export default class AddressCard extends Vue {
     flex-direction: column;
     justify-content: center;
 }
+
 .mainnet_but {
     background-image: url('/img/modal_icons/mainnet_addr.svg');
 }
@@ -356,9 +357,11 @@ export default class AddressCard extends Vue {
     .qr_but {
         background-image: url('/img/qr_icon_night.svg');
     }
+
     .print_but {
         background-image: url('/img/print_icon_night.svg');
     }
+
     .ledger_but {
         background-image: url('/img/ledger_night.svg');
     }
@@ -378,23 +381,23 @@ export default class AddressCard extends Vue {
     padding: 12px 16px;
 }
 
-$qr_width: 110px;
+// $qr_width: 110px;
 
 .bottom {
     display: grid;
-    grid-template-columns: $qr_width 1fr;
+    grid-template-columns: 1fr;
     column-gap: 14px;
-    padding-right: 18px;
+    padding-right: 16px;
     margin-top: 4px;
     margin-bottom: 4px;
-    padding-left: 8px;
+    padding-left: 16px;
     flex-grow: 1;
 
-    canvas {
-        width: $qr_width;
-        height: $qr_width;
-        background-color: transparent;
-    }
+    // canvas {
+    //     width: $qr_width;
+    //     height: $qr_width;
+    //     background-color: transparent;
+    // }
 
     .bottom_rest {
         padding-top: 4px;
@@ -437,6 +440,7 @@ $qr_width: 110px;
     .addr_info {
         display: none;
     }
+
     canvas {
         display: block;
         margin: 0px auto;

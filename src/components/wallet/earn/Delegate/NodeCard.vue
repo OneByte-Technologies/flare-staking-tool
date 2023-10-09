@@ -3,17 +3,11 @@
         <p class="node_id">{{ node.nodeID }}</p>
         <!--        <div class="meta_row"></div>-->
         <div>
-            <label>Fee</label>
-            <p>{{ node.fee.toFixed(2) }}%</p>
-        </div>
-        <div>
             <label>Uptime</label>
             <!--            <p>{{ uptimeText }}</p>-->
             <p style="font-size: 0.8rem">
                 Please refer to
-                <a :href="vscoutURL" target="_blank">VScout</a>
-                or
-                <a :href="avascanURL" target="_blank">Avascan</a>
+                <a :href="vscoutURL" target="_blank">Towo Labs</a>
                 to get more information about a node's uptime.
             </p>
         </div>
@@ -26,11 +20,11 @@
         <!--        </div>-->
         <div>
             <label>Active Stake</label>
-            <p>{{ totalStakeBig.toLocaleString(0) }} AVAX</p>
+            <p>{{ totalStakeBig.toLocaleString(0) }} FLR</p>
         </div>
         <div>
             <label>Available Stake</label>
-            <p>{{ remainingStakeBig.toLocaleString(0) }} AVAX</p>
+            <p>{{ remainingStakeBig.toLocaleString(0) }} FLR</p>
         </div>
         <!--        <div class="dates"></div>-->
         <div class="date_row">
@@ -88,7 +82,7 @@ export default class NodeCard extends Vue {
     }
 
     get vscoutURL() {
-        return `https://vscout.io/validator/${this.node.nodeID}`
+        return `https://validators.towolabs.com/validator/${this.node.nodeID}`
     }
 }
 </script>

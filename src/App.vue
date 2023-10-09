@@ -2,6 +2,7 @@
     <v-app>
         <v-main>
             <template>
+                <DebugModeManager></DebugModeManager>
                 <UrlBanner></UrlBanner>
                 <navbar v-show="isNavbar"></navbar>
                 <div class="main_cols" :wallet_view="!isNavbar">
@@ -17,12 +18,12 @@
         <LedgerWalletLoading></LedgerWalletLoading>
         <NetworkLoadingBlock></NetworkLoadingBlock>
         <notifications></notifications>
-        <analytics></analytics>
+        <!-- <analytics></analytics> -->
         <TestNetBanner></TestNetBanner>
     </v-app>
 </template>
 <script>
-import Analytics from '@/components/Analytics/Analytics'
+// import Analytics from '@/components/Analytics/Analytics'
 import Notifications from '@/components/Notifications'
 import Navbar from './components/Navbar'
 import SaveAccountModal from '@/components/modals/SaveAccount/SaveAccountModal'
@@ -32,10 +33,12 @@ import TestNetBanner from '@/components/TestNetBanner'
 import NetworkLoadingBlock from '@/components/misc/NetworkLoadingBlock'
 import UpgradeToAccountModal from '@/components/modals/SaveAccount/UpgradeToAccountModal'
 import LedgerWalletLoading from '@/components/modals/LedgerWalletLoading'
+import DebugModeManager from '@/components/misc/DebugModeManager'
 import UrlBanner from '@/components/misc/UrlBanner'
 
 export default {
     components: {
+        DebugModeManager,
         UrlBanner,
         LedgerWalletLoading,
         UpgradeToAccountModal,
@@ -45,7 +48,7 @@ export default {
         SaveAccountModal,
         Navbar,
         Notifications,
-        Analytics,
+        // Analytics,
         TestNetBanner,
     },
     async created() {
@@ -57,7 +60,7 @@ export default {
 
         await this.$store.dispatch('Network/init')
         this.$store.commit('Accounts/loadAccounts')
-        this.$store.dispatch('Assets/initErc20List')
+        // this.$store.dispatch('Assets/initErc20List')
         this.$store.dispatch('Assets/ERC721/init')
         this.$store.dispatch('updateAvaxPrice')
 
@@ -82,22 +85,22 @@ export default {
                 vmid: 'description',
                 name: 'description',
                 content:
-                    'Avalanche wallet is a simple, highly secure, non-custodial crypto wallet for storing AVAX.',
+                    'Flare wallet is a simple, highly secure, non-custodial crypto wallet for storing FLR.',
             },
             {
                 vmid: 'og:description',
                 name: 'description',
                 content:
-                    'Avalanche wallet is a simple, highly secure, non-custodial crypto wallet for storing AVAX.',
+                    'Flare wallet is a simple, highly secure, non-custodial crypto wallet for storing FLR.',
             },
             {
                 vmid: 'og:title',
                 name: 'og:title',
-                content: 'Fastest Performing and Secure DeFi Wallet | Avalanche Wallet',
+                content: 'Fastest Performing and Secure Staking Tool | Flare',
             },
         ],
-        title: 'Fastest Performing and Secure DeFi Wallet',
-        titleTemplate: '%s | Avalanche Wallet',
+        title: 'Fastest Performing and Secure Staking Tool',
+        titleTemplate: '%s | Flare',
     },
 }
 </script>

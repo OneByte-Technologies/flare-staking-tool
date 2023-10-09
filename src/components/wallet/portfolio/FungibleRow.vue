@@ -24,7 +24,7 @@
                 &nbsp;USD
             </span>
         </p>
-        <p class="balance_col" v-else>0</p>
+        <p class="balance_col" v-else>{{ totBal }}</p>
     </div>
 </template>
 <script lang="ts">
@@ -48,11 +48,13 @@ import Big from 'big.js'
 export default class FungibleRow extends Vue {
     @Prop() asset!: AvaAsset
 
+    totBal: string = ''
+
     get iconUrl(): string | null {
         if (!this.asset) return null
 
         if (this.isAvaxToken) {
-            return '/img/avax_icon_circle.png'
+            return '/img/logo-FLR.png'
         }
 
         return null
@@ -100,15 +102,12 @@ export default class FungibleRow extends Vue {
     get name(): string {
         let name = this.asset.name
         // TODO: Remove this hack after network change
-        if (name === 'AVA') return 'AVAX'
+        if (name === 'AVA') return 'FLR'
         return name
     }
 
     get symbol(): string {
         let sym = this.asset.symbol
-
-        // TODO: Remove this hack after network change
-        if (sym === 'AVA') return 'AVAX'
         return sym
     }
 
@@ -148,6 +147,7 @@ export default class FungibleRow extends Vue {
     .balance_col {
         font-size: 18px;
         text-align: right;
+
         .fiat {
             font-size: 12px;
             color: var(--primary-color-light);
@@ -164,9 +164,11 @@ export default class FungibleRow extends Vue {
     .send_col {
         text-align: center;
         opacity: 0.4;
+
         &:hover {
             opacity: 1;
         }
+
         img {
             width: 18px;
             object-fit: contain;
@@ -175,6 +177,7 @@ export default class FungibleRow extends Vue {
 }
 
 $icon_w: 40px;
+
 .icon {
     position: relative;
     align-self: center;
@@ -223,8 +226,10 @@ $icon_w: 40px;
         span {
             font-size: 15px;
         }
+
         font-size: 15px;
     }
+
     .send_col {
         img {
             width: 14px;
@@ -236,12 +241,14 @@ $icon_w: 40px;
     }
 
     $icon_w: 30px;
+
     .icon {
         width: $icon_w;
         height: $icon_w;
         border-radius: $icon_w;
     }
 }
+
 @include main.mobile-device {
     .name_col {
         display: none;

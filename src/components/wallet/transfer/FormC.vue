@@ -58,7 +58,7 @@
             <div class="fees" v-if="isConfirm">
                 <p>
                     {{ $t('transfer.fee_tx') }}
-                    <span>{{ maxFeeText }} AVAX</span>
+                    <span>{{ maxFeeText }} FLR</span>
                 </p>
                 <p>
                     <span>${{ maxFeeUSD.toLocaleString(2) }} USD</span>
@@ -78,7 +78,7 @@
                 </v-btn>
                 <template v-else>
                     <v-btn
-                        class="button_primary checkout"
+                        class="button_secondary checkout"
                         depressed
                         block
                         @click="submit"
@@ -112,7 +112,7 @@
                 <v-btn
                     style="margin: 14px 0"
                     :disabled="!canSendAgain"
-                    class="button_primary"
+                    class="button_secondary"
                     small
                     block
                     @click="startAgain"
@@ -234,7 +234,7 @@ export default class FormC extends Vue {
     }
 
     get symbol(): string {
-        if (this.formToken === 'native') return 'AVAX'
+        if (this.formToken === 'native') return 'FLR'
         return this.formToken.data.symbol
     }
 
@@ -310,7 +310,7 @@ export default class FormC extends Vue {
 
         if (!this.isCollectible) {
             if (this.formToken === 'native') {
-                // For AVAX Transfers
+                // For FLR Transfers
                 let gasLimit = await TxHelper.estimateAvaxGas(
                     this.wallet.getEvmAddress(),
                     this.formAddress,

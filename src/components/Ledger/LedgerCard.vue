@@ -1,41 +1,57 @@
 <template>
-    <button class="button_primary" @click="submit" :disabled="disabled">
-        <template v-if="!isLoading">
-            Ledger
-
-            <span v-if="disabled" class="no_firefox">{{ browserName }} is not supported</span>
-            <ImageDayNight
-                day="/img/access_icons/day/ledger.svg"
-                night="/img/access_icons/night/ledger.svg"
-                class="ledger_img"
-                v-else
-            ></ImageDayNight>
-        </template>
-        <Spinner v-else class="spinner"></Spinner>
-    </button>
+    <div>
+        <div>
+            <div class="page-title">Please select a standard for derivation and your address</div>
+            <v-select
+                class="ledger-input"
+                v-model="selectedStandard"
+                @change="onSelectStandard"
+                :items="standard"
+                label="Please select a standard for derivation path"
+                filled
+            ></v-select>
+            <v-select
+                class="ledger-input"
+                v-model="selectedAddress"
+                :items="addressList"
+                :placeholder="placeholder"
+                :readonly="isFetchingAddresses"
+                :loading="isFetchingAddresses"
+                filled
+            ></v-select>
+            <v-btn
+                class="ava_button button_primary"
+                :disabled="!selectedAddress"
+                @click="submit"
+                depressed
+            >
+                Access Wallet
+            </v-btn>
+            <div style="margin-top: 12px">
+                <router-link to="/access" class="link">Cancel</router-link>
+            </div>
+        </div>
+    </div>
 </template>
 <script lang="ts">
 import 'reflect-metadata'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import TransportU2F from '@ledgerhq/hw-transport-u2f'
 //@ts-ignore
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb'
 // @ts-ignore
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 // @ts-ignore
-import Eth from '@ledgerhq/hw-app-eth'
 import Transport from '@ledgerhq/hw-transport'
-
 import Spinner from '@/components/misc/Spinner.vue'
 import LedgerBlock from '@/components/modals/LedgerBlock.vue'
 import { LedgerWallet } from '@/js/wallets/LedgerWallet'
-import { AVA_ACCOUNT_PATH, LEDGER_ETH_ACCOUNT_PATH } from '@/js/wallets/MnemonicWallet'
 import { LEDGER_EXCHANGE_TIMEOUT } from '@/store/modules/ledger/types'
 import ImageDayNight from '@/components/misc/ImageDayNight.vue'
 import { getLedgerProvider } from '@avalabs/avalanche-wallet-sdk'
 import { MIN_LEDGER_V } from '@/js/wallets/constants'
+import { derivedAddresses } from '@/js/wallets/LedgerWallet'
 const { detect } = require('detect-browser')
-
 const UnsupportedBrowsers = ['firefox', 'safari']
 
 @Component({
@@ -45,11 +61,30 @@ const UnsupportedBrowsers = ['firefox', 'safari']
         LedgerBlock,
     },
 })
-export default class LedgerButton extends Vue {
-    isLoading: boolean = false
+export default class LedgerCard extends Vue {
+    selectedStandard: string = 'BIP44'
+    selectedAddress: string = ''
+    isFetchingAddresses: boolean = true
     version?: string = undefined
-    destroyed() {
-        this.$store.commit('Ledger/closeModal')
+    addressList: string[] = []
+    derivedAddress: derivedAddresses[] = []
+
+    get path() {
+        let pathArr: string[] = []
+        for (let i = 0; i < 5; i++) {
+            const pathStr =
+                this.selectedStandard === 'BIP44' ? `m/44'/60'/0'/0/${i}` : `m/44'/60'/${i}'/0/0`
+            pathArr.push(pathStr)
+        }
+        return pathArr
+    }
+
+    get standard() {
+        return ['BIP44', 'Ledger Live']
+    }
+
+    get placeholder() {
+        return this.isFetchingAddresses ? 'Fetching addresses...' : 'Please select an address'
     }
 
     get browser() {
@@ -71,7 +106,9 @@ export default class LedgerButton extends Vue {
         let transport
 
         try {
+            console.log(' Transport Starts here')
             transport = await TransportWebHID.create()
+            console.log(' Transport WebHID created')
             return transport
         } catch (e) {
             console.log('Web HID not supported.')
@@ -79,14 +116,17 @@ export default class LedgerButton extends Vue {
 
         //@ts-ignore
         if (window.USB) {
+            console.log('USB WINDOW')
             transport = await TransportWebUSB.create()
         } else {
+            console.log('U2F Create')
             transport = await TransportU2F.create()
         }
         return transport
     }
-
-    async submit() {
+    async init() {
+        this.addressList = []
+        this.isFetchingAddresses = true
         try {
             let transport = await this.getTransport()
             transport.setExchangeTimeout(LEDGER_EXCHANGE_TIMEOUT)
@@ -96,46 +136,78 @@ export default class LedgerButton extends Vue {
 
             // Close the initial prompt modal if exists
             this.$store.commit('Ledger/setIsUpgradeRequired', false)
-            this.isLoading = true
 
             if (!this.version) {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
-                this.isLoading = false
                 throw new Error('')
             }
 
             if (this.version < MIN_LEDGER_V) {
                 this.$store.commit('Ledger/setIsUpgradeRequired', true)
-                this.isLoading = false
+                throw new Error('')
+            }
+            console.log('calculating addresses')
+            this.derivedAddress = await LedgerWallet.getDerivedAddresses(transport, this.path)
+            for (let i = 0; i < 5; i++) {
+                const addr = '0x' + this.derivedAddress[i].ethAddress
+                this.addressList.push(addr)
+            }
+            this.isFetchingAddresses = false
+        } catch (e) {
+            this.isFetchingAddresses = false
+            this.onerror(e)
+        }
+    }
+
+    findDp() {
+        const selectedDerivedAddress = this.derivedAddress.find(
+            (item) => item.ethAddress === this.selectedAddress.slice(2)
+        )
+        console.log('returning derivation path')
+
+        return selectedDerivedAddress?.derivationPath
+    }
+
+    mounted() {
+        this.init()
+    }
+
+    async onSelectStandard() {
+        this.init()
+    }
+
+    async submit() {
+        try {
+            console.log('SUBMIT BUTTON PRESSED')
+            let transport = await this.getTransport()
+            transport.setExchangeTimeout(LEDGER_EXCHANGE_TIMEOUT)
+
+            // Wait for app config
+            await this.waitForConfig(transport)
+
+            // Close the initial prompt modal if exists
+            this.$store.commit('Ledger/setIsUpgradeRequired', false)
+
+            if (!this.version) {
+                this.$store.commit('Ledger/setIsUpgradeRequired', true)
                 throw new Error('')
             }
 
-            const messages = [
-                {
-                    title: 'Derivation Path',
-                    value: AVA_ACCOUNT_PATH,
-                },
-                {
-                    title: 'Derivation Path',
-                    value: LEDGER_ETH_ACCOUNT_PATH,
-                },
-            ]
-
-            this.$store.commit('Ledger/openModal', {
-                title: 'Getting Public Keys',
-                messages,
-                isPrompt: false,
-            })
-
-            let wallet = await LedgerWallet.fromTransport(transport)
+            if (this.version < MIN_LEDGER_V) {
+                this.$store.commit('Ledger/setIsUpgradeRequired', true)
+                throw new Error('')
+            }
+            const dp = this.findDp()
+            console.log('creating wallet using requested address')
+            let wallet = await LedgerWallet.fromTransport(transport, dp!)
             try {
                 await this.loadWallet(wallet)
                 this.onsuccess()
             } catch (e) {
                 this.onerror(e)
             }
-        } catch (e) {
-            this.onerror(e)
+        } catch (err) {
+            console.log(err)
         }
     }
 
@@ -171,17 +243,17 @@ export default class LedgerButton extends Vue {
         })
     }
 
+    selectAddrModal() {}
+
     showWalletLoading() {
         this.$store.commit('Ledger/closeModal')
         this.$store.commit('Ledger/setIsWalletLoading', true)
     }
     onsuccess() {
         this.$store.commit('Ledger/setIsWalletLoading', false)
-        this.isLoading = false
         this.version = undefined
     }
     onerror(err: any) {
-        this.isLoading = false
         this.version = undefined
         this.$store.commit('Ledger/closeModal')
         console.error(err)
@@ -198,6 +270,24 @@ export default class LedgerButton extends Vue {
 .spinner {
     width: 100% !important;
     color: inherit;
+}
+
+.page-title {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.ledger-input {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.link {
+    color: var(--link-secondary);
+}
+
+.v-text-field:hover {
+    border: none;
 }
 
 .ledger_img {

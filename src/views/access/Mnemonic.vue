@@ -170,7 +170,9 @@ input[type='password'] {
     margin-top: -20px;
     font-size: 0.75em;
 }
-
+.link {
+    color: var(--link-secondary);
+}
 .key_in {
     margin: 30px auto;
     margin-bottom: 6px;

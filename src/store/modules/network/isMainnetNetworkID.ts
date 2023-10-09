@@ -3,5 +3,5 @@
  * @param id
  */
 export function isMainnetNetworkID(id: number) {
-    return id === 1
+    return id === 14
 }

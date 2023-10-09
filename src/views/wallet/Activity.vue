@@ -70,15 +70,16 @@
                 </div>
             </div>
             <div v-if="!showList" class="loading">
-                <template v-if="!isError">
+                <!-- <template v-if="!isError">
                     <Spinner class="spinner"></Spinner>
                     <p>{{ $t('activity.loading') }}</p>
-                </template>
-                <template v-else>
-                    <p>Error Loading Activity History</p>
-                    <v-btn @click="updateHistory" class="button_secondary" small depressed>
+                </template> -->
+                <template>
+                    <h2>Coming Soon</h2>
+                    <!-- <p>Error Loading Activity History</p> -->
+                    <!-- <v-btn @click="updateHistory" class="button_secondary" small depressed>
                         Try Again
-                    </v-btn>
+                    </v-btn> -->
                 </template>
             </div>
         </div>
@@ -168,8 +169,9 @@ export default class Activity extends Vue {
     }
 
     get showList(): boolean {
-        if (this.isUpdatingAll || this.isLoading || this.isError) return false
-        return true
+        return false
+        // if (this.isUpdatingAll || this.isLoading || this.isError) return false
+        // return true
     }
 
     get isUpdatingAll(): boolean {

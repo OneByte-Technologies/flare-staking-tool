@@ -2,8 +2,8 @@
     <div id="nav">
         <ConfirmLogout ref="logout"></ConfirmLogout>
         <router-link to="/" class="logo">
-            <img v-if="$root.theme === 'day'" src="@/assets/wallet_logo.png" />
-            <img v-else src="@/assets/wallet_logo_dark.png" />
+            <img v-if="$root.theme === 'day'" src="@/assets/flare_logo.png" />
+            <img v-else src="@/assets/flare_logo_dark.png" />
             <!--            <span class="slogan">by Avalanche</span>-->
         </router-link>
         <v-spacer></v-spacer>
@@ -22,16 +22,16 @@
                 </router-link>
             </template>
             <network-menu></network-menu>
-            <LanguageSelect class="lang_web"></LanguageSelect>
+            <!-- <LanguageSelect class="lang_web"></LanguageSelect> -->
 
-            <button @click="togglePopup">
+            <!-- <button @click="togglePopup">
                 <fa icon="ellipsis-h"></fa>
-            </button>
-            <div class="popup-wrapper">
+            </button> -->
+            <!-- <div class="popup-wrapper">
                 <div class="popup" v-if="popupOpen">
                     <AnalyticsCheckbox></AnalyticsCheckbox>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="mobile_right">
@@ -51,8 +51,8 @@
         >
             <v-list dense nav>
                 <div style="display: flex; justify-content: space-between; padding: 4px 8px">
-                    <img v-if="$root.theme === 'day'" src="@/assets/wallet_logo.svg" />
-                    <img v-else src="@/assets/wallet_logo_dark.svg" />
+                    <img v-if="$root.theme === 'day'" src="@/assets/flare_logo.svg" />
+                    <img v-else src="@/assets/flare_logo_dark.svg" />
                     <DayNightToggle class="action_but"></DayNightToggle>
                 </div>
                 <template v-if="isAuth">
@@ -61,7 +61,7 @@
                     <router-link to="/wallet/cross_chain">
                         {{ $t('wallet.sidebar.export') }}
                     </router-link>
-                    <router-link to="/wallet/earn">{{ $t('wallet.sidebar.earn') }}</router-link>
+                    <router-link to="/wallet/earn">{{ $t('wallet.sidebar.staking') }}</router-link>
                     <router-link to="/wallet/activity">Activity</router-link>
                     <router-link to="/wallet/keys">{{ $t('wallet.sidebar.manage') }}</router-link>
                     <router-link to="/wallet/advanced" data-cy="wallet_advanced">
@@ -82,7 +82,7 @@
                 </template>
                 <div class="mobile_bottom">
                     <AccountMenu></AccountMenu>
-                    <LanguageSelect class="lang_mobile"></LanguageSelect>
+                    <!-- <LanguageSelect class="lang_mobile"></LanguageSelect> -->
                 </div>
             </v-list>
         </v-navigation-drawer>
@@ -97,6 +97,7 @@ import DayNightToggle from '@/components/misc/DayNightToggle.vue'
 import NetworkMenu from './NetworkSettings/NetworkMenu.vue'
 import ConfirmLogout from '@/components/modals/ConfirmLogout.vue'
 import AccountMenu from '@/components/wallet/sidebar/AccountMenu.vue'
+// import Web3Modal from '@/components/Web3Modal.vue'
 @Component({
     components: {
         AccountMenu,
@@ -109,7 +110,7 @@ import AccountMenu from '@/components/wallet/sidebar/AccountMenu.vue'
 })
 export default class Navbar extends Vue {
     isDrawer: boolean = false
-    popupOpen: boolean = false
+    // popupOpen: boolean = false
 
     get isAuth(): boolean {
         return this.$store.state.isAuth
@@ -120,9 +121,9 @@ export default class Navbar extends Vue {
         this.$refs.logout.open()
     }
 
-    togglePopup(): void {
-        this.popupOpen = !this.popupOpen
-    }
+    // togglePopup(): void {
+    //     this.popupOpen = !this.popupOpen
+    // }
 }
 </script>
 <style scoped lang="scss">

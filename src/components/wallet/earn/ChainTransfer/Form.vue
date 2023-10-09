@@ -31,7 +31,7 @@
         </div>
 
         <div v-if="!isConfirm">
-            <label>{{ $t('earn.transfer.amount') }}</label>
+            <label>{{ $t('staking.transfer.amount') }}</label>
 
             <AvaxInput
                 :max="maxAmt"
@@ -41,8 +41,8 @@
             ></AvaxInput>
         </div>
         <div class="confirmation_val" v-else>
-            <label>{{ $t('earn.transfer.amount') }}</label>
-            <p>{{ formAmtText }} AVAX</p>
+            <label>{{ $t('staking.transfer.amount') }}</label>
+            <p>{{ formAmtText }} FLR</p>
         </div>
     </div>
 </template>
@@ -56,11 +56,11 @@ import { ChainIdType } from '@/constants'
 import MnemonicWallet from '@/js/wallets/MnemonicWallet'
 import { ChainSwapFormData } from '@/components/wallet/earn/ChainTransfer/types'
 
-const chainTypes: ChainIdType[] = ['X', 'P', 'C']
+const chainTypes: ChainIdType[] = ['P', 'C']
 const chainNames = {
-    X: 'X Chain',
     C: 'C Chain',
     P: 'P Chain',
+    X: 'X Chain',
 }
 
 @Component({
@@ -69,14 +69,13 @@ const chainNames = {
     },
 })
 export default class Form extends Vue {
-    sourceChain: ChainIdType = 'X'
-    targetChain: ChainIdType = 'P'
+    sourceChain: ChainIdType = 'P'
+    targetChain: ChainIdType = 'C'
     amt: BN = new BN(0)
 
     @Prop() balance!: Big
     @Prop() maxAmt!: BN
     @Prop() isConfirm!: boolean
-
     clear() {
         this.amt = new BN(0)
         this.onChange()
@@ -92,7 +91,7 @@ export default class Form extends Vue {
 
     get sourceOptions(): ChainIdType[] {
         if (!this.isEVMSupported) {
-            return ['X', 'P']
+            return ['C', 'P']
         }
 
         let all = [...chainTypes]
@@ -102,8 +101,8 @@ export default class Form extends Vue {
     get destinationOptions(): ChainIdType[] {
         return {
             X: ['P', 'C'],
-            P: ['X', 'C'],
-            C: ['X', 'P'],
+            P: ['C'],
+            C: ['P'],
         }[this.sourceChain] as ChainIdType[]
     }
 
@@ -162,6 +161,7 @@ export default class Form extends Vue {
 
     padding-bottom: 14px;
 }
+
 label {
     color: var(--primary-color);
     font-size: 15px;
@@ -194,9 +194,11 @@ select {
 .balance {
     font-size: 13px;
     color: var(--primary-color-light);
+
     span {
         float: right;
     }
+
     margin-top: 4px !important;
 }
 

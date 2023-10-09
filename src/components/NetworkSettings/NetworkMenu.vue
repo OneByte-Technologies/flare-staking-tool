@@ -37,13 +37,13 @@
                 <div class="header" data-cy="custom-network-option">
                     <template v-if="page === 'list'">
                         <h4>{{ $t('network.title') }}</h4>
-                        <button
+                        <!-- <button
                             @click="viewCustom"
                             class="button_secondary"
                             data-cy="create-custom-option"
                         >
                             {{ $t('network.custom') }}
-                        </button>
+                        </button> -->
                     </template>
                     <template v-if="page === 'custom'">
                         <h4>{{ $t('network.title2') }}</h4>
@@ -150,7 +150,7 @@ export default class NetworkMenu extends Vue {
         let net = this.activeNetwork
 
         if (!net) return false
-        if (net.networkId !== 1) return true
+        if (net.networkId !== 14) return true
         return false
     }
 }

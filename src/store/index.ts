@@ -40,6 +40,7 @@ import { Buffer } from 'avalanche'
 import { privateToAddress } from 'ethereumjs-util'
 import { updateFilterAddresses } from '../providers'
 import { getAvaxPriceUSD } from '@/helpers/price_helper'
+import { checkIsRegistered } from '@/js/Register'
 
 export default new Vuex.Store({
     modules: {
@@ -62,6 +63,7 @@ export default new Vuex.Store({
         prices: {
             usd: 0,
         },
+        isRegistered: false,
     },
     getters: {
         addresses(state: RootState): string[] {
@@ -69,6 +71,15 @@ export default new Vuex.Store({
             if (!wallet) return []
             const addresses = wallet.getDerivedAddresses()
             return addresses
+        },
+        activeAddress(state: RootState): string | null {
+            if (!state.activeWallet) {
+                console.log('No active wallet found')
+                return null
+            }
+            const address = state.activeWallet.getCurrentAddressAvm()
+            console.log('Active address:', address)
+            return address
         },
     },
     mutations: {
@@ -283,7 +294,7 @@ export default new Vuex.Store({
 
                 const utcDate = new Date()
                 const dateString = utcDate.toISOString().replace(' ', '_')
-                const filename = `AVAX_${dateString}.json`
+                const filename = `FLR_${dateString}.json`
 
                 const blob = new Blob([text], {
                     type: 'application/json',
@@ -359,6 +370,25 @@ export default new Vuex.Store({
             const usd = await getAvaxPriceUSD()
             store.state.prices = {
                 usd,
+            }
+        },
+
+        async updateIsRegistered(store) {
+            store.state.isRegistered = false
+            if (!store.state.activeWallet) {
+                const addr = 'no active wallet'
+                console.log('store.state.activeWallet', store.state.activeWallet, addr)
+                // const register = await checkIsRegistered(addr)
+                // console.log(register)
+                // const convertedValue: boolean = Boolean(register)
+                // store.state.isRegistered = convertedValue
+            } else {
+                const addr = store.state.activeWallet.getEvmChecksumAddress()
+
+                // Check address binder and updated isRegistered value
+                const register = await checkIsRegistered(addr)
+                const convertedValue: boolean = Boolean(register)
+                store.state.isRegistered = convertedValue
             }
         },
     },

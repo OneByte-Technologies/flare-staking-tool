@@ -12,20 +12,20 @@
 
                 <div v-if="!isSuccess && !isLoading">
                     <div v-if="!isImportErr" class="fees">
-                        <h4>{{ $t('earn.transfer.fee') }}</h4>
+                        <h4>{{ $t('staking.transfer.fee') }}</h4>
 
                         <p>
                             Export Fee
-                            <span>{{ exportFee.toLocaleString() }} AVAX</span>
+                            <span>{{ exportFee.toLocaleString() }} FLR</span>
                         </p>
                         <p>
                             Import Fee
-                            <span>{{ importFee.toLocaleString() }} AVAX</span>
+                            <span>{{ importFee.toLocaleString() }} FLR</span>
                         </p>
                         <p>
                             <b>
                                 Total
-                                <span>{{ fee.toLocaleString() }} AVAX</span>
+                                <span>{{ fee.toLocaleString() }} FLR</span>
                             </b>
                         </p>
                     </div>
@@ -33,7 +33,7 @@
                         <p class="err">{{ err }}</p>
                         <template v-if="isImportErr">
                             <p>
-                                {{ $t('earn.transfer.err_desc') }}
+                                {{ $t('staking.transfer.err_desc') }}
                             </p>
                             <v-btn
                                 depressed
@@ -42,7 +42,7 @@
                                 block
                                 @click="startAgain"
                             >
-                                {{ $t('earn.transfer.success.again') }}
+                                {{ $t('staking.transfer.success.again') }}
                             </v-btn>
                         </template>
                         <template v-else>
@@ -56,7 +56,7 @@
                                 depressed
                                 :loading="isLoading"
                             >
-                                {{ $t('earn.transfer.confirm') }}
+                                {{ $t('staking.transfer.confirm') }}
                             </v-btn>
                             <template v-else>
                                 <v-btn
@@ -67,7 +67,7 @@
                                     depressed
                                     block
                                 >
-                                    {{ $t('earn.transfer.submit') }}
+                                    {{ $t('staking.transfer.submit') }}
                                 </v-btn>
                                 <v-btn
                                     v-if="!isLoading"
@@ -78,20 +78,20 @@
                                     text
                                     block
                                 >
-                                    {{ $t('earn.transfer.cancel') }}
+                                    {{ $t('staking.transfer.cancel') }}
                                 </v-btn>
                             </template>
                         </template>
                     </div>
                 </div>
                 <div v-if="isSuccess" class="complete">
-                    <h4>{{ $t('earn.transfer.success.title') }}</h4>
+                    <h4>{{ $t('staking.transfer.success.title') }}</h4>
                     <p style="color: var(--success); margin: 12px 0 !important">
                         <fa icon="check-circle"></fa>
-                        {{ $t('earn.transfer.success.message') }}
+                        {{ $t('staking.transfer.success.message') }}
                     </p>
                     <v-btn depressed class="button_secondary" small block @click="startAgain">
-                        {{ $t('earn.transfer.success.again') }}
+                        {{ $t('staking.transfer.success.again') }}
                     </v-btn>
                 </div>
             </div>
@@ -168,8 +168,8 @@ export default class ChainTransfer extends Vue {
     $refs!: {
         form: ChainSwapForm
     }
-    sourceChain: ChainIdType = 'X'
-    targetChain: ChainIdType = 'P'
+    sourceChain: ChainIdType = 'P'
+    targetChain: ChainIdType = 'C'
     isLoading = false
     amt: BN = new BN(0)
     err: string = ''
@@ -233,10 +233,8 @@ export default class ChainTransfer extends Vue {
     get balanceBN(): BN {
         if (this.sourceChain === 'P') {
             return this.platformUnlocked
-        } else if (this.sourceChain === 'C') {
-            return this.evmUnlocked
         } else {
-            return this.avmUnlocked
+            return this.evmUnlocked
         }
     }
 
@@ -257,9 +255,7 @@ export default class ChainTransfer extends Vue {
     }
 
     getFee(chain: ChainIdType, isExport: boolean): Big {
-        if (chain === 'X') {
-            return bnToBigAvaxX(avm.getTxFee())
-        } else if (chain === 'P') {
+        if (chain === 'P') {
             return bnToBigAvaxX(pChain.getTxFee())
         } else {
             const fee = isExport
@@ -391,13 +387,6 @@ export default class ChainTransfer extends Vue {
 
         try {
             switch (sourceChain) {
-                case 'X':
-                    exportTxId = await wallet.exportFromXChain(
-                        amt,
-                        destinationChain as ExportChainsX,
-                        this.importFeeBN
-                    )
-                    break
                 case 'P':
                     exportTxId = await wallet.exportFromPChain(
                         amt,
@@ -417,16 +406,14 @@ export default class ChainTransfer extends Vue {
             throw e
         }
 
-        this.exportId = exportTxId
-        this.waitExportStatus(exportTxId)
+        this.exportId = exportTxId as string
+        this.waitExportStatus(exportTxId as string)
     }
 
     // STEP 2
     async waitExportStatus(txId: string, remainingTries = 15) {
         let status
-        if (this.sourceChain === 'X') {
-            status = await avm.getTxStatus(txId)
-        } else if (this.sourceChain === 'P') {
+        if (this.sourceChain === 'P') {
             let resp = await pChain.getTxStatus(txId)
             if (typeof resp === 'string') {
                 status = resp

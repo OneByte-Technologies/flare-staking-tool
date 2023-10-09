@@ -85,7 +85,7 @@
         "nftcol": "nem helyettesíthető token (NHT)",
         "nftempty": "Még nem gyűjtött össze nem helyettesíthető tokent.",
         "locked": "Zárt",
-        "info2": "A Token Sale-ban vásároltam érméket. Hol van az AVAX?",
+        "info2": "A Token Sale-ban vásároltam érméket. Hol van az FLR?",
         "info2_desc": "Ez a pénztárca az Avalanche Everest teszthálózathoz csatlakozik. Vásárlása az Avalanche Mainnet elindítása után jelenik meg a pénztárcában.",
         "hover1": "Cím QR-kód megtekintése",
         "hover2": "Nyomtatás",
@@ -172,13 +172,13 @@
     },
     "earn": {
         "title": "Keressen",
-        "desc": "Több AVAX-ot kereshet, ha megjátssza meglévő zsetonjait.",
+        "desc": "Több FLR-ot kereshet, ha megjátssza meglévő zsetonjait.",
         "subtitle1": "Érvényesítés",
         "subtitle2": "Delegálás",
         "subtitle3": "Transzfer láncok között",
         "subtitle4": "Becsült jutalom",
-        "warning_1": "Legalább {0} AVAX szükséges a P láncon ahhoz, hogy érvényesítő legyen.",
-        "warning_2": "Legalábbt {0} AVAX szükséges a P láncon ahhoz, hogy érvényesítő legyen.",
+        "warning_1": "Legalább {0} FLR szükséges a P láncon ahhoz, hogy érvényesítő legyen.",
+        "warning_2": "Legalábbt {0} FLR szükséges a P láncon ahhoz, hogy érvényesítő legyen.",
         "validate_card": {
             "title": "Érvényesítés",
             "desc": "Rendelkezik egy Avalanche csomópontja amit meg akar játszani.",
@@ -191,7 +191,7 @@
         },
         "transfer_card": {
             "title": "Transzfer láncok között",
-            "desc": "A megjátszáshoz AVAX szükséges a P láncon. Vigyen át zsetont az X láncról P-re.",
+            "desc": "A megjátszáshoz FLR szükséges a P láncon. Vigyen át zsetont az X láncról P-re.",
             "submit": "Transzfer"
         },
         "rewards_card": {
@@ -242,7 +242,7 @@
             },
             "amount": {
                 "label": "Megjátszott összeg",
-                "desc": "AVAX összeg amit zárol a megjátszáshoz."
+                "desc": "FLR összeg amit zárol a megjátszáshoz."
             },
             "fee": {
                 "label": "Delegálási költség",
@@ -281,7 +281,7 @@
             },
             "errs": {
                 "date": "A kezdési dátum a jövőben van, a befejezés dátuma pedig követi a kezdési dátumot.",
-                "amount": "A delegálási összeg legalább {0} AVAX",
+                "amount": "A delegálási összeg legalább {0} FLR",
                 "id": "Érvénytelen csomópont azonosító. Így kell kezdődnie: \"NodeID-\"",
                 "address": "Érvénytelen jutalom cím."
             }
@@ -319,8 +319,8 @@
                 },
                 "amount": {
                     "label": "Megjátszott összeg",
-                    "desc": "AVAX összeg amit zárol a megjátszáshoz.",
-                    "desc2": "Az elérhető delegálási összeg ehhez a csomóponthoz {0} AVAX"
+                    "desc": "FLR összeg amit zárol a megjátszáshoz.",
+                    "desc2": "Az elérhető delegálási összeg ehhez a csomóponthoz {0} FLR"
                 },
                 "reward": {
                     "label": "Jutalom címe",
@@ -345,7 +345,7 @@
                 "max_dur": "A megjátszási időtartam legfeljebb 1 év.",
                 "no_node": "Meg kell adnia egy érvényesítőt.",
                 "val_end": "A delegálás befejezési dátuma nem lehet későbbi az érvényesítő befejezési dátumánál.",
-                "amt": "A delegálási összeg legalább {0} AVAX."
+                "amt": "A delegálási összeg legalább {0} FLR."
             },
             "summary": {
                 "duration": "Megjátszási időtartam",

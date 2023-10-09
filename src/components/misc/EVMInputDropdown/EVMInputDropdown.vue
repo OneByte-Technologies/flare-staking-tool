@@ -211,6 +211,7 @@ export default class EVMInputDropdown extends Vue {
         border-radius: 3px;
         background-color: var(--bg-light);
         padding: 8px 14px;
+        overflow: hidden;
     }
 }
 
@@ -254,9 +255,11 @@ export default class EVMInputDropdown extends Vue {
         max-height: 20px;
     }
 }
+
 .max_but {
     opacity: 0.4;
     font-size: 13px;
+
     &:hover {
         opacity: 1;
     }

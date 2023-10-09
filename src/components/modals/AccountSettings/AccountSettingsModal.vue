@@ -2,8 +2,11 @@
     <modal ref="modal" title="Account Settings" class="modal_main" @beforeClose="clear">
         <div class="modal_body">
             <div class="header">
-                <Identicon :value="account.baseAddresses.join('')"></Identicon>
-                <p style="text-align: center">{{ account.name }}</p>
+                <Identicon
+                    v-if="account && account.baseAddresses"
+                    :value="account.baseAddresses.join('')"
+                ></Identicon>
+                <p style="text-align: center">{{ account && account.name }}</p>
 
                 <p class="err small" style="text-align: center">
                     Clearing your browser cache will remove this account. Make sure you have your

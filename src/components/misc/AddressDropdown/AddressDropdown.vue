@@ -12,7 +12,6 @@
             <p class="caret"><fa icon="caret-down"></fa></p>
         </div>
         <div ref="popup_list" class="list" v-show="active" @focus="focus" @blur="blur" tabindex="1">
-            <!--            <v-select></v-select>-->
             <ul>
                 <li class="select_all" @click="toggleAll" v-if="multiple">
                     <input type="checkbox" :checked="isAll" />

@@ -2,8 +2,8 @@
     <div class="wallet_sidebar">
         <div class="stick">
             <div class="brand">
-                <img v-if="$root.theme === 'day'" src="@/assets/wallet_logo.png" />
-                <img v-else src="@/assets/wallet_logo_dark.png" />
+                <img v-if="$root.theme === 'day'" src="@/assets/flare_logo.png" />
+                <img v-else src="@/assets/flare_logo_dark.png" />
             </div>
             <div class="links">
                 <router-link to="/wallet" class="wallet_link">
@@ -27,13 +27,13 @@
                 <router-link to="/wallet/earn" data-cy="wallet_earn" class="wallet_link">
                     <img v-if="$root.theme === 'day'" src="@/assets/sidebar/earn_nav.png" />
                     <img v-else src="@/assets/sidebar/earn_nav_night.png" />
-                    {{ $t('wallet.sidebar.earn') }}
+                    {{ $t('wallet.sidebar.staking') }}
                 </router-link>
-                <router-link to="/wallet/studio" data-cy="wallet_studio" class="wallet_link">
+                <!-- <router-link to="/wallet/studio" data-cy="wallet_studio" class="wallet_link">
                     <img v-if="$root.theme === 'day'" src="@/assets/sidebar/studio_nav.svg" />
                     <img v-else src="@/assets/sidebar/studio_nav_night.svg" />
                     {{ $t('wallet.sidebar.studio') }}
-                </router-link>
+                </router-link> -->
                 <router-link to="/wallet/activity" data-cy="wallet_activity" class="wallet_link">
                     <img v-if="$root.theme === 'day'" src="@/assets/sidebar/activity_nav.svg" />
                     <img v-else src="@/assets/sidebar/activity_nav_night.svg" />
@@ -52,8 +52,8 @@
             </div>
             <div class="bottom">
                 <AccountMenu class="wallet_link"></AccountMenu>
-                <LanguageSelect></LanguageSelect>
-                <AnalyticsCheckbox></AnalyticsCheckbox>
+                <!-- <LanguageSelect></LanguageSelect> -->
+                <!-- <AnalyticsCheckbox></AnalyticsCheckbox> -->
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="balance_card">
+    <div>
         <UtxosBreakdownModal ref="utxos_modal"></UtxosBreakdownModal>
         <div class="fungible_card">
             <div class="header">
@@ -26,12 +26,12 @@
             </div>
             <div class="balance_row">
                 <p class="balance" data-cy="wallet_balance" v-if="!balanceTextRight">
-                    {{ balanceTextLeft }} AVAX
+                    {{ balanceTextLeft }} FLR
                 </p>
                 <p class="balance" data-cy="wallet_balance" v-else>
                     {{ balanceTextLeft }}
                     <span>.{{ balanceTextRight }}</span>
-                    AVAX
+                    FLR
                 </p>
                 <div style="display: flex; flex-direction: row">
                     <p class="balance_usd">
@@ -39,7 +39,7 @@
                         USD
                     </p>
                     <p class="balance_usd" style="background-color: transparent">
-                        <b>1 AVAX</b>
+                        <b>1 FLR</b>
                         =
                         <b>${{ avaxPriceText }}</b>
                         USD
@@ -51,52 +51,71 @@
                 <div class="alt_non_breakdown" v-if="!isBreakdown">
                     <div>
                         <label>{{ $t('top.balance.available') }}</label>
-                        <p>{{ unlockedText }} AVAX</p>
+                        <p>{{ unlockedText }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.locked') }}</label>
-                        <p>{{ balanceTextLocked }} AVAX</p>
+                        <p>{{ balanceTextLocked }} FLR</p>
                     </div>
                     <div v-if="hasMultisig">
                         <label>Multisig</label>
-                        <p>{{ balanceTextMultisig }} AVAX</p>
+                        <p>{{ balanceTextMultisig }} FLR</p>
                     </div>
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
-                        <p>{{ stakingText }} AVAX</p>
+                        <p>{{ stakingText }} FLR</p>
                     </div>
                 </div>
                 <div class="alt_breakdown" v-else>
                     <div>
-                        <label>{{ $t('top.balance.available') }} (X)</label>
-                        <p>{{ avmUnlocked | cleanAvaxBN }} AVAX</p>
+                        <!-- <label>{{ $t('top.balance.available') }} (X)</label>
+                        <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p> -->
                         <label>{{ $t('top.balance.available') }} (P)</label>
-                        <p>{{ platformUnlocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ platformUnlocked | cleanAvaxBN }} FLR</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
-                        <p>{{ evmUnlocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ evmUnlocked | cleanAvaxBN }} FLR</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.balance.locked') }} (X)</label>
-                        <p>{{ avmLocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ avmLocked }} FLR</p>
                         <label>{{ $t('top.balance.locked') }} (P)</label>
-                        <p>{{ platformLocked | cleanAvaxBN }} AVAX</p>
+                        <p>{{ Number(platformLocked) }} FLR</p>
                         <label>{{ $t('top.balance.locked_stake') }} (P)</label>
-                        <p>{{ platformLockedStakeable | cleanAvaxBN }} AVAX</p>
+                        <p>{{ Number(platformLockedStakeable) }} FLR</p>
                     </div>
                     <div v-if="hasMultisig">
                         <label>Multisig (X)</label>
-                        <p>{{ avmMultisig | cleanAvaxBN }} AVAX</p>
+                        <p>{{ avmMultisig }} FLR</p>
                         <label>Multisig (P)</label>
-                        <p>{{ platformMultisig | cleanAvaxBN }} AVAX</p>
+                        <p>{{ platformMultisig }} FLR</p>
                     </div>
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
-                        <p>{{ stakingText }} AVAX</p>
+                        <p>{{ stakingText }} FLR</p>
+                        <label>Total Mirror Funds</label>
+                        <p>{{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR</p>
+                    </div>
+                </div>
+                <div class="alt_breakdown">
+                    <div>
+                        <label v-if="!isBreakdown">Total Mirror Funds</label>
+                        <p v-if="!isBreakdown">
+                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR
+                        </p>
+                        <label v-if="isBreakdown">Mirror Funds</label>
+                        <p v-if="isBreakdown">
+                            {{ formatNumberWithCommas(amountFromCurrentValidator) }} FLR
+                        </p>
+                    </div>
+
+                    <div v-if="isBreakdown">
+                        <label>Pending Mirror Funds</label>
+                        <p>{{ amountFromPendingValidator }} FLR</p>
                     </div>
                 </div>
             </div>
         </div>
-        <NftCol class="nft_card"></NftCol>
+        <!-- <NftCol class="nft_card"></NftCol> -->
     </div>
 </template>
 <script lang="ts">
@@ -113,9 +132,14 @@ import { BN } from 'avalanche/dist'
 import { ONEAVAX } from 'avalanche/dist/utils'
 import { bnToBig } from '@/helpers/helper'
 import { priceDict } from '@/store/types'
-import { WalletType } from '@/js/wallets/types'
+import { WalletType, WalletNameType } from '@/js/wallets/types'
 import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdownModal.vue'
-
+import { ethers } from 'ethers'
+import { mapGetters } from 'vuex'
+import { bech32 } from 'bech32'
+import { fetchMirrorFunds } from '@/views/wallet/FlareContract'
+import { ava, pChain, cChain } from '@/AVA'
+import { Context } from '@/views/wallet/Interfaces'
 @Component({
     components: {
         UtxosBreakdownModal,
@@ -131,10 +155,84 @@ import UtxosBreakdownModal from '@/components/modals/UtxosBreakdown/UtxosBreakdo
     },
 })
 export default class BalanceCard extends Vue {
-    isBreakdown = true
+    isBreakdown = false
 
     $refs!: {
         utxos_modal: UtxosBreakdownModal
+    }
+    refresh: number = 0
+    totalMirrorAmount: string = ''
+    amountFromCurrentValidator: number = 0
+    amountFromPendingValidator: number = 0
+    pChainAddress = this.basePChainAddress
+    wallets = this.$store.state.activeWallet
+    cAddr: string = this.wallets.getEvmChecksumAddress()
+    cAddrBech: string = this.wallets.getEvmAddressBech()
+    avaxAssetID: string = pChain.getAVAXAssetID().toString()
+
+    get publicKey(): string {
+        if (this.wallet.type === 'ledger') return this.wallets.publicKey
+        const ethersWallet = new ethers.Wallet(this.wallets.ethKey)
+        return ethersWallet.publicKey
+    }
+
+    ctx: Context = {
+        privkHex: this.wallet.type === 'ledger' ? undefined : this.wallets.ethKey,
+        privkCB58: this.wallet.type === 'ledger' ? undefined : '',
+        publicKey: this.publicKey,
+        rpcurl: this.getIp(),
+        web3: ethers, // Replace with the actual web3 instance
+        avalanche: ava,
+        cchain: cChain,
+        pchain: pChain,
+        cKeychain: cChain.keyChain(),
+        pKeychain: pChain.keyChain(),
+        pAddressBech32: this.pChainAddress,
+        cAddressBech32: this.cAddrBech,
+        cAddressHex: this.cAddr,
+        cChainBlockchainID: cChain.getBlockchainID(),
+        pChainBlockchainID: pChain.getBlockchainID(),
+        avaxAssetID: this.avaxAssetID,
+        config: {
+            protocol: 'https',
+            ip: this.getIp(),
+            port: 443,
+            networkID: ava.getNetworkID(),
+            hrp: ava.getHRP(),
+        },
+    }
+    mirrorFundDetail = {}
+
+    @Watch('refresh')
+    async mirrorFunds() {
+        try {
+            const mirrorFundsData = await fetchMirrorFunds(this.ctx)
+            console.log('Mirror Funds Data', mirrorFundsData)
+            // Handle the data as needed, e.g., update component data or state
+            this.totalMirrorAmount = parseFloat(
+                mirrorFundsData['Total Mirrored Amount']
+            ).toLocaleString()
+            this.mirrorFundDetail = mirrorFundsData['Mirror Funds Details']
+            this.amountFromCurrentValidator = mirrorFundsData['Total Current Amount']
+            this.amountFromPendingValidator = mirrorFundsData['Total Pending Amount']
+        } catch (error) {
+            console.error('Error fetching Mirror Funds:', error)
+        }
+    }
+
+    formatNumberWithCommas(number: number) {
+        return number.toLocaleString()
+    }
+
+    getIp() {
+        let ip = ''
+        if (ava.getHRP() === 'costwo') {
+            ip = 'coston2'
+        } else if (ava.getHRP() === 'flare') {
+            ip = 'flare'
+        }
+        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        return rpcUrl
     }
 
     updateBalance(): void {
@@ -233,7 +331,7 @@ export default class BalanceCard extends Vue {
         return ''
     }
 
-    // Locked balance is the sum of locked AVAX tokens on X and P chain
+    // Locked balance is the sum of locked FLR tokens on X and P chain
     get balanceTextLocked(): string {
         if (this.isUpdateBalance) return '--'
 
@@ -271,6 +369,7 @@ export default class BalanceCard extends Vue {
     }
 
     get platformBalance() {
+        this.refresh++
         return this.$store.getters['Assets/walletPlatformBalance']
     }
 
@@ -345,8 +444,13 @@ export default class BalanceCard extends Vue {
         }
     }
 
-    get wallet(): WalletType | null {
+    get wallet(): WalletType {
         return this.$store.state.activeWallet
+    }
+
+    get basePChainAddress(): string {
+        const addr = this.wallet.getAllAddressesP()
+        return addr[0]
     }
 
     get isUpdateBalance(): boolean {
@@ -372,15 +476,11 @@ export default class BalanceCard extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../../main';
-.balance_card {
-    display: grid;
-    grid-template-columns: 1fr 230px;
-    column-gap: 20px;
-}
 
 .nft_card {
     border-left: 2px solid var(--bg-light);
 }
+
 .fungible_card {
     height: 100%;
     display: grid !important;
@@ -394,6 +494,7 @@ export default class BalanceCard extends Vue {
     margin-top: 8px;
     /*max-width: 460px;*/
 }
+
 .header {
     display: flex;
 
@@ -402,6 +503,7 @@ export default class BalanceCard extends Vue {
         flex-grow: 1;
     }
 }
+
 h4 {
     font-weight: normal;
 }
@@ -413,6 +515,7 @@ h4 {
 .balance_row {
     align-self: center;
 }
+
 .balance {
     font-size: 2.4em;
     white-space: normal;
@@ -443,6 +546,7 @@ h4 {
     button {
         outline: none !important;
     }
+
     img {
         object-fit: contain;
         width: 100%;
@@ -452,10 +556,12 @@ h4 {
         color: var(--primary-color) !important;
     }
 }
+
 .buts {
     width: 100%;
     text-align: right;
 }
+
 .buts button {
     font-size: 18px;
     margin: 0px 18px;
@@ -470,6 +576,7 @@ h4 {
     object-fit: contain;
     outline: none !important;
 }
+
 .buts button[tooltip]:hover:before {
     border-radius: 4px;
     /*left: 0;*/
@@ -491,13 +598,16 @@ h4 {
     grid-template-columns: repeat(4, max-content);
     column-gap: 0px;
     margin-top: 12px;
+
     > div {
         position: relative;
         padding: 0 24px;
         border-right: 2px solid var(--bg-light);
+
         &:first-of-type {
             padding-left: 0;
         }
+
         &:last-of-type {
             border: none;
         }
@@ -525,11 +635,6 @@ h4 {
 }
 
 @include main.medium-device {
-    .balance_card {
-        display: block;
-        //grid-template-columns: 1fr 120px;
-    }
-
     .balance {
         font-size: 1.8rem !important;
     }
@@ -537,6 +642,7 @@ h4 {
     .balance_usd {
         font-size: 11px;
     }
+
     .nft_col {
         display: none;
     }
@@ -547,11 +653,6 @@ h4 {
 }
 
 @include main.mobile-device {
-    .balance_card {
-        grid-template-columns: none;
-        display: block !important;
-    }
-
     .nft_col {
         display: none;
     }

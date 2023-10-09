@@ -50,6 +50,7 @@ abstract class AbstractWallet {
     isFetchUtxos: boolean
     isInit: boolean
 
+    abstract signContractLedger(unsignedTx: Buffer): Promise<string>
     abstract getEvmAddressBech(): string
     abstract getEvmAddress(): string
     abstract getCurrentAddressAvm(): string
@@ -111,21 +112,21 @@ abstract class AbstractWallet {
 
     async getEthBalance() {
         const netID = ava.getNetworkID()
-        const isMainnet = isMainnetNetworkID(netID)
-        const isFuji = isTestnetNetworkID(netID)
+        const isFlare = isMainnetNetworkID(netID)
+        const isC2 = isTestnetNetworkID(netID)
 
-        let bal
+        // TO-DO : find glacier API alternative /*IMPORTANT*/
         // Can't use glacier if not mainnet/fuji
-        if (!isMainnet && !isFuji) {
-            bal = new BN(await web3.eth.getBalance(this.getEvmAddress()))
-        } else {
-            const chainId = isMainnet ? '43114' : '43113'
-            const res = await glacier.evm.getNativeBalance({
-                chainId: chainId,
-                address: '0x' + this.getEvmAddress(),
-            })
-            bal = new BN(res.nativeTokenBalance.balance)
-        }
+        // if (!isFlare && !isC2) {
+        const bal = new BN(await web3.eth.getBalance(this.getEvmAddress()))
+        // } else {
+        //     const chainId = isFlare ? '14' : '114'
+        //     const res = await glacier.evm.getNativeBalance({
+        //         chainId: chainId,
+        //         address: '0x' + this.getEvmAddress(),
+        //     })
+        //     bal = new BN(res.nativeTokenBalance.balance)
+        // }
 
         this.ethBalance = bal
         return bal
@@ -161,7 +162,7 @@ abstract class AbstractWallet {
             utxoSet = await this.evmGetAtomicUTXOs(sourceChain)
         }
 
-        // TODO: Only use AVAX utxos
+        // TODO: Only use FLR utxos
         // TODO?: If the import fee for a utxo is greater than the value of the utxo, ignore it
 
         if (utxoSet.getAllUTXOs().length === 0) {
@@ -330,6 +331,7 @@ abstract class AbstractWallet {
 
     async platformGetAtomicUTXOs(sourceChain: ExportChainsP) {
         const addrs = this.getAllAddressesP()
+
         return await UtxoHelper.platformGetAtomicUTXOs(addrs, sourceChain)
     }
 
@@ -351,7 +353,6 @@ abstract class AbstractWallet {
 
         const fromAddrs = utxoAddrs
         const ownerAddrs = utxoAddrs
-
         const unsignedTx = await pChain.buildImportTx(
             utxoSet,
             ownerAddrs,
@@ -436,13 +437,13 @@ abstract class AbstractWallet {
 
         // If reward address isn't given use index 0 address
         if (!rewardAddress) {
-            rewardAddress = this.getPlatformRewardAddress()
+            rewardAddress = this.basePChainAddress
         }
 
         // For change address use first available on the platform chain
         const changeAddress = this.getChangeAddressPlatform()
 
-        const stakeReturnAddr = this.getCurrentAddressPlatform()
+        const stakeReturnAddr = this.basePChainAddress
 
         // Convert dates to unix time
         const startTime = new BN(Math.round(start.getTime() / 1000))
@@ -490,6 +491,11 @@ abstract class AbstractWallet {
         return res
     }
 
+    get basePChainAddress(): string {
+        const addr = this.getAllAddressesP()
+        return addr[0]
+    }
+
     /**
      * Create and issue an AddDelegatorTx
      * @param nodeID
@@ -523,10 +529,10 @@ abstract class AbstractWallet {
 
         // If reward address isn't given use index 0 address
         if (!rewardAddress) {
-            rewardAddress = this.getPlatformRewardAddress()
+            rewardAddress = this.basePChainAddress
         }
 
-        const stakeReturnAddr = this.getPlatformRewardAddress()
+        const stakeReturnAddr = this.basePChainAddress
 
         // For change address use first available on the platform chain
         const changeAddress = this.getChangeAddressPlatform()

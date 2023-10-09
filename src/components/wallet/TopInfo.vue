@@ -1,6 +1,6 @@
 <template>
     <div class="top_cards">
-        <balance-card class="top_card balance_card"></balance-card>
+        <balance-card class="top_card"></balance-card>
         <address-card class="top_card addr_card"></address-card>
     </div>
 </template>
@@ -35,9 +35,6 @@ export default {
     animation-name: fade;
     animation-duration: 0.6s;
     animation-timing-function: ease-out;
-}
-
-.balance_card {
 }
 
 .addr_card {
@@ -122,10 +119,6 @@ export default {
 
     .top_card {
         /*padding: ;*/
-    }
-
-    .balance_card {
-        grid-column: unset;
     }
 
     .addr_card {

@@ -51,7 +51,7 @@ import { ExportChainsC, ExportChainsP } from '@avalabs/avalanche-wallet-sdk'
 // Accounts are not used and the account index is fixed to 0
 // m / purpose' / coin_type' / account' / change / address_index
 
-const AVA_TOKEN_INDEX: string = '9000'
+const AVA_TOKEN_INDEX: string = '60'
 export const AVA_ACCOUNT_PATH: string = `m/44'/${AVA_TOKEN_INDEX}'/0'` // Change and index left out
 export const ETH_ACCOUNT_PATH: string = `m/44'/60'/0'`
 export const LEDGER_ETH_ACCOUNT_PATH = ETH_ACCOUNT_PATH + '/0/0'
@@ -88,7 +88,7 @@ export default class MnemonicWallet extends AbstractHdWallet implements IAvaHdWa
     constructor(mnemonic: string) {
         const seed: globalThis.Buffer = bip39.mnemonicToSeedSync(mnemonic)
         const masterHdKey: HDKey = HDKey.fromMasterSeed(seed)
-        const accountHdKey = masterHdKey.derive(AVA_ACCOUNT_PATH)
+        const accountHdKey = masterHdKey.derive(ETH_ACCOUNT_PATH + '/0/0')
         const ethAccountKey = masterHdKey.derive(ETH_ACCOUNT_PATH + '/0/0')
 
         super(accountHdKey, ethAccountKey, false)
@@ -210,6 +210,11 @@ export default class MnemonicWallet extends AbstractHdWallet implements IAvaHdWa
     async signC(unsignedTx: EVMUnsignedTx): Promise<EvmTx> {
         const keyChain = this.ethKeyChain
         return unsignedTx.sign(keyChain)
+    }
+
+    async signContractLedger(unsignedTx: Buffer): Promise<string> {
+        console.log('Function not supported')
+        return ''
     }
 
     async signEvm(tx: Transaction) {

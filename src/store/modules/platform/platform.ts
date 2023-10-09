@@ -11,7 +11,11 @@ import {
     ValidatorDelegatorPendingDict,
     ValidatorListItem,
 } from '@/store/modules/platform/types'
-import { DelegatorPendingRaw, ValidatorRaw } from '@/components/misc/ValidatorList/types'
+import {
+    DelegatorPendingRaw,
+    Delegators,
+    ValidatorRaw,
+} from '@/components/misc/ValidatorList/types'
 import { ONEAVAX } from 'avalanche/dist/utils'
 
 const MINUTE_MS = 60000
@@ -98,7 +102,19 @@ const platform_module: Module<PlatformState, RootState> = {
 
                 const delegatorsPending: DelegatorPendingRaw[] = delegatorPendingMap[nodeID] || []
 
-                const delegatedAmt = new BN(v.delegatorWeight)
+                let delegatedAmt = new BN(0)
+
+                if (v.delegators && v.delegators.length > 0) {
+                    for (let y = 0; y < v.delegators.length; y++) {
+                        const delegator: Delegators = v.delegators[y]
+                        console.log('DELEGATORS///', delegator)
+
+                        const rewardOwner = v.delegators[y].rewardOwner
+                        console.log('////////RewardOwner', rewardOwner)
+                        delegatedAmt = delegatedAmt.add(new BN(delegator.stakeAmount))
+                    }
+                }
+
                 let delegatedPendingAmt = new BN(0)
 
                 if (delegatorsPending) {
@@ -116,8 +132,8 @@ const platform_module: Module<PlatformState, RootState> = {
                 const delegatedStake = delegatedAmt.add(delegatedPendingAmt)
                 const validatorStake = new BN(v.stakeAmount)
                 // Calculate remaining stake
-                const absMaxStake = ONEAVAX.mul(new BN(3000000))
-                const relativeMaxStake = validatorStake.mul(new BN(5))
+                const absMaxStake = ONEAVAX.mul(new BN(200000000)) //200M FLR
+                const relativeMaxStake = validatorStake.mul(new BN(16)) // validatorStake * (delegationFactor + 1)
                 const stakeLimit = BN.min(absMaxStake, relativeMaxStake)
 
                 const remainingStake = stakeLimit.sub(validatorStake).sub(delegatedStake)
@@ -127,7 +143,7 @@ const platform_module: Module<PlatformState, RootState> = {
                     validatorStake: validatorStake,
                     delegatedStake: delegatedStake,
                     remainingStake: remainingStake,
-                    numDelegators: parseInt(v.delegatorCount) + delegatorsPending.length,
+                    numDelegators: v.delegators?.length ?? 0 + delegatorsPending.length,
                     startTime: startTime,
                     endTime,
                     uptime: parseFloat(v.uptime),
@@ -168,11 +184,11 @@ const platform_module: Module<PlatformState, RootState> = {
             const stakeAmt = validator.validatorStake
 
             // 5 times the validator's stake
-            const relativeMaxStake = stakeAmt.mul(new BN(5))
+            const relativeMaxStake = stakeAmt.mul(new BN(16))
 
             // absolute max stake
             const mult = new BN(10).pow(new BN(6 + 9))
-            const absMaxStake = new BN(3).mul(mult)
+            const absMaxStake = new BN(200).mul(mult)
 
             if (relativeMaxStake.lt(absMaxStake)) {
                 return relativeMaxStake

@@ -56,7 +56,7 @@
                     <div class="fees">
                         <p>
                             {{ $t('transfer.fee_tx') }}
-                            <span>{{ txFee.toLocaleString(9) }} AVAX</span>
+                            <span>{{ txFee.toLocaleString(9) }} FLR</span>
                         </p>
                         <p>
                             {{ $t('transfer.total_avax') }}
@@ -170,7 +170,7 @@ import { TxState } from '@/components/wallet/earn/ChainTransfer/types'
     },
 })
 export default class Transfer extends Vue {
-    formType: ChainIdType = 'X'
+    formType: ChainIdType = 'C'
     showAdvanced: boolean = false
     isAjax: boolean = false
     addressIn: string = ''

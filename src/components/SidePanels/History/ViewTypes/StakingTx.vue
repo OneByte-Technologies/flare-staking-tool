@@ -2,31 +2,37 @@
     <div class="staking_tx">
         <div class="data_row">
             <p>{{ actionText }}</p>
-            <p class="amt">{{ amtText }} AVAX</p>
+            <p class="amt">{{ amtText }} FLR</p>
         </div>
         <!--If received validator reward and validator tx-->
         <div class="data_row" v-if="isValidator && receivedValidatorReward">
             <p>
-                <span class="rewarded"><fa icon="check-square"></fa></span>
+                <span class="rewarded">
+                    <fa icon="check-square"></fa>
+                </span>
                 {{ $t('transactions.reward_amount') }}
             </p>
-            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} AVAX</p>
+            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} FLR</p>
         </div>
         <!--If received validator reward and delegator tx-->
         <div class="data_row" v-if="!isValidator && receivedValidatorReward">
             <p>
-                <span class="rewarded"><fa icon="check-square"></fa></span>
+                <span class="rewarded">
+                    <fa icon="check-square"></fa>
+                </span>
                 {{ $t('transactions.fee_amount') }}
             </p>
-            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} AVAX</p>
+            <p class="amt">{{ formatRewardAmount(validatorRewardAmount) }} FLR</p>
         </div>
         <!--If received delegator reward and delegator tx-->
         <div class="data_row" v-if="!isValidator && receivedDelegatorReward">
             <p>
-                <span class="rewarded"><fa icon="check-square"></fa></span>
+                <span class="rewarded">
+                    <fa icon="check-square"></fa>
+                </span>
                 {{ $t('transactions.reward_amount') }}
             </p>
-            <p class="amt">{{ formatRewardAmount(delegatorRewardAmount) }} AVAX</p>
+            <p class="amt">{{ formatRewardAmount(delegatorRewardAmount) }} FLR</p>
         </div>
     </div>
 </template>
@@ -147,6 +153,7 @@ export default class StakingTx extends Vue {
     grid-template-columns: max-content 1fr;
     column-gap: 24px;
 }
+
 .amt {
     text-align: right;
     white-space: nowrap;
@@ -182,9 +189,11 @@ export default class StakingTx extends Vue {
         color: var(--primary-color);
     }
 }
+
 span.rewarded {
     color: var(--success);
 }
+
 .not_rewarded span {
     color: var(--error);
 }

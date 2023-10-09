@@ -1,7 +1,7 @@
 <template>
     <div class="dates_form">
         <!--        <div>-->
-        <!--            <label>{{ $t('earn.validate.duration.start') }}</label>-->
+        <!--            <label>{{ $t('staking.validate.duration.start') }}</label>-->
         <!--            <datetime-->
         <!--                v-model="localStart"-->
         <!--                type="datetime"-->
@@ -26,17 +26,14 @@
 import { DAY_MS, MINUTE_MS } from '../../../constants'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
-const MIN_STAKE_DURATION = DAY_MS * 14
-
 @Component
 export default class DateForm extends Vue {
     // timeNow = 0
 
     localStart = this.startDateMin
     localEnd = this.endDateMin
-
     @Prop() maxEndDate?: string
-
+    @Prop() minStakingDurationForValidators?: boolean
     // @Watch('localStart')
     // startChange(val: string) {
     //     this.setStartDate(val)
@@ -93,6 +90,9 @@ export default class DateForm extends Vue {
     maxoutEndDate() {
         this.localEnd = this.endDateMax
     }
+    get startDateOffset() {
+        return this.minStakingDurationForValidators === true ? DAY_MS * 60 : DAY_MS * 14
+    }
 
     get stakeDuration(): number {
         let start = new Date(this.localStart)
@@ -123,7 +123,7 @@ export default class DateForm extends Vue {
         let start = this.localStart
         let startDate = new Date(start)
 
-        let end = startDate.getTime() + MIN_STAKE_DURATION
+        let end = startDate.getTime() + this.startDateOffset
         let endDate = new Date(end)
         return endDate.toISOString()
     }
@@ -144,7 +144,7 @@ export default class DateForm extends Vue {
         let start = this.localStart
         let startDate = new Date(start)
 
-        let end = startDate.getTime() + DAY_MS * 21
+        let end = startDate.getTime() + DAY_MS * 1
         let endDate = new Date(end)
         return endDate.toISOString()
     }
@@ -177,6 +177,7 @@ export default class DateForm extends Vue {
         float: right;
         opacity: 0.4;
         cursor: pointer;
+
         &:hover {
             opacity: 1;
         }
@@ -186,6 +187,7 @@ export default class DateForm extends Vue {
 .max_but {
     padding-left: 12px;
     color: var(--primary-color-light);
+
     &:hover {
         color: var(--primary-color);
     }
