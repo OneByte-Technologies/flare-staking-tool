@@ -35,6 +35,8 @@
         </div>
 
         <div class="mobile_right">
+            <DayNightToggle class="action_but"></DayNightToggle>
+            <network-menu></network-menu>
             <v-btn @click="isDrawer = !isDrawer" icon class="mobile_drawer">
                 <fa icon="bars"></fa>
             </v-btn>
@@ -203,7 +205,8 @@ button {
 }
 
 .mobile_right {
-    display: none;
+    display: flex;
+    align-items: center;
 }
 
 .mobile_bottom {
@@ -246,7 +249,7 @@ button {
     }
 
     .mobile_right {
-        display: block;
+        display: flex;
     }
 
     .mobile_drawer {
