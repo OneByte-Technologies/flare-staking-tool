@@ -1,6 +1,6 @@
-# Flare (FLR) Wallet
+# Flare (FLR) Staking Tool
 
-This is the frontend Vue.js application for the Flare (FLR) Wallet.
+This is the frontend Vue.js application for the Flare (FLR) Staking Tool.
 
 ## Prerequisites
 
@@ -43,11 +43,11 @@ WARNING: This history might be out of order and incomplete.
 
 ## Browser Support
 
-We suggest using Google Chrome to view the Flare Wallet website.
+We suggest using Google Chrome to view the Flare Staking Tool website.
 
 ### Firefox and https
 
-Firefox does not allow https requests to localhost. But the Flare Wallet uses https by default, so we will need to change this to http. Make this switch by editing the `vue.config.js` file in the root directory and change
+Firefox does not allow https requests to localhost. But the Flare Staking Tool uses https by default, so we will need to change this to http. Make this switch by editing the `vue.config.js` file in the root directory and change
 
 ```
 devServer: {
@@ -98,4 +98,3 @@ By default, there are two network options to connect to: `Mainnet` and `Coston2`
 ##### Coston2 (Testnet)
 
 -   Flare API: `https://coston2-api.flare.network:443`
-
