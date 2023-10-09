@@ -226,7 +226,10 @@ export default class AddressBinder extends Vue {
             }
             const txId = await contract.provider.sendTransaction(signedTx)
             console.log('txId', txId)
-            const result = await contract.cAddressToPAddress(cAddress)
+            let result
+            setTimeout(async () => {
+                result = await contract.cAddressToPAddress(cAddress)
+            }, 2500)
 
             if (result !== '0x0000000000000000000000000000000000000000') {
                 console.log('Success. You are registered')
