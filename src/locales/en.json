@@ -11,16 +11,16 @@
         "cookie_desc": "We use cookies to develop improvements and enhance your experience. To find out more, read our"
     },
     "home": {
-        "desc": "Flare is a simple, secure, non-custodial tool for staking multiple assets.",
+        "desc": "FlareStake is a simple, secure, noncustodial tool for staking Flare assets.",
         "access": {
             "title": "Welcome Back!",
-            "desc": "Access your existing staking tool here.",
-            "submit": "Access Wallet"
+            "desc": "Use an existing wallet to stake Flare assets.",
+            "submit": "Use an Existing Wallet"
         },
         "create": {
             "title": "New to Flare?",
-            "desc": "Ready to stake? Create a wallet now.",
-            "submit": "Create New Wallet"
+            "desc": "Create a new wallet to stake Flare assets.",
+            "submit": "Create a New Wallet"
         }
     },
     "network": {
@@ -120,7 +120,7 @@
         "hover4": "View Mainnet Address",
         "balance": {
             "show": "Show Breakdown",
-            "hide": "Hide Breakdown",
+            "hide": "Show Totals Only",
             "available": "Available",
             "locked": "Locked",
             "locked_stake": "Locked Stakeable",
@@ -132,8 +132,8 @@
             "title_x": "Derived Wallet Address",
             "title_p": "Derived Platform Wallet Address",
             "title_c": "Derived EVM Wallet Address",
-            "desc_p": "This is your P-Chain address to receive staking rewards and cross chain transfers.",
-            "desc_c": "This is your C-Chain address. Use it to interact with the ethereum virtual machine."
+            "desc_p": "Your P-Chain address to receive staking rewards and cross-chain transfers.",
+            "desc_c": "Your C-Chain address to be used with smart contracts."
         }
     },
     "transfer": {
@@ -164,8 +164,10 @@
             "title": "Source Chain"
         },
         "c_chain": {
-            "gasPrice": "Gas Price (GWEI)",
+            "gasPrice": "Gas Price in Gwei",
+            "gasPriceDesc": "The gas price is automatically adjusted according to network load.",
             "gasLimit": "Gas Limit",
+            "gasLimitDesc": "The Gas Limit is automatically calculated after you click Confirm.",
             "confirm": "Confirm",
             "cancel": "Cancel",
             "success": {
@@ -178,7 +180,7 @@
     },
     "cross_chain": {
         "title": "Cross Chain",
-        "desc": "Transfer tokens between Platform (P) and Contract (C) chains.",
+        "desc": "Transfer tokens between the Platform chain (P-chain) and Contract chain (C-chain).",
         "card": {
             "source": "Source",
             "destination": "Destination",
@@ -292,7 +294,7 @@
         "subtitle": "Active Key",
         "save_account": {
             "title": "Save Account",
-            "desc": "Encode your wallet with a password and store securely on this browser.",
+            "desc": "Encode your wallet with a password and store securely on this browser.Password must have a minimum of 9 characters.",
             "submit": "Save",
             "placeholder_1": "Account Name",
             "placeholder_2": "Password",
@@ -399,7 +401,7 @@
             "source": "Source Chain",
             "destination": "Destination Chain",
             "balance": "Balance",
-            "amount": "Transfer Amount",
+            "amount": "Amount",
             "fee": "Fee",
             "fee_name": "Export + Import Fee",
             "confirm": "Confirm",
