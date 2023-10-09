@@ -58,9 +58,9 @@ import { ChainSwapFormData } from '@/components/wallet/earn/ChainTransfer/types'
 
 const chainTypes: ChainIdType[] = ['P', 'C']
 const chainNames = {
-    C: 'C Chain',
-    P: 'P Chain',
-    X: 'X Chain',
+    C: 'C-Chain',
+    P: 'P-Chain',
+    X: 'X-Chain',
 }
 
 @Component({
