@@ -208,8 +208,7 @@ button {
 }
 
 .mobile_right {
-    display: flex;
-    align-items: center;
+    display: none;
 }
 
 .mobile_bottom {
@@ -253,6 +252,7 @@ button {
 
     .mobile_right {
         display: flex;
+        align-items: center;
     }
 
     .mobile_drawer {
