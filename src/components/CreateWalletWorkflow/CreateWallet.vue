@@ -36,6 +36,17 @@
                             <div class="cols">
                                 <!-- LEFT -->
                                 <div class="mneumonic_disp_col">
+                                    <div class="download-div">
+                                        <button
+                                            class="but_primary ava_button button_secondary"
+                                            @click="downloadKeyPhrase"
+                                        >
+                                            Download
+                                            {{ ' ' }}
+                                            <fa icon="download"></fa>
+                                        </button>
+                                    </div>
+
                                     <div class="mnemonic_disp">
                                         <mnemonic-display
                                             :phrase="keyPhrase"
@@ -58,9 +69,7 @@
                                         <img src="@/assets/success.svg" alt />
                                     </template>
                                     <header v-if="!isVerified">
-                                        <h1>
-                                            {{ $t('create.mnemonic_title') }}
-                                        </h1>
+                                        <h1>{{ $t('create.mnemonic_title') }}</h1>
                                         <p>{{ $t('create.mnemonic_desc') }}</p>
                                     </header>
                                     <header v-else>
@@ -170,6 +179,23 @@ export default class CreateWallet extends Vue {
         this.isSecured = false
         let mnemonic = bip39.generateMnemonic(256)
         this.keyPhrase = new MnemonicPhrase(mnemonic)
+    }
+    downloadKeyPhrase() {
+        if (!this.keyPhrase) return
+
+        const keyPhraseText = this.keyPhrase.getValue()
+        const numberedKeyPhraseText = keyPhraseText
+            .split(' ')
+            .map((word, index) => `${index + 1}. ${word}`)
+            .join('\n')
+
+        const blob = new Blob([numberedKeyPhraseText], { type: 'text/plain' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'mnemonic-phrase.txt'
+        link.click()
+        URL.revokeObjectURL(url)
     }
 
     get canSubmit(): boolean {
@@ -290,6 +316,11 @@ a {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 60px;
+}
+.download-div {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 1rem;
 }
 
 .mneumonic_disp_col {

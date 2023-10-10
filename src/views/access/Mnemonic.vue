@@ -85,6 +85,7 @@ export default class Mnemonic extends Vue {
 
     getMnemonic() {
         const inputVal = this.$refs['mnemonic_in'].value
+        console.log('Mnemonic:', inputVal.trim())
         return inputVal.trim()
     }
 
