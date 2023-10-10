@@ -6,7 +6,7 @@
                     {{ $t('staking.rewards.total') }}
                 </label>
                 <p>
-                    {{ totalRewardNumber.toString() }}
+                    {{ rewardBig(totalRewardNumber) }}
                 </p>
             </div>
             <div>
@@ -14,7 +14,7 @@
                     {{ $t('staking.rewards.claimed') }}
                 </label>
                 <p>
-                    {{ claimedRewardNumber.toString() }}
+                    {{ rewardBig(claimedRewardNumber) }}
                 </p>
             </div>
             <div>
@@ -22,7 +22,7 @@
                     {{ $t('staking.rewards.unclaimed') }}
                 </label>
                 <p>
-                    {{ unclaimedRewards.toString() }}
+                    {{ rewardBig(unclaimedRewards) }}
                 </p>
             </div>
             <div>
@@ -94,15 +94,16 @@ export default class UserRewards extends Vue {
         const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
         const contract = new ethers.Contract(contractAddress, abi, provider)
         const rewards = await contract.getStateOfRewards(cAddress)
-        const totalRewardNumber: BN = new BN(rewards[0])
+        const totalRewardNumber: BN = new BN(rewards[0].toString())
         this.totalRewardNumber = totalRewardNumber
-        const claimedRewardNumber: BN = new BN(rewards[1])
+        const claimedRewardNumber: BN = new BN(rewards[1].toString())
         this.claimedRewardNumber = claimedRewardNumber
         const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
         this.unclaimedRewards = unclaimedRewards
         console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
         this.rewardExist()
     }
+
     async mounted() {
         console.log('mounted')
         this.viewRewards()
@@ -120,9 +121,12 @@ export default class UserRewards extends Vue {
         this.$store.dispatch('Earn/rewardCheck')
 
         // Update every 5 minutes
-        this.updateInterval = setInterval(() => {
-            this.$store.dispatch('Earn/refreshRewards')
-        }, 5 * 60 * 1000)
+        this.updateInterval = setInterval(
+            () => {
+                this.$store.dispatch('Earn/refreshRewards')
+            },
+            5 * 60 * 1000
+        )
     }
 
     destroyed() {
@@ -131,7 +135,8 @@ export default class UserRewards extends Vue {
     }
 
     isRewardValid(): boolean {
-        const rewardAmt = this.inputReward
+        const rewardAmt = this.inputReward.mul(new BN(1000000000))
+        console.log('Reward Amount ', rewardAmt)
         return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
     }
 
@@ -153,7 +158,7 @@ export default class UserRewards extends Vue {
             gasEstimate = await contract.estimateGas.claim(
                 cAddress,
                 cAddress,
-                this.inputReward.toString(),
+                this.inputReward.mul(new BN(1000000000)).toString(),
                 false,
                 {
                     from: cAddress,
@@ -168,7 +173,7 @@ export default class UserRewards extends Vue {
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
             cAddress,
-            this.inputReward.toString(),
+            this.inputReward.mul(new BN(1000000000)).toString(),
             false
         )
         console.log('Populated Tx', populatedTx)
@@ -206,8 +211,8 @@ export default class UserRewards extends Vue {
         this.canClaim = true
     }
 
-    get rewardBig(): Big {
-        return Big(this.inputReward.toString()).div(Math.pow(10, 18))
+    rewardBig(amt: BN): Big {
+        return Big(amt.toString()).div(Math.pow(10, 18))
     }
 
     get stakingTxs() {
