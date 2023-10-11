@@ -37,13 +37,10 @@
                                 <!-- LEFT -->
                                 <div class="mneumonic_disp_col">
                                     <div class="download-div">
-                                        <button
-                                            class="but_primary ava_button button_secondary"
-                                            @click="downloadKeyPhrase"
-                                        >
+                                        <button class="download-button" @click="downloadKeyPhrase">
                                             Download
                                             {{ ' ' }}
-                                            <fa icon="download"></fa>
+                                            <fa style="width: 12px" icon="download"></fa>
                                         </button>
                                     </div>
 
@@ -319,8 +316,12 @@ a {
 }
 .download-div {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin-bottom: 1rem;
+
+    .download-button {
+        color: #868f89;
+    }
 }
 
 .mneumonic_disp_col {
@@ -422,9 +423,6 @@ a {
             //flex-direction: column;
             //align-items: flex-start;
             //justify-content: space-between;
-
-            .access {
-            }
 
             .link {
                 margin-left: 40px;
