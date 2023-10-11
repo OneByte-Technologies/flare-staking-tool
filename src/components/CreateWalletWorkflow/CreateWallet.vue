@@ -320,7 +320,7 @@ a {
     margin-bottom: 4px;
 
     .download-button {
-        color: #868f89;
+        color: var(--primary-color-light);
         font-size: 12px;
     }
 }
