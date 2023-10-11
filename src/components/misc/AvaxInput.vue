@@ -12,7 +12,7 @@
                 @change="amount_in"
             ></BigNumInput>
         </div>
-        <p class="ticker">FLR</p>
+        <p class="ticker">{{ symbol }}</p>
         <div v-if="balance" class="balance">
             <div>
                 <p v-if="balanceText">
@@ -20,7 +20,7 @@
                         <fa icon="wallet"></fa>
                     </Tooltip>
                 </p>
-                <p class="usd-conversion">
+                <p v-if="balanceText && symbol !== 'C2FLR'" class="usd-conversion">
                     <b>$</b>
                     {{ amountUSD.toLocaleString(2) }}
                 </p>
@@ -54,6 +54,7 @@ export default class AvaxInput extends Vue {
     max?: BN | null
 
     @Prop() balance?: Big | null
+    @Prop() symbol!: string
 
     maxOut(ev: MouseEvent) {
         ev.preventDefault()

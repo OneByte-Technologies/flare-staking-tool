@@ -27,7 +27,11 @@
             </div>
             <div>
                 <label>{{ $t('staking.rewards.claim') }}</label>
-                <AvaxInput :max="unclaimedRewards" v-model="inputReward"></AvaxInput>
+                <AvaxInput
+                    :max="unclaimedRewards"
+                    v-model="inputReward"
+                    :symbol="symbol"
+                ></AvaxInput>
             </div>
             <div class="claimbutton">
                 <v-btn
@@ -197,6 +201,15 @@ export default class UserRewards extends Vue {
         }
         const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
         return rpcUrl
+    }
+    get symbol() {
+        let symbol = ''
+        if (ava.getNetworkID() === 2) {
+            symbol = 'FLR'
+        } else if (ava.getNetworkID() === 114) {
+            symbol = 'C2FLR'
+        }
+        return symbol
     }
 
     rewardExist() {

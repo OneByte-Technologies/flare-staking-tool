@@ -103,7 +103,7 @@
                         <div class="bal_rows">
                             <p>
                                 {{ updatedBalance }}
-                                <b>FLR</b>
+                                <b>{{ symbol }}</b>
                             </p>
                         </div>
                     </div>
@@ -163,6 +163,7 @@ export default class KeyRow extends Vue {
     }
     get updatedBalance(): string {
         let ava = this.$store.getters['Assets/AssetAVA']
+        console.log(ava, 'ava')
         if (!ava) return '?'
 
         let evmUnlocked = this.wallet
@@ -172,6 +173,12 @@ export default class KeyRow extends Vue {
         let totalBalanceBig = bnToBig(totalBalance, ava.denomination)
 
         return totalBalanceBig.toLocaleString(ava.denomination)
+    }
+    get symbol(): string {
+        let ava = this.$store.getters['Assets/AssetAVA']
+        let sym = ava?.symbol
+        console.log(`Symbol is ${sym}`)
+        return sym ?? 'FLR'
     }
 
     get isVolatile() {
