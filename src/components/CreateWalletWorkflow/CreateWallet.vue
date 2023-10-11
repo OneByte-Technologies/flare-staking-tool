@@ -317,10 +317,11 @@ a {
 .download-div {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 1rem;
+    margin-bottom: 4px;
 
     .download-button {
         color: #868f89;
+        font-size: 12px;
     }
 }
 
