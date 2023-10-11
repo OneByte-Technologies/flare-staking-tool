@@ -35,7 +35,7 @@ import { Vue, Component, Prop, Model } from 'vue-property-decorator'
 import { Big, bnToBig } from '@avalabs/avalanche-wallet-sdk'
 import Tooltip from '@/components/misc/Tooltip.vue'
 //@ts-ignore
-import { BigNumInput } from '@avalabs/vue_components'
+import BigNumInput from '@/components/misc/CustomBigNumInput'
 import { BN } from 'avalanche'
 import { priceDict } from '../../store/types'
 

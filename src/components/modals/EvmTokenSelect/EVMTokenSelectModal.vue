@@ -3,10 +3,10 @@
         <div class="token_select_body">
             <div class="list">
                 <div class="token_row" @click="select('native')">
-                    <img src="/img/avax_icon_circle.png" class="col_img" />
+                    <img src="/img/logo-FLR.png" class="col_img" />
                     <div class="col_name">
                         <p>FLR</p>
-                        <p>FLare</p>
+                        <p>Flare</p>
                     </div>
                     <p class="col_bal">{{ avaxBalance.toLocaleString() }}</p>
                 </div>

@@ -39,10 +39,9 @@ import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import { BN } from 'avalanche'
 // import Big from 'big.js';
 import Dropdown from '@/components/misc/Dropdown.vue'
-// import BigNumInput from "@/components/misc/BigNumInput";
 
 // @ts-ignore
-import { BigNumInput } from '@avalabs/vue_components'
+import BigNumInput from '@/components/misc/CustomBigNumInput'
 import AvaAsset from '@/js/AvaAsset'
 import { ICurrencyInputDropdownValue } from '@/components/wallet/transfer/types'
 import { IWalletAssetsDict, IWalletBalanceDict, priceDict } from '@/store/types'
