@@ -45,8 +45,9 @@
                                     </div>
                                     <div class="download-div">
                                         <button class="download-button" @click="downloadKeyPhrase">
-                                            Download Key Phrase
-                                            {{ ' ' }}
+
+                                            {{ $t('create.download') }}
+
                                             <fa style="width: 12px" icon="download"></fa>
                                         </button>
                                     </div>
@@ -316,7 +317,7 @@ a {
 .download-div {
     display: flex;
     justify-content: center;
-    margin-top: 24px;
+    margin-top: 16px;
 
     .download-button {
         color: var(--primary-color-light);
