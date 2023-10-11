@@ -477,6 +477,12 @@ export default class FormC extends Vue {
         this.isSuccess = true
         this.txHash = txId
 
+        if (this.$store.state.Network.selectedNetwork === 14) {
+            this.txExplorer = `https://flare-explorer.flare.network/tx/${this.txHash}`
+        } else {
+            this.txExplorer = `https://coston2-explorer.flare.network/tx/${this.txHash}`
+        }
+
         this.$store.dispatch('Notifications/add', {
             title: this.$t('transfer.success_title'),
             message: this.$t('transfer.success_msg'),
