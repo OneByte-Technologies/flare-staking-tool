@@ -12,7 +12,7 @@
                 @change="amount_in"
             ></BigNumInput>
         </div>
-        <p class="ticker">FLR</p>
+        <p class="ticker">{{ symbol }}</p>
         <div v-if="balance" class="balance">
             <div>
                 <p v-if="balanceText">
@@ -20,7 +20,7 @@
                         <fa icon="wallet"></fa>
                     </Tooltip>
                 </p>
-                <p class="usd-conversion">
+                <p v-if="balanceText && symbol !== 'C2FLR'" class="usd-conversion">
                     <b>$</b>
                     {{ amountUSD.toLocaleString(2) }}
                 </p>
@@ -35,7 +35,7 @@ import { Vue, Component, Prop, Model } from 'vue-property-decorator'
 import { Big, bnToBig } from '@avalabs/avalanche-wallet-sdk'
 import Tooltip from '@/components/misc/Tooltip.vue'
 //@ts-ignore
-import { BigNumInput } from '@avalabs/vue_components'
+import BigNumInput from '@/components/misc/CustomBigNumInput'
 import { BN } from 'avalanche'
 import { priceDict } from '../../store/types'
 
@@ -54,6 +54,7 @@ export default class AvaxInput extends Vue {
     max?: BN | null
 
     @Prop() balance?: Big | null
+    @Prop() symbol!: string
 
     maxOut(ev: MouseEvent) {
         ev.preventDefault()

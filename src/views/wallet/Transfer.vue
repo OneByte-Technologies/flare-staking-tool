@@ -8,7 +8,7 @@
             <FormC v-show="formType === 'C'">
                 <ChainInput v-model="formType" :disabled="isConfirm"></ChainInput>
             </FormC>
-            <div class="new_order_Form" v-show="formType === 'X'">
+            <!-- <div class="new_order_Form" v-show="formType === 'X'">
                 <div class="lists">
                     <ChainInput v-model="formType" :disabled="isConfirm"></ChainInput>
                     <div>
@@ -38,10 +38,6 @@
                         ></qr-input>
                     </div>
                     <div>
-                        <!--                        <template v-if="isConfirm && formMemo.length > 0">-->
-                        <!--                            <h4>Memo (Optional)</h4>-->
-                        <!--                            <p class="confirm_val">{{ formMemo }}</p>-->
-                        <!--                        </template>-->
                         <h4 v-if="memo || !isConfirm">{{ $t('transfer.memo') }}</h4>
                         <textarea
                             class="memo"
@@ -127,7 +123,7 @@
                         </template>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -135,7 +131,7 @@
 import 'reflect-metadata'
 import { Vue, Component, Ref } from 'vue-property-decorator'
 
-import TxList from '@/components/wallet/transfer/TxList.vue'
+// import TxList from '@/components/wallet/transfer/TxList.vue'
 import Big from 'big.js'
 
 import NftList from '@/components/wallet/transfer/NftList.vue'
@@ -161,7 +157,7 @@ import { TxState } from '@/components/wallet/earn/ChainTransfer/types'
 @Component({
     components: {
         FaucetLink,
-        TxList,
+        // TxList,
         QrInput,
         NftList,
         TxSummary,
@@ -193,7 +189,7 @@ export default class Transfer extends Vue {
     txState: TxState | null = null
 
     $refs!: {
-        txList: TxList
+        // txList: TxList
         nftList: NftList
     }
 
@@ -290,7 +286,7 @@ export default class Transfer extends Vue {
         this.memo = ''
 
         // Clear transactions list
-        this.$refs.txList.reset()
+        // this.$refs.txList.reset()
 
         // Clear NFT list
         if (this.hasNFT) {

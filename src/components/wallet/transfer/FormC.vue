@@ -33,7 +33,7 @@
                     <h4>
                         {{ $t('transfer.c_chain.gasPrice') }}
                         <br />
-                        <small>Adjusted automatically according to network load.</small>
+                        <small>{{ $t('transfer.c_chain.gasPriceDesc') }}</small>
                     </h4>
                     <p></p>
                     <input
@@ -48,7 +48,7 @@
                     <h4>{{ $t('transfer.c_chain.gasLimit') }}</h4>
                     <template>
                         <p v-if="!isConfirm" style="font-size: 13px">
-                            Gas Limit will be automatically calculated after you click Confirm.
+                            {{ $t('transfer.c_chain.gasLimitDesc') }}
                         </p>
                         <p v-else class="confirm_data">{{ gasLimit }}</p>
                     </template>
@@ -472,7 +472,7 @@ export default class FormC extends Vue {
         if (this.$store.state.Network.selectedNetwork === 14) {
             this.txExplorer = `https://flare-explorer.flare.network/tx/${this.txHash}`
         } else {
-            this.txExplorer = `https://coston2-explorer.flare.network//tx/${this.txHash}`
+            this.txExplorer = `https://coston2-explorer.flare.network/tx/${this.txHash}`
         }
 
         this.$store.dispatch('Notifications/add', {

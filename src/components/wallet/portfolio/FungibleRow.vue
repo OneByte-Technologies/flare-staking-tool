@@ -19,7 +19,7 @@
                 {{ amtBig.toLocaleString() }}
             </span>
             <br />
-            <span class="fiat" v-if="isAvaxToken">
+            <span class="fiat" v-if="isAvaxToken && symbol !== 'C2FLR'">
                 {{ totalUSD.toLocaleString(2) }}
                 &nbsp;USD
             </span>
@@ -108,6 +108,7 @@ export default class FungibleRow extends Vue {
 
     get symbol(): string {
         let sym = this.asset.symbol
+        console.log(`Symbol is ${sym}`)
         return sym
     }
 

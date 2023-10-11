@@ -2,7 +2,7 @@
     <v-banner sticky class="url_banner" color="#f00" ref="banner">
         <template v-slot:default>
             <fa icon="exclamation-triangle"></fa>
-            Make sure the URL is
+            Ensure the URL is
             <b>staking.flare.network</b>
             <button @click="dismiss" class="dismiss_but" data-cy="dismiss_banner">
                 <fa icon="times"></fa>

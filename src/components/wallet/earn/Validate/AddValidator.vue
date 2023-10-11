@@ -36,6 +36,7 @@
                                 v-model="stakeAmt"
                                 :max="maxFormAmount"
                                 class="amt_in"
+                                :symbol="symbol"
                             ></AvaxInput>
                         </div>
                         <div style="margin: 30px 0">
@@ -111,7 +112,9 @@
                 </transition-group>
                 <div>
                     <div class="summary" v-if="!isSuccess">
-                        <CurrencySelect v-model="currency_type"></CurrencySelect>
+                        <template v-if="symbol !== 'C2FLR'">
+                            <CurrencySelect v-model="currency_type"></CurrencySelect>
+                        </template>
                         <div>
                             <label>
                                 {{ $t('staking.validate.summary.max_del') }}
@@ -122,8 +125,13 @@
                                     <fa icon="question-circle"></fa>
                                 </Tooltip>
                             </label>
-                            <p v-if="currency_type === 'FLR'">{{ maxDelegationText }} FLR</p>
+                            <p v-if="currency_type === 'FLR'">
+                                {{ maxDelegationText }} {{ symbol }}
+                            </p>
                             <p v-if="currency_type === 'USD'">${{ maxDelegationUsdText }} USD</p>
+                            <p v-if="symbol !== 'C2FLR' && currency_type === 'FLR'">
+                                {{ maxDelegationUsdText }} {{ symbol }}
+                            </p>
                         </div>
                         <div>
                             <label>{{ $t('staking.validate.summary.duration') }} *</label>
@@ -253,6 +261,7 @@ import { WalletType } from '@/js/wallets/types'
 import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
+import AvaAsset from '@/js/AvaAsset'
 
 const MIN_MS = 60000
 const HOUR_MS = MIN_MS * 60
@@ -399,6 +408,15 @@ export default class AddValidator extends Vue {
         } else {
             return ZERO
         }
+    }
+    get ava_asset(): AvaAsset | null {
+        let ava = this.$store.getters['Assets/AssetAVA']
+        return ava
+    }
+    get symbol(): string {
+        let sym = this.ava_asset?.symbol
+        console.log(`Symbol is ${sym}`)
+        return sym ?? 'FLR'
     }
 
     get wallet(): WalletType {
@@ -561,8 +579,8 @@ export default class AddValidator extends Vue {
         this.updateFormData()
         let wallet: WalletType = this.$store.state.activeWallet
 
-        // Start delegation in 5 minutes
-        let startDate = new Date(Date.now() + 5 * MIN_MS)
+        // Start delegation in 30 seconds
+        let startDate = new Date(Date.now() + 0.5 * MIN_MS)
         let endMs = this.formEnd.getTime()
         let startMs = startDate.getTime()
 

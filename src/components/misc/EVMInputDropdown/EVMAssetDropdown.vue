@@ -32,10 +32,18 @@ export default class EVMAssetDropdown extends Vue {
     $refs!: {
         select_modal: EVMTokenSelectModal
     }
+    selectedNetwork = this.$store.state.Network.selectedNetwork
 
     get symbol() {
-        if (this.selected === 'native') return 'FLR'
-        else return this.selected.data.symbol
+        if (this.selected === 'native') {
+            if (this.selectedNetwork.name === 'Coston2') {
+                return 'C2FLR'
+            } else {
+                return 'FLR'
+            }
+        } else {
+            return this.selected.data.symbol
+        }
     }
 
     showPopup() {
@@ -65,7 +73,7 @@ export default class EVMAssetDropdown extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../../../main";
+@use '../../../main';
 .evm_dropdown {
     position: relative;
 }

@@ -35,6 +35,7 @@
         </div>
 
         <div class="mobile_right">
+            <network-menu></network-menu>
             <v-btn @click="isDrawer = !isDrawer" icon class="mobile_drawer">
                 <fa icon="bars"></fa>
             </v-btn>
@@ -112,12 +113,16 @@ export default class Navbar extends Vue {
     isDrawer: boolean = false
     // popupOpen: boolean = false
 
+    $refs!: {
+        logout: ConfirmLogout
+    }
     get isAuth(): boolean {
         return this.$store.state.isAuth
     }
 
     logout(): void {
         // @ts-ignore
+        this.isDrawer = false
         this.$refs.logout.open()
     }
 
@@ -246,7 +251,8 @@ button {
     }
 
     .mobile_right {
-        display: block;
+        display: flex;
+        align-items: center;
     }
 
     .mobile_drawer {

@@ -32,6 +32,7 @@
                             :max="maxFormAmount"
                             class="amt_in"
                             :balance="utxosBalanceBig"
+                            :symbol="symbol"
                         ></AvaxInput>
                     </div>
                     <!-- <div class="reward_in" style="margin: 30px 0" :type="rewardDestination">
@@ -292,8 +293,8 @@ export default class AddDelegator extends Vue {
         this.isLoading = true
         this.err = ''
 
-        // Start delegation in 5 minutes
-        let startDate = new Date(Date.now() + 5 * MIN_MS)
+        // Start delegation in 30 seconds
+        let startDate = new Date(Date.now() + 0.5 * MIN_MS)
 
         try {
             this.isLoading = false
@@ -341,6 +342,16 @@ export default class AddDelegator extends Vue {
         }
         const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
         return rpcUrl
+    }
+
+    get symbol() {
+        let symbol = ''
+        if (ava.getNetworkID() === 2) {
+            symbol = 'FLR'
+        } else if (ava.getNetworkID() === 114) {
+            symbol = 'C2FLR'
+        }
+        return symbol
     }
 
     async updateTxStatus(txId: string) {
