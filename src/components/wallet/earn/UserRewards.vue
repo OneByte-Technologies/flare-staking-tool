@@ -187,8 +187,26 @@ export default class UserRewards extends Vue {
             gasLimit: gasEstimate,
         }
         console.log('unsignedtx', unsignedTx)
-        const ethersWallet = new ethers.Wallet(wallet.ethKey)
-        const signedTx = await ethersWallet.signTransaction(unsignedTx)
+
+        let signedTx
+
+        if (wallet.type === 'ledger') {
+            const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
+            const txHash = ethers.utils.keccak256(serializedUnsignedTx).slice(2)
+            const txBuffer = Buffer.from(txHash, 'hex')
+            let signature = ''
+            try {
+                signature = await wallet.signContractLedger(txBuffer)
+            } catch (e) {
+                console.log(e)
+            }
+
+            signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
+        } else {
+            const ethersWallet = new ethers.Wallet(wallet.ethKey)
+            signedTx = await ethersWallet.signTransaction(unsignedTx)
+        }
+
         const txId = await contract.provider.sendTransaction(signedTx)
         this.isClaimRewardPending = false
         console.log('txId', txId)
