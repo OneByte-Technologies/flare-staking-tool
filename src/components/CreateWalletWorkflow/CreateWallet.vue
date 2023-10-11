@@ -316,7 +316,7 @@ a {
 .download-div {
     display: flex;
     justify-content: center;
-    margin-top: 55px;
+    margin-top: 16px;
 
     .download-button {
         color: var(--primary-color-light);

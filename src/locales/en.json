@@ -93,7 +93,7 @@
         "mnemonic_desc": "Use these 24 words in sequential order to recover your Flare Wallet",
         "attention": "Attention!",
         "warning": "Store this key phrase in a secure location. Anyone with this key phrase can access your Flare Wallet. There is no way to recover lost key phrases.",
-        "confirm": "I wrote down my key phrase in a secure location.",
+        "confirm": "I wrote down my key phrase or downloaded it in a secure location.",
         "regenerate": "Regenerate",
         "success_title": "Congratulations!",
         "success_desc": "It's time to access your Flare Dashboard.",
