@@ -139,7 +139,7 @@
                                 depressed
                                 small
                             >
-                                {{ $t('staking.rewards_card.submit') }}
+                                {{ $t('staking.rewards_card.view') }}
                             </v-btn>
                         </div>
                     </div>

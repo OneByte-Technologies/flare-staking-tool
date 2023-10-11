@@ -366,7 +366,7 @@
         "subtitle1": "Validate",
         "subtitle2": "Delegate",
         "subtitle3": "Cross Chain",
-        "subtitle4": "View and Claim Rewards",
+        "subtitle4": "Manage Rewards",
         "subtitle5": "Bind Your Addresses",
         "warning_1": "To delegate to your own validator, you must have at least {0} FLR on the P-chain.",
         "warning_2": "To delegate, you must have at least {0} FLR on the P-chain.",
@@ -394,8 +394,9 @@
         },
         "rewards_card": {
             "title": "Manage Rewards",
-            "desc": "View your totals rewards and claim them.",
-            "submit": "Manage Rewards"
+            "desc": "View your total rewards and claim them.",
+            "view": "Manage Rewards",
+            "submit": "Claim Rewards"
         },
         "transfer": {
             "source": "Source Chain",
