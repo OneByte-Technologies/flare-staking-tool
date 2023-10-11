@@ -370,10 +370,15 @@ const assets_module: Module<AssetsState, RootState> = {
             const res = await avm.getAssetDescription('AVAX')
             const id = bintools.cb58Encode(res.assetID)
             state.AVA_ASSET_ID = id
-            const asset = new AvaAsset(id, 'Flare', 'FLR', res.denomination)
+
+            let symbol = 'FLR'
+            if (ava.getNetworkID() === 114) {
+                symbol = 'C2FLR'
+            }
+
+            const asset = new AvaAsset(id, 'Flare', symbol, res.denomination)
             commit('addAsset', asset)
         },
-
         /**
          * Update the X-Chain asset dictionary, split balances into categories.
          * (locked, available, multisig)

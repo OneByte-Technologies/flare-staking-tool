@@ -263,10 +263,12 @@ export default class NetworkMenu extends Vue {
 @media only screen and (max-width: main.$mobile_width) {
     .network_body {
         position: fixed;
-        width: 100vw;
+        width: 70vw;
         z-index: 2;
         right: 0 !important;
         left: 0 !important;
+        overflow: visible !important;
+        background-color: var(--bg-light) !important;
     }
 }
 

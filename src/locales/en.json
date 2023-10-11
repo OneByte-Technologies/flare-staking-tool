@@ -11,16 +11,16 @@
         "cookie_desc": "We use cookies to develop improvements and enhance your experience. To find out more, read our"
     },
     "home": {
-        "desc": "Flare is a simple, secure, non-custodial tool for staking multiple assets.",
+        "desc": "FlareStake is a simple, secure, noncustodial tool for staking Flare assets.",
         "access": {
             "title": "Welcome Back!",
-            "desc": "Access your existing staking tool here.",
-            "submit": "Access Wallet"
+            "desc": "Use an existing wallet to stake Flare assets.",
+            "submit": "Use an Existing Wallet"
         },
         "create": {
             "title": "New to Flare?",
-            "desc": "Ready to stake? Create a wallet now.",
-            "submit": "Create New Wallet"
+            "desc": "Create a new wallet to stake Flare assets.",
+            "submit": "Create a New Wallet"
         }
     },
     "network": {
@@ -120,7 +120,7 @@
         "hover4": "View Mainnet Address",
         "balance": {
             "show": "Show Breakdown",
-            "hide": "Hide Breakdown",
+            "hide": "Show Totals Only",
             "available": "Available",
             "locked": "Locked",
             "locked_stake": "Locked Stakeable",
@@ -132,8 +132,8 @@
             "title_x": "Derived Wallet Address",
             "title_p": "Derived Platform Wallet Address",
             "title_c": "Derived EVM Wallet Address",
-            "desc_p": "This is your P-Chain address to receive staking rewards and cross chain transfers.",
-            "desc_c": "This is your C-Chain address. Use it to interact with the ethereum virtual machine."
+            "desc_p": "Your P-Chain address to receive staking rewards and cross-chain transfers.",
+            "desc_c": "Your C-Chain address to be used with smart contracts."
         }
     },
     "transfer": {
@@ -164,20 +164,23 @@
             "title": "Source Chain"
         },
         "c_chain": {
-            "gasPrice": "Gas Price (GWEI)",
+            "gasPrice": "Gas Price in Gwei",
+            "gasPriceDesc": "The gas price is automatically adjusted according to network load.",
             "gasLimit": "Gas Limit",
+            "gasLimitDesc": "The Gas Limit is automatically calculated after you click Confirm.",
             "confirm": "Confirm",
             "cancel": "Cancel",
             "success": {
                 "desc": "Transaction Sent",
-                "label1": "Transaction Hash"
+                "label1": "Transaction Hash",
+                "label2": "View in Explorer"
             },
             "reset": "Start Again"
         }
     },
     "cross_chain": {
         "title": "Cross Chain",
-        "desc": "Transfer tokens between Platform (P) and Contract (C) chains.",
+        "desc": "Transfer tokens between the Platform chain (P-chain) and Contract chain (C-chain).",
         "card": {
             "source": "Source",
             "destination": "Destination",
@@ -291,7 +294,7 @@
         "subtitle": "Active Key",
         "save_account": {
             "title": "Save Account",
-            "desc": "Encode your wallet with a password and store securely on this browser.",
+            "desc": "Encode your wallet with a password and store securely on this browser.Password must have a minimum of 9 characters.",
             "submit": "Save",
             "placeholder_1": "Account Name",
             "placeholder_2": "Password",
@@ -359,46 +362,46 @@
     },
     "staking": {
         "title": "Staking",
-        "desc": "You can earn more FLR by staking your existing tokens.",
+        "desc": "Earn more FLR by staking your existing tokens.",
         "subtitle1": "Validate",
         "subtitle2": "Delegate",
         "subtitle3": "Cross Chain",
         "subtitle4": "View and Claim Rewards",
-        "subtitle5": "Address Binder",
-        "warning_1": "You must have at least {0} FLR on the P chain to become a validator.",
-        "warning_2": "You must have at least {0} FLR on the P chain to become a delegator.",
+        "subtitle5": "Bind Your Addresses",
+        "warning_1": "To delegate to your own validator, you must have at least {0} FLR on the P-chain.",
+        "warning_2": "To delegate, you must have at least {0} FLR on the P-chain.",
         "warning_3": "Register to unlock Staking options",
-        "warning_4": "You are already registered",
+        "warning_4": "Your addresses are already registered.",
         "address_binder_card": {
-            "title": "Address Binder",
-            "desc": "Bind Your P-Chain Address to Your C-Chain Address to Unlock Rewards",
+            "title": "Bind Your Addresses",
+            "desc": "To unlock rewards, bind your P-chain address to your C-chain address.",
             "submit": "Register"
         },
         "transfer_card": {
-            "title": "Chain Transfer",
-            "desc": "Staking requires FLR on the P chain. Transfer tokens between C and P chain",
+            "title": "Transfer Your FLR",
+            "desc": "To stake, transfer FLR from C-chain to P-chain.",
             "submit": "Transfer"
         },
         "delegate_card": {
-            "title": "Delegate",
-            "desc": "You do not own an Flare node, but you want to stake using another node.",
-            "submit": "Add Delegator"
+            "title": "Add a Delegation",
+            "desc": "Delegate your FLR to be staked on someone else's validator node.",
+            "submit": "Add Delegation"
         },
         "validate_card": {
-            "title": "Validate",
-            "desc": "You have an Flare node that you want to stake with.",
+            "title": "Add a Validator",
+            "desc": "Delegate your FLR to be staked on your own validator node.",
             "submit": "Add Validator"
         },
         "rewards_card": {
-            "title": "View & Claim Rewards",
-            "desc": "View staking rewards you will receive.",
-            "submit": "Claim Rewards"
+            "title": "Manage Rewards",
+            "desc": "View your totals rewards and claim them.",
+            "submit": "Manage Rewards"
         },
         "transfer": {
             "source": "Source Chain",
             "destination": "Destination Chain",
             "balance": "Balance",
-            "amount": "Transfer Amount",
+            "amount": "Amount",
             "fee": "Fee",
             "fee_name": "Export + Import Fee",
             "confirm": "Confirm",
@@ -413,7 +416,7 @@
                 "export": "Export Transaction ID:",
                 "import": "Import Transaction ID:",
                 "message": "You have successfully transferred between chains.",
-                "messageAddressBind": "Addresses has been registered successfully",
+                "messageAddressBind": "Your addresses are registered.",
                 "again": "Start Again",
                 "back": "Back to Earn"
             }
@@ -479,11 +482,11 @@
             },
             "fee": {
                 "label": "Delegation Fee",
-                "desc": "You will claim this % of the rewards from the delegators on your node."
+                "desc": "You will claim this percentage of the rewards from your node's delegators."
             },
             "reward": {
                 "label": "Reward Address",
-                "desc": "Where to send the staking rewards.",
+                "desc": "The address where you want your staking rewards sent.",
                 "chip_1": "Use this wallet",
                 "chip_2": "Custom Address"
             },
@@ -492,7 +495,7 @@
                 "max_del_tooltip": "Maximum amount that can be delegated to this validator.",
                 "duration": "Staking Duration",
                 "rewards": "Estimated Rewards",
-                "warn": "If it is your first time staking, start small. Staked tokens are locked until the end of the staking period."
+                "warn": "If you are staking for the first time, begin by staking only a small amount. Staked tokens are locked until the end of the staking period."
             },
             "confirmation": {
                 "id": "Node ID",
@@ -581,7 +584,7 @@
                 "node": "Node ID",
                 "amount": "Staking Amount",
                 "start": "Start Date",
-                "start_desc": "Your delegation will start 5 minutes after you submit this form.",
+                "start_desc": "Your delegation will start 30 seconds after you submit this form.",
                 "end": "End Date",
                 "reward": "Reward Address"
             },
@@ -602,7 +605,7 @@
                 "duration": "Staking Duration",
                 "reward": "Estimated Reward",
                 "fee": "Fee",
-                "warn": "If it is your first time staking, start small. Staked tokens are locked until the end of the staking period."
+                "warn": "If you are staking for the first time, begin by staking only a small amount. Staked tokens are locked until the end of the staking period."
             },
             "confirm": "Confirm",
             "submit": "Submit",

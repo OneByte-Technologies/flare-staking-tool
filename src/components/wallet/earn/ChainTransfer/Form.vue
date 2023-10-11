@@ -38,11 +38,12 @@
                 v-model="amt"
                 @change="onAmtChange"
                 :balance="balance"
+                :symbol="symbol"
             ></AvaxInput>
         </div>
         <div class="confirmation_val" v-else>
             <label>{{ $t('staking.transfer.amount') }}</label>
-            <p>{{ formAmtText }} FLR</p>
+            <p>{{ formAmtText }} {{ symbol }}</p>
         </div>
     </div>
 </template>
@@ -58,9 +59,9 @@ import { ChainSwapFormData } from '@/components/wallet/earn/ChainTransfer/types'
 
 const chainTypes: ChainIdType[] = ['P', 'C']
 const chainNames = {
-    C: 'C Chain',
-    P: 'P Chain',
-    X: 'X Chain',
+    C: 'C-Chain',
+    P: 'P-Chain',
+    X: 'X-Chain',
 }
 
 @Component({
@@ -76,6 +77,7 @@ export default class Form extends Vue {
     @Prop() balance!: Big
     @Prop() maxAmt!: BN
     @Prop() isConfirm!: boolean
+    @Prop() symbol!: string
     clear() {
         this.amt = new BN(0)
         this.onChange()

@@ -26,91 +26,95 @@
             </div>
             <div class="balance_row">
                 <p class="balance" data-cy="wallet_balance" v-if="!balanceTextRight">
-                    {{ balanceTextLeft }} FLR
+                    {{ balanceTextLeft }} {{ symbol }}
                 </p>
                 <p class="balance" data-cy="wallet_balance" v-else>
                     {{ balanceTextLeft }}
                     <span>.{{ balanceTextRight }}</span>
-                    FLR
+                    {{ symbol }}
                 </p>
-                <div style="display: flex; flex-direction: row">
-                    <p class="balance_usd">
-                        <b>$ {{ totalBalanceUSDText }}</b>
-                        USD
-                    </p>
-                    <p class="balance_usd" style="background-color: transparent">
-                        <b>1 FLR</b>
-                        =
-                        <b>${{ avaxPriceText }}</b>
-                        USD
-                    </p>
-                </div>
+                <template v-if="symbol !== 'C2FLR'">
+                    <div style="display: flex; flex-direction: row">
+                        <p class="balance_usd">
+                            <b>$ {{ totalBalanceUSDText }}</b>
+                            USD
+                        </p>
+                        <p class="balance_usd" style="background-color: transparent">
+                            <b>1 {{ symbol }}</b>
+                            =
+                            <b>${{ avaxPriceText }}</b>
+                            USD
+                        </p>
+                    </div>
+                </template>
             </div>
-            <!--            <button class="expand_but">Show Breakdown<fa icon="list-ol"></fa></button>-->
+            <!--  <button class="expand_but">Show Breakdown<fa icon="list-ol"></fa></button> -->
             <div class="alt_info">
                 <div class="alt_non_breakdown" v-if="!isBreakdown">
                     <div>
                         <label>{{ $t('top.balance.available') }}</label>
-                        <p>{{ unlockedText }} FLR</p>
+                        <p>{{ unlockedText }} {{ symbol }}</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.locked') }}</label>
-                        <p>{{ balanceTextLocked }} FLR</p>
+                        <p>{{ balanceTextLocked }} {{ symbol }}</p>
                     </div>
                     <div v-if="hasMultisig">
                         <label>Multisig</label>
-                        <p>{{ balanceTextMultisig }} FLR</p>
+                        <p>{{ balanceTextMultisig }} {{ symbol }}</p>
                     </div>
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
-                        <p>{{ stakingText }} FLR</p>
+                        <p>{{ stakingText }} {{ symbol }}</p>
                     </div>
                 </div>
                 <div class="alt_breakdown" v-else>
                     <div>
                         <!-- <label>{{ $t('top.balance.available') }} (X)</label>
-                        <p>{{ avmUnlocked | cleanAvaxBN }} FLR</p> -->
+                        <p>{{ avmUnlocked | cleanAvaxBN }} {{symbol}}</p> -->
                         <label>{{ $t('top.balance.available') }} (P)</label>
-                        <p>{{ platformUnlocked | cleanAvaxBN }} FLR</p>
+                        <p>{{ platformUnlocked | cleanAvaxBN }} {{ symbol }}</p>
                         <label>{{ $t('top.balance.available') }} (C)</label>
-                        <p>{{ evmUnlocked | cleanAvaxBN }} FLR</p>
+                        <p>{{ evmUnlocked | cleanAvaxBN }} {{ symbol }}</p>
                     </div>
                     <div v-if="hasLocked">
                         <label>{{ $t('top.balance.locked') }} (X)</label>
-                        <p>{{ avmLocked }} FLR</p>
+                        <p>{{ avmLocked }} {{ symbol }}</p>
                         <label>{{ $t('top.balance.locked') }} (P)</label>
-                        <p>{{ Number(platformLocked) }} FLR</p>
+                        <p>{{ Number(platformLocked) }} {{ symbol }}</p>
                         <label>{{ $t('top.balance.locked_stake') }} (P)</label>
-                        <p>{{ Number(platformLockedStakeable) }} FLR</p>
+                        <p>{{ Number(platformLockedStakeable) }} {{ symbol }}</p>
                     </div>
                     <div v-if="hasMultisig">
                         <label>Multisig (X)</label>
-                        <p>{{ avmMultisig }} FLR</p>
+                        <p>{{ avmMultisig }} {{ symbol }}</p>
                         <label>Multisig (P)</label>
-                        <p>{{ platformMultisig }} FLR</p>
+                        <p>{{ platformMultisig }} {{ symbol }}</p>
                     </div>
                     <div>
                         <label>{{ $t('top.balance.stake') }}</label>
-                        <p>{{ stakingText }} FLR</p>
+                        <p>{{ stakingText }} {{ symbol }}</p>
                         <label>Total Mirror Funds</label>
-                        <p>{{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR</p>
+                        <p>
+                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} {{ symbol }}
+                        </p>
                     </div>
                 </div>
                 <div class="alt_breakdown">
                     <div>
                         <label v-if="!isBreakdown">Total Mirror Funds</label>
                         <p v-if="!isBreakdown">
-                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} FLR
+                            {{ totalMirrorAmount !== '' ? totalMirrorAmount : '--' }} {{ symbol }}
                         </p>
                         <label v-if="isBreakdown">Mirror Funds</label>
                         <p v-if="isBreakdown">
-                            {{ formatNumberWithCommas(amountFromCurrentValidator) }} FLR
+                            {{ formatNumberWithCommas(amountFromCurrentValidator) }} {{ symbol }}
                         </p>
                     </div>
 
                     <div v-if="isBreakdown">
                         <label>Pending Mirror Funds</label>
-                        <p>{{ amountFromPendingValidator }} FLR</p>
+                        <p>{{ amountFromPendingValidator }} {{ symbol }}</p>
                     </div>
                 </div>
             </div>
@@ -252,6 +256,12 @@ export default class BalanceCard extends Vue {
         this.isBreakdown = !this.isBreakdown
     }
 
+    get symbol(): string {
+        let sym = this.ava_asset?.symbol
+        console.log(`Symbol is ${sym}`)
+        return sym ?? ''
+    }
+
     get avmUnlocked(): BN {
         if (!this.ava_asset) return new BN(0)
         return this.ava_asset.amount
@@ -331,7 +341,7 @@ export default class BalanceCard extends Vue {
         return ''
     }
 
-    // Locked balance is the sum of locked FLR tokens on X and P chain
+    // Locked balance is the sum of locked {{symbol}} tokens on X and P chain
     get balanceTextLocked(): string {
         if (this.isUpdateBalance) return '--'
 

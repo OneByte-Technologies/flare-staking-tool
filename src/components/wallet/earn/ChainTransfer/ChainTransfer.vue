@@ -8,6 +8,7 @@
                     :is-confirm="isConfirm"
                     :balance="balanceBig"
                     :max-amt="formMaxAmt"
+                    :symbol="symbol"
                 ></ChainSwapForm>
 
                 <div v-if="!isSuccess && !isLoading">
@@ -16,16 +17,16 @@
 
                         <p>
                             Export Fee
-                            <span>{{ exportFee.toLocaleString() }} FLR</span>
+                            <span>{{ exportFee.toLocaleString() }} {{ symbol }}</span>
                         </p>
                         <p>
                             Import Fee
-                            <span>{{ importFee.toLocaleString() }} FLR</span>
+                            <span>{{ importFee.toLocaleString() }} {{ symbol }}</span>
                         </p>
                         <p>
                             <b>
                                 Total
-                                <span>{{ fee.toLocaleString() }} FLR</span>
+                                <span>{{ fee.toLocaleString() }} {{ symbol }}</span>
                             </b>
                         </p>
                     </div>
@@ -210,6 +211,11 @@ export default class ChainTransfer extends Vue {
     get ava_asset(): AvaAsset | null {
         let ava = this.$store.getters['Assets/AssetAVA']
         return ava
+    }
+    get symbol(): string {
+        let sym = this.ava_asset?.symbol
+        console.log(`Symbol is ${sym}`)
+        return sym ?? 'FLR'
     }
 
     get platformBalance() {

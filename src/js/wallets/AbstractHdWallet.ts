@@ -86,7 +86,7 @@ abstract class AbstractHdWallet extends AbstractWallet {
     }
     // Fetches the utxos
     async getUTXOs(): Promise<void> {
-        this.updateUTXOsX()
+        // this.updateUTXOsX()
 
         // platform utxos are updated but not returned by function
         this.updateUTXOsP()
