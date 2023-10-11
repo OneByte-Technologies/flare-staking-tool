@@ -104,9 +104,12 @@
                     {{ $t('transfer.c_chain.success.desc') }}
                 </p>
                 <div>
-                    <a :href="explorerLink" target="_blank">
-                        {{ $t('transfer.c_chain.success.label2') }}
-                    </a>
+                    <lable>
+                        <a :href="explorerLink" target="_blank" class="explorer">
+                            {{ $t('transfer.c_chain.success.label2') }}
+                        </a>
+                        <fa style="width: 12px" icon="up-right-from-square"></fa>
+                    </lable>
                 </div>
                 <v-btn
                     style="margin: 14px 0"
@@ -559,6 +562,13 @@ input,
 }
 
 label {
+    color: var(--primary-color-light);
+    font-size: 12px;
+    font-weight: bold;
+    margin: 2px 0 !important;
+}
+
+.explorer {
     color: var(--primary-color-light);
     font-size: 12px;
     font-weight: bold;

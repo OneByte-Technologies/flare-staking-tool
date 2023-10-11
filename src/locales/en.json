@@ -173,7 +173,7 @@
             "success": {
                 "desc": "Transaction Sent",
                 "label1": "Transaction Hash",
-                "label2": "View in Explorer"
+                "label2": "View in explorer"
             },
             "reset": "Start Again"
         }
