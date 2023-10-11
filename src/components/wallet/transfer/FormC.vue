@@ -106,12 +106,12 @@
                 <div>
                     <label>{{ $t('transfer.c_chain.success.label2') }}</label>
                     <a
-                        :href="txExplorer"
+                        :href="explorerLink"
                         class="confirm_data"
                         style="word-break: break-all"
                         target="_blank"
                     >
-                        {{ txExplorer }}
+                        {{ explorerLink }}
                     </a>
                 </div>
                 <v-btn
@@ -151,6 +151,7 @@ import EVMInputDropdown from '@/components/misc/EVMInputDropdown/EVMInputDropdow
 import Erc20Token from '@/js/Erc20Token'
 import { iErc721SelectInput } from '@/components/misc/EVMInputDropdown/types'
 import { WalletHelper } from '@/helpers/wallet_helper'
+import { AvaNetwork } from '@/js/AvaNetwork'
 
 @Component({
     components: {
@@ -464,16 +465,17 @@ export default class FormC extends Vue {
         }
     }
 
+    get explorerLink() {
+        let net: AvaNetwork = this.$store.state.Network.selectedNetwork
+        let explorer = net.explorerSiteUrl
+        if (!explorer) return null
+        return explorer + '/tx/' + this.txHash
+    }
+
     onSuccess(txId: string) {
         this.isLoading = false
         this.isSuccess = true
         this.txHash = txId
-
-        if (this.$store.state.Network.selectedNetwork === 14) {
-            this.txExplorer = `https://flare-explorer.flare.network/tx/${this.txHash}`
-        } else {
-            this.txExplorer = `https://coston2-explorer.flare.network/tx/${this.txHash}`
-        }
 
         this.$store.dispatch('Notifications/add', {
             title: this.$t('transfer.success_title'),
