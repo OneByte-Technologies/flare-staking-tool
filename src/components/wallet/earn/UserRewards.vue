@@ -210,6 +210,7 @@ export default class UserRewards extends Vue {
         const txId = await contract.provider.sendTransaction(signedTx)
         this.isClaimRewardPending = false
         console.log('txId', txId)
+        this.viewRewards()
     }
 
     getIp() {
