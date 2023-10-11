@@ -93,7 +93,7 @@
         "mnemonic_desc": "Use these 24 words in sequential order to recover your Flare Wallet",
         "attention": "Attention!",
         "warning": "Store this key phrase in a secure location. Anyone with this key phrase can access your Flare Wallet. There is no way to recover lost key phrases.",
-        "confirm": "I wrote down my key phrase in a secure location.",
+        "confirm": "I wrote down my key phrase or downloaded it in a secure location.",
         "regenerate": "Regenerate",
         "success_title": "Congratulations!",
         "success_desc": "It's time to access your Flare Dashboard.",
@@ -102,7 +102,8 @@
         "verifytitle": "Verify Mnemonic",
         "verify_desc": "Fill In Mnemonic Phrase Below",
         "error_number": "Oops, looks like you forgot to fill number",
-        "error_word": "The mnemonic phrase you entered for word not match the actual phrase."
+        "error_word": "The mnemonic phrase you entered for word not match the actual phrase.",
+        "download": "Download Key Phrase"
     },
     "top": {
         "title1": "Derived Flare Wallet Address",
@@ -173,7 +174,7 @@
             "success": {
                 "desc": "Transaction Sent",
                 "label1": "Transaction Hash",
-                "label2": "View in Explorer"
+                "label2": "View in explorer"
             },
             "reset": "Start Again"
         }
@@ -366,7 +367,7 @@
         "subtitle1": "Validate",
         "subtitle2": "Delegate",
         "subtitle3": "Cross Chain",
-        "subtitle4": "View and Claim Rewards",
+        "subtitle4": "Manage Rewards",
         "subtitle5": "Bind Your Addresses",
         "warning_1": "To delegate to your own validator, you must have at least {0} FLR on the P-chain.",
         "warning_2": "To delegate, you must have at least {0} FLR on the P-chain.",
@@ -394,8 +395,9 @@
         },
         "rewards_card": {
             "title": "Manage Rewards",
-            "desc": "View your totals rewards and claim them.",
-            "submit": "Manage Rewards"
+            "desc": "View your total rewards and claim them.",
+            "view": "Manage Rewards",
+            "submit": "Claim Rewards"
         },
         "transfer": {
             "source": "Source Chain",
