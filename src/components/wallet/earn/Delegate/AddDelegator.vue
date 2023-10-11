@@ -293,8 +293,8 @@ export default class AddDelegator extends Vue {
         this.isLoading = true
         this.err = ''
 
-        // Start delegation in 5 minutes
-        let startDate = new Date(Date.now() + 5 * MIN_MS)
+        // Start delegation in 30 seconds
+        let startDate = new Date(Date.now() + 0.5 * MIN_MS)
 
         try {
             this.isLoading = false
