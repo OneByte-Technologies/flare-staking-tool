@@ -561,7 +561,7 @@ export default class AddValidator extends Vue {
         this.updateFormData()
         let wallet: WalletType = this.$store.state.activeWallet
 
-        // Start delegation in 5 minutes
+        // Start delegation in 30 seconds
         let startDate = new Date(Date.now() + 0.5 * MIN_MS)
         let endMs = this.formEnd.getTime()
         let startMs = startDate.getTime()
