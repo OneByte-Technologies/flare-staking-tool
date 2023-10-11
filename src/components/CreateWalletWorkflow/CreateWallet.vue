@@ -36,20 +36,19 @@
                             <div class="cols">
                                 <!-- LEFT -->
                                 <div class="mneumonic_disp_col">
-                                    <div class="download-div">
-                                        <button class="download-button" @click="downloadKeyPhrase">
-                                            Download
-                                            {{ ' ' }}
-                                            <fa style="width: 12px" icon="download"></fa>
-                                        </button>
-                                    </div>
-
                                     <div class="mnemonic_disp">
                                         <mnemonic-display
                                             :phrase="keyPhrase"
                                             :bgColor="verificationColor"
                                             class="mnemonic_display"
                                         ></mnemonic-display>
+                                    </div>
+                                    <div class="download-div">
+                                        <button class="download-button" @click="downloadKeyPhrase">
+                                            {{ $t('create.download') }}
+
+                                            <fa style="width: 12px" icon="download"></fa>
+                                        </button>
                                     </div>
                                 </div>
                                 <!-- RIGHT -->
@@ -316,8 +315,8 @@ a {
 }
 .download-div {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 4px;
+    justify-content: center;
+    margin-top: 55px;
 
     .download-button {
         color: var(--primary-color-light);

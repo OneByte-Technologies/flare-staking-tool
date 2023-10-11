@@ -102,7 +102,8 @@
         "verifytitle": "Verify Mnemonic",
         "verify_desc": "Fill In Mnemonic Phrase Below",
         "error_number": "Oops, looks like you forgot to fill number",
-        "error_word": "The mnemonic phrase you entered for word not match the actual phrase."
+        "error_word": "The mnemonic phrase you entered for word not match the actual phrase.",
+        "download": "Download Key Phrase"
     },
     "top": {
         "title1": "Derived Flare Wallet Address",
