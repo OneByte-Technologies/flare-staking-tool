@@ -53,6 +53,7 @@ import { MIN_LEDGER_V } from '@/js/wallets/constants'
 import { derivedAddresses } from '@/js/wallets/LedgerWallet'
 const { detect } = require('detect-browser')
 const UnsupportedBrowsers = ['firefox', 'safari']
+const addressCount = 10
 
 @Component({
     components: {
@@ -71,7 +72,7 @@ export default class LedgerCard extends Vue {
 
     get path() {
         let pathArr: string[] = []
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < addressCount; i++) {
             const pathStr =
                 this.selectedStandard === 'BIP44' ? `m/44'/60'/0'/0/${i}` : `m/44'/60'/${i}'/0/0`
             pathArr.push(pathStr)
@@ -148,7 +149,7 @@ export default class LedgerCard extends Vue {
             }
             console.log('calculating addresses')
             this.derivedAddress = await LedgerWallet.getDerivedAddresses(transport, this.path)
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < addressCount; i++) {
                 const addr = '0x' + this.derivedAddress[i].ethAddress
                 this.addressList.push(addr)
             }

@@ -472,7 +472,7 @@ export default class FormC extends Vue {
         if (this.$store.state.Network.selectedNetwork === 14) {
             this.txExplorer = `https://flare-explorer.flare.network/tx/${this.txHash}`
         } else {
-            this.txExplorer = `https://coston2-explorer.flare.network//tx/${this.txHash}`
+            this.txExplorer = `https://coston2-explorer.flare.network/tx/${this.txHash}`
         }
 
         this.$store.dispatch('Notifications/add', {
