@@ -104,11 +104,9 @@
                     {{ $t('transfer.c_chain.success.desc') }}
                 </p>
                 <div>
-                    <lable>
-                        <a :href="explorerLink" target="_blank" class="explorer">
-                            {{ $t('transfer.c_chain.success.label2') }}
-                        </a>
-                    </lable>
+                    <a :href="explorerLink" target="_blank" class="explorer">
+                        {{ $t('transfer.c_chain.success.label2') }}
+                    </a>
                 </div>
                 <v-btn
                     style="margin: 14px 0"
