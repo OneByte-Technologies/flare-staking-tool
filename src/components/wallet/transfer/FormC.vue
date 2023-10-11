@@ -108,7 +108,6 @@
                         <a :href="explorerLink" target="_blank" class="explorer">
                             {{ $t('transfer.c_chain.success.label2') }}
                         </a>
-                        <fa style="width: 12px" icon="up-right-from-square"></fa>
                     </lable>
                 </div>
                 <v-btn

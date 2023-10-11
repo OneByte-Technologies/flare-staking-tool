@@ -45,7 +45,6 @@
                                     </div>
                                     <div class="download-div">
                                         <button class="download-button" @click="downloadKeyPhrase">
-
                                             {{ $t('create.download') }}
 
                                             <fa style="width: 12px" icon="download"></fa>
