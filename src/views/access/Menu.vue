@@ -40,7 +40,7 @@
                     ></ImageDayNight>
                 </router-link>
                 <div v-else class="disabled_button menu_option button_primary">
-                    Ledger (Recommended)
+                    Ledger
 
                     <span v-if="disabled" class="no_firefox">
                         {{ browserName }} is not supported
