@@ -121,7 +121,7 @@ export default class Home extends Vue {}
                 align-items: center;
                 justify-content: center;
                 background-color: var(--bg-light);
-                padding: 60px 90px main.$container-padding main.$container-padding;
+                padding: 60px 90px main.$container-padding 90px;
 
                 header {
                     margin-bottom: 60px;
