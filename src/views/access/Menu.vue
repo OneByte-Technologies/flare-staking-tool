@@ -32,7 +32,7 @@
                     to="/access/ledger"
                     class="menu_option button_primary"
                 >
-                    Ledger (Recommended)
+                    Ledger
                     <ImageDayNight
                         day="/img/access_icons/day/ledger.svg"
                         night="/img/access_icons/night/ledger.svg"
