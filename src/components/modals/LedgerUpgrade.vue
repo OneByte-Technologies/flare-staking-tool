@@ -16,7 +16,7 @@
                     <a href="https://www.ledger.com/ledger-live/download" target="_blank">
                         Ledger Live
                     </a>
-                    app manager. The minimum version required to use the app is version {{ minV }}
+                    app. The minimum version required to use the app is version {{ minV }}
                 </small>
             </p>
         </div>
