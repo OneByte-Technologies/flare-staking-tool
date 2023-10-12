@@ -6,7 +6,7 @@
                 <li>Enter your PIN and access your device.</li>
                 <li>
                     Ensure you have installed the
-                    <b>Avalanche v{{ minV }}</b>
+                    <b>Avalanche App v{{ minV }}</b>
                     or above and open it on your device.
                 </li>
             </ol>
