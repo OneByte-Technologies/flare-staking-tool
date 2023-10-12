@@ -242,6 +242,9 @@ export default class AddressBinder extends Vue {
             const genericError =
                 'Something went wrong while binding your address. Please try again.'
             this.bindingError = e?.reason || genericError
+            if (this.bindingError.includes('0x6986')) {
+            this.bindingError = 'Ledger Device: Rejected Signing'
+            }
             this.bindingDetailedError = e?.error?.message || ''
         }
         this.isAddressBindingPending = false
