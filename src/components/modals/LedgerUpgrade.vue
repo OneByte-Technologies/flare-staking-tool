@@ -12,7 +12,7 @@
             </ol>
             <p style="margin-top: 12px !important">
                 <small>
-                    If you do not have the Flare app on your ledger, please add it through the
+                    If you do not have the Avalanche app on your ledger, please add it through the
                     <a href="https://www.ledger.com/ledger-live/download" target="_blank">
                         Ledger Live
                     </a>
