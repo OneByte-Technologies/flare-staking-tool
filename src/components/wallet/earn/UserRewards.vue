@@ -34,6 +34,7 @@
                 ></AvaxInput>
             </div>
             <div class="claimbutton">
+                <p class="err">{{ err }}</p>
                 <v-btn
                     v-if="canClaim"
                     @click="claimRewards"
@@ -85,6 +86,7 @@ export default class UserRewards extends Vue {
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
     inputReward: BN = new BN(0)
     isClaimRewardPending = false
+    err = ''
 
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
@@ -125,9 +127,12 @@ export default class UserRewards extends Vue {
         this.$store.dispatch('Earn/rewardCheck')
 
         // Update every 5 minutes
-        this.updateInterval = setInterval(() => {
-            this.$store.dispatch('Earn/refreshRewards')
-        }, 5 * 60 * 1000)
+        this.updateInterval = setInterval(
+            () => {
+                this.$store.dispatch('Earn/refreshRewards')
+            },
+            5 * 60 * 1000
+        )
     }
 
     destroyed() {
@@ -142,75 +147,84 @@ export default class UserRewards extends Vue {
     }
 
     async claimRewards() {
-        this.isClaimRewardPending = true
-        const wallet = this.$store.state.activeWallet
-        const cAddress = wallet.getEvmChecksumAddress()
-        const rpcUrl: string = this.getIp()
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-        const contractAddress = await this.getContractAddress(
-            ava.getHRP(),
-            validatorRewardManagerContractName
-        )
-        const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        const nonce = await provider.getTransactionCount(cAddress)
-        let gasEstimate
         try {
-            gasEstimate = await contract.estimateGas.claim(
+            this.isClaimRewardPending = true
+            const wallet = this.$store.state.activeWallet
+            const cAddress = wallet.getEvmChecksumAddress()
+            const rpcUrl: string = this.getIp()
+            const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+            const contractAddress = await this.getContractAddress(
+                ava.getHRP(),
+                validatorRewardManagerContractName
+            )
+            const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
+            const contract = new ethers.Contract(contractAddress, abi, provider)
+            const nonce = await provider.getTransactionCount(cAddress)
+            let gasEstimate
+            try {
+                gasEstimate = await contract.estimateGas.claim(
+                    cAddress,
+                    cAddress,
+                    this.inputReward.mul(new BN(1000000000)).toString(),
+                    false,
+                    {
+                        from: cAddress,
+                    }
+                )
+            } catch (error) {
+                console.log('error', error)
+                console.log('Incorrect arguments passed')
+            }
+            const gasPrice = await provider.getGasPrice()
+            console.log('gas Price', gasPrice, 'gas Estimate', gasEstimate)
+            const populatedTx = await contract.populateTransaction.claim(
                 cAddress,
                 cAddress,
                 this.inputReward.mul(new BN(1000000000)).toString(),
-                false,
-                {
-                    from: cAddress,
-                }
+                false
             )
-        } catch (error) {
-            console.log('error', error)
-            console.log('Incorrect arguments passed')
-        }
-        const gasPrice = await provider.getGasPrice()
-        console.log('gas Price', gasPrice, 'gas Estimate', gasEstimate)
-        const populatedTx = await contract.populateTransaction.claim(
-            cAddress,
-            cAddress,
-            this.inputReward.mul(new BN(1000000000)).toString(),
-            false
-        )
-        console.log('Populated Tx', populatedTx)
-        const chainId = ava.getNetworkID()
-        const unsignedTx = {
-            ...populatedTx,
-            nonce,
-            chainId: chainId,
-            gasPrice,
-            gasLimit: gasEstimate,
-        }
-        console.log('unsignedtx', unsignedTx)
+            console.log('Populated Tx', populatedTx)
+            const chainId = ava.getNetworkID()
+            const unsignedTx = {
+                ...populatedTx,
+                nonce,
+                chainId: chainId,
+                gasPrice,
+                gasLimit: gasEstimate,
+            }
+            console.log('unsignedtx', unsignedTx)
 
-        let signedTx
+            let signedTx
 
-        if (wallet.type === 'ledger') {
-            const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
-            const txHash = ethers.utils.keccak256(serializedUnsignedTx).slice(2)
-            const txBuffer = Buffer.from(txHash, 'hex')
-            let signature = ''
-            try {
-                signature = await wallet.signContractLedger(txBuffer)
-            } catch (e) {
-                console.log(e)
+            if (wallet.type === 'ledger') {
+                const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
+                const txHash = ethers.utils.keccak256(serializedUnsignedTx).slice(2)
+                const txBuffer = Buffer.from(txHash, 'hex')
+                let signature = ''
+                try {
+                    signature = await wallet.signContractLedger(txBuffer)
+                } catch (e) {
+                    console.log(e)
+                    this.isClaimRewardPending = false
+                    console.error(e)
+                    throw e
+                }
+
+                signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
+            } else {
+                const ethersWallet = new ethers.Wallet(wallet.ethKey)
+                signedTx = await ethersWallet.signTransaction(unsignedTx)
             }
 
-            signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
-        } else {
-            const ethersWallet = new ethers.Wallet(wallet.ethKey)
-            signedTx = await ethersWallet.signTransaction(unsignedTx)
+            const txId = await contract.provider.sendTransaction(signedTx)
+            this.isClaimRewardPending = false
+            console.log('txId', txId)
+            this.viewRewards()
+        } catch (e) {
+            this.isClaimRewardPending = false
+            console.error(e)
+            throw e
         }
-
-        const txId = await contract.provider.sendTransaction(signedTx)
-        this.isClaimRewardPending = false
-        console.log('txId', txId)
-        this.viewRewards()
     }
 
     getIp() {
@@ -338,6 +352,11 @@ label {
     .grid > div {
         margin: 10px;
     }
+}
+
+.err {
+    margin: 14px 0 !important;
+    font-size: 14px;
 }
 
 .claimbutton {
