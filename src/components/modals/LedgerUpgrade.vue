@@ -6,7 +6,7 @@
                 <li>Enter your PIN and access your device.</li>
                 <li>
                     Ensure you have installed the
-                    <b>Flare App v{{ minV }}</b>
+                    <b>Avalanche v{{ minV }}</b>
                     or above and open it on your device.
                 </li>
             </ol>
