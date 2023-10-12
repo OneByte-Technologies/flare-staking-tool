@@ -127,12 +127,9 @@ export default class UserRewards extends Vue {
         this.$store.dispatch('Earn/rewardCheck')
 
         // Update every 5 minutes
-        this.updateInterval = setInterval(
-            () => {
-                this.$store.dispatch('Earn/refreshRewards')
-            },
-            5 * 60 * 1000
-        )
+        this.updateInterval = setInterval(() => {
+            this.$store.dispatch('Earn/refreshRewards')
+        }, 5 * 60 * 1000)
     }
 
     destroyed() {

@@ -425,7 +425,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
     // Ideally we wont use this function at all, but ledger is not ready yet.
     async signTransactionHash<
         UnsignedTx extends AVMUnsignedTx | PlatformUnsignedTx | EVMUnsignedTx,
-        SignedTx extends AVMTx | PlatformTx | EvmTx,
+        SignedTx extends AVMTx | PlatformTx | EvmTx
     >(unsignedTx: UnsignedTx, paths: string[], chainId: ChainIdType): Promise<SignedTx> {
         const txbuff = unsignedTx.toBuffer()
         const msg: BufferAvax = BufferAvax.from(createHash('sha256').update(txbuff).digest())
@@ -483,7 +483,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
     // Used for signing transactions that are parsable
     async signTransactionParsable<
         UnsignedTx extends PlatformUnsignedTx | EVMUnsignedTx,
-        SignedTx extends AVMTx | PlatformTx | EvmTx,
+        SignedTx extends AVMTx | PlatformTx | EvmTx
     >(unsignedTx: UnsignedTx, paths: string[], chainId: ChainIdType): Promise<SignedTx> {
         const cKeyChain = avalanche.CChain().keyChain()
         const txHashes = unsignedTx.prepareUnsignedHashes(cKeyChain)
@@ -547,8 +547,8 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             store.commit('Ledger/closeModal')
             console.error(e)
             let err
-            const msg: string = e.TransportStatusError.message
-            if (msg.includes('0x6896')) {
+            const msg: string = e.message
+            if (msg.includes('0x6986')) {
                 err = 'Ledger Device: Signing Rejected'
             } else {
                 err = e.message
@@ -626,9 +626,9 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         chainId: ChainIdType
     ): ILedgerBlockMessage[] {
         const tx =
-            ((
-                unsignedTx as AVMUnsignedTx | PlatformUnsignedTx
-            ).getTransaction() as AddValidatorTx) || AddDelegatorTx
+            ((unsignedTx as
+                | AVMUnsignedTx
+                | PlatformUnsignedTx).getTransaction() as AddValidatorTx) || AddDelegatorTx
         const txType = tx.getTxType()
         const messages: ILedgerBlockMessage[] = []
 
@@ -873,8 +873,8 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             store.commit('Ledger/closeModal')
             console.error(e)
             let err
-            const msg: string = e.TransportStatusError.message
-            if (msg.includes('0x6896')) {
+            const msg: string = e.message
+            if (msg.includes('0x6986')) {
                 err = 'Ledger Device: Rejected Signing'
             } else {
                 err = e.message
@@ -944,8 +944,8 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             store.commit('Ledger/closeModal')
             console.error(e)
             let err
-            const msg: string = e.TransportStatusError.message
-            if (msg.includes('0x6896')) {
+            const msg: string = e.message
+            if (msg.includes('0x6986')) {
                 err = 'Ledger Device: Rejected Signing'
             } else {
                 err = e.message
