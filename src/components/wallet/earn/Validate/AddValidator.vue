@@ -673,6 +673,8 @@ export default class AddValidator extends Vue {
             this.err = this.$t('staking.validate.errs.id') as string
         } else if (msg.includes('address format')) {
             this.err = this.$t('staking.validate.errs.address') as string
+        } else if (msg.includes('0x6986')) {
+            this.err = 'Ledger Device: Rejected Signing'
         } else {
             this.err = err.message
         }

@@ -127,9 +127,12 @@ export default class UserRewards extends Vue {
         this.$store.dispatch('Earn/rewardCheck')
 
         // Update every 5 minutes
-        this.updateInterval = setInterval(() => {
-            this.$store.dispatch('Earn/refreshRewards')
-        }, 5 * 60 * 1000)
+        this.updateInterval = setInterval(
+            () => {
+                this.$store.dispatch('Earn/refreshRewards')
+            },
+            5 * 60 * 1000
+        )
     }
 
     destroyed() {
@@ -200,11 +203,16 @@ export default class UserRewards extends Vue {
                 let signature = ''
                 try {
                     signature = await wallet.signContractLedger(txBuffer)
-                } catch (e) {
+                } catch (e: any) {
                     console.log(e)
                     this.isClaimRewardPending = false
-                    console.error(e)
-                    throw e
+                    const msg: string = e.message
+                    if (msg.includes('0x6986')) {
+                        this.err = 'Ledger Device: Rejected Signing'
+                    } else {
+                        this.err = e.message
+                    }
+                    throw this.err
                 }
 
                 signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
@@ -217,10 +225,15 @@ export default class UserRewards extends Vue {
             this.isClaimRewardPending = false
             console.log('txId', txId)
             this.viewRewards()
-        } catch (e) {
+        } catch (e: any) {
             this.isClaimRewardPending = false
-            console.error(e)
-            throw e
+            const msg: string = e.message
+            if (msg.includes('0x6986')) {
+                this.err = 'Ledger Device: Rejected Signing'
+            } else {
+                this.err = e.message
+            }
+            throw this.err
         }
     }
 
