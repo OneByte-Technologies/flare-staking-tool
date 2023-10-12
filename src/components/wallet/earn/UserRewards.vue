@@ -24,8 +24,25 @@
                 <p>
                     {{ rewardBig(unclaimedRewards) }}
                 </p>
+                <div style="max-width: 90%; margin-top: 12px" v-if="sendTo === 'anotherWallet'">
+                    <v-text-field
+                        class="pass"
+                        label="Custom Wallet Address"
+                        dense
+                        solo
+                        type="text/plain"
+                        v-model="customAddress"
+                        hide-details
+                    ></v-text-field>
+                </div>
             </div>
             <div>
+                <RadioButtons
+                    :labels="['Send to My Wallet', 'Send to Another Wallet']"
+                    :keys="['myWallet', 'anotherWallet']"
+                    :disabled="false"
+                    v-model="sendTo"
+                ></RadioButtons>
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput
                     :max="unclaimedRewards"
@@ -70,11 +87,13 @@ import {
     validatorRewardManagerContractName,
 } from '@/views/wallet/FlareContractConstants'
 import AvaxInput from '@/components/misc/AvaxInput.vue'
+import RadioButtons from '@/components/misc/RadioButtons.vue'
 
 @Component({
     components: {
         UserRewardRow,
         AvaxInput,
+        RadioButtons,
     },
 })
 export default class UserRewards extends Vue {
@@ -85,6 +104,8 @@ export default class UserRewards extends Vue {
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
     inputReward: BN = new BN(0)
     isClaimRewardPending = false
+    sendTo: string = 'myWallet' // Default to 'My Wallet'
+    customAddress: string = ''
 
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
@@ -145,6 +166,7 @@ export default class UserRewards extends Vue {
         this.isClaimRewardPending = true
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
+        const recipientAddress = this.sendTo === 'anotherWallet' ? this.customAddress : cAddress
         const rpcUrl: string = this.getIp()
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
         const contractAddress = await this.getContractAddress(
@@ -158,7 +180,7 @@ export default class UserRewards extends Vue {
         try {
             gasEstimate = await contract.estimateGas.claim(
                 cAddress,
-                cAddress,
+                recipientAddress,
                 this.inputReward.mul(new BN(1000000000)).toString(),
                 false,
                 {
@@ -173,7 +195,7 @@ export default class UserRewards extends Vue {
         console.log('gas Price', gasPrice, 'gas Estimate', gasEstimate)
         const populatedTx = await contract.populateTransaction.claim(
             cAddress,
-            cAddress,
+            recipientAddress,
             this.inputReward.mul(new BN(1000000000)).toString(),
             false
         )
@@ -211,6 +233,12 @@ export default class UserRewards extends Vue {
         this.isClaimRewardPending = false
         console.log('txId', txId)
         this.viewRewards()
+        // Dispatch a success notification
+        this.$store.dispatch('Notifications/add', {
+            title: 'Claim Reward',
+            message: 'Reward claimed successfully',
+            type: 'success',
+        })
     }
 
     getIp() {
