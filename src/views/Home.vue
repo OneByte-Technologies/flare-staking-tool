@@ -29,7 +29,7 @@
                                     </router-link>
                                 </div>
                             </div>
-                            <div class="login_option">
+                            <!-- <div class="login_option">
                                 <header>
                                     <div class="img_container">
                                         <img
@@ -45,8 +45,8 @@
                                     </div>
                                     <h2>{{ $t('home.create.title') }}</h2>
                                     <p>{{ $t('home.create.desc') }}</p>
-                                </header>
-                                <div>
+                                </header> -->
+                            <!-- <div>
                                     <router-link
                                         data-cy="create"
                                         to="/create"
@@ -54,8 +54,8 @@
                                     >
                                         {{ $t('home.create.submit') }}
                                     </router-link>
-                                </div>
-                            </div>
+                                </div> -->
+                            <!-- </div> -->
                         </div>
                         <ToS class="tos" style="align-self: center; margin: 30px !important"></ToS>
                     </div>
@@ -108,9 +108,10 @@ export default class Home extends Vue {}
 
         .login_wrapper {
             margin-top: 60px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            column-gap: main.$container-padding;
+            display: flex;
+            // grid-template-columns: 1fr 1fr;
+            // column-gap: main.$container-padding;
+            justify-content: center;
 
             .login_option {
                 display: flex;
