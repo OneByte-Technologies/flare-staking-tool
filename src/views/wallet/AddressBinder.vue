@@ -218,6 +218,8 @@ export default class AddressBinder extends Vue {
                     signature = await this.wallet.signContractLedger(txBuffer)
                 } catch (e) {
                     console.log(e)
+                    this.isAddressBindingPending = false
+                    this.bindingError = 'Ledger Device: Rejected Signing'
                 }
 
                 signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
@@ -242,9 +244,6 @@ export default class AddressBinder extends Vue {
             const genericError =
                 'Something went wrong while binding your address. Please try again.'
             this.bindingError = e?.reason || genericError
-            if (e.includes('Rejected')) {
-                this.bindingError = 'Ledger Device: Rejected Signing'
-            }
             this.bindingDetailedError = e?.error?.message || ''
         }
         this.isAddressBindingPending = false
