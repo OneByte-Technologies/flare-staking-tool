@@ -229,7 +229,8 @@ export default class AddressBinder extends Vue {
             }
             const txId = await contract.provider.sendTransaction(signedTx)
             console.log('txId', txId)
-            await this.delay(2500)
+            const status = await txId.wait()
+            console.log('status', status)
             const result = await contract.cAddressToPAddress(cAddress)
 
             if (result && result !== '0x0000000000000000000000000000000000000000') {
@@ -248,10 +249,6 @@ export default class AddressBinder extends Vue {
             this.bindingDetailedError = e?.error?.message || ''
         }
         this.isAddressBindingPending = false
-    }
-
-    delay(t: number) {
-        return new Promise((resolve) => setTimeout(resolve, t))
     }
 
     onSuccess() {
