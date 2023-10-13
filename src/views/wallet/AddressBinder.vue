@@ -229,8 +229,7 @@ export default class AddressBinder extends Vue {
             }
             const txId = await contract.provider.sendTransaction(signedTx)
             console.log('txId', txId)
-            const status = await txId.wait()
-            console.log('status', status)
+            await txId.wait()
             const result = await contract.cAddressToPAddress(cAddress)
 
             if (result && result !== '0x0000000000000000000000000000000000000000') {
