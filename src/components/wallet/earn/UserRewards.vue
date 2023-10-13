@@ -127,9 +127,12 @@ export default class UserRewards extends Vue {
         this.$store.dispatch('Earn/rewardCheck')
 
         // Update every 5 minutes
-        this.updateInterval = setInterval(() => {
-            this.$store.dispatch('Earn/refreshRewards')
-        }, 5 * 60 * 1000)
+        this.updateInterval = setInterval(
+            () => {
+                this.$store.dispatch('Earn/refreshRewards')
+            },
+            5 * 60 * 1000
+        )
     }
 
     destroyed() {
@@ -203,8 +206,7 @@ export default class UserRewards extends Vue {
                 } catch (e: any) {
                     console.log(e)
                     this.isClaimRewardPending = false
-                    const msg: string = e.message
-                    if (msg.includes('0x6986')) {
+                    if (e.includes('Rejected')) {
                         this.err = 'Ledger Device: Rejected Signing'
                     } else {
                         this.err = e.message
