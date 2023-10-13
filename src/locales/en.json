@@ -49,7 +49,7 @@
         }
     },
     "access": {
-        "title": "Access your wallet",
+        "title": "How do you want to access your wallet? ",
         "create": "Don't have a wallet?",
         "but_private_key": "Private Key",
         "but_mnemonic": "Mnemonic Key Phrase",
