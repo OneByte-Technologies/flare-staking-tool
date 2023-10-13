@@ -6,6 +6,7 @@
                 class="ledger-input"
                 v-model="selectedStandard"
                 @change="onSelectStandard"
+                :disabled="isFetchingAddresses"
                 :items="standard"
                 label="Please select a standard for derivation path"
                 filled
@@ -63,9 +64,9 @@ const addressCount = 10
     },
 })
 export default class LedgerCard extends Vue {
-    selectedStandard: string = ''
+    selectedStandard: string = 'BIP44'
     selectedAddress: string = ''
-    isFetchingAddresses: boolean = false
+    isFetchingAddresses: boolean = true
     version?: string = undefined
     addressList: string[] = []
     derivedAddress: derivedAddresses[] = []
@@ -168,6 +169,10 @@ export default class LedgerCard extends Vue {
         console.log('returning derivation path')
 
         return selectedDerivedAddress?.derivationPath
+    }
+
+    mounted() {
+        this.init()
     }
 
     async onSelectStandard() {
