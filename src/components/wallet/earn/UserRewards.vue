@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="grid">
+        <div v-if="!isFetchingRewards" class="grid">
             <div>
                 <label style="text-align: center">
                     {{ $t('staking.rewards.total') }}
@@ -67,6 +67,10 @@
                 </v-btn>
             </div>
         </div>
+        <div class="loader" v-else>
+            <fa icon="spinner" spin></fa>
+            <div class="fetch-text">Fetching rewards...</div>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -104,6 +108,7 @@ export default class UserRewards extends Vue {
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
     inputReward: BN = new BN(0)
     isClaimRewardPending = false
+    isFetchingRewards = true
     err = ''
     sendTo: string = 'myWallet' // Default to 'My Wallet'
     customAddress: string = ''
@@ -112,7 +117,7 @@ export default class UserRewards extends Vue {
         input_reward: AvaxInput
     }
 
-    async viewRewards() {
+    async viewRewards(fromClaimRewards: boolean) {
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
         const rpcUrl: string = this.getIp()
@@ -132,11 +137,22 @@ export default class UserRewards extends Vue {
         this.unclaimedRewards = unclaimedRewards
         console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
         this.rewardExist()
+        this.isFetchingRewards = false
+
+        if (fromClaimRewards) {
+            this.resetInputs()
+            this.isClaimRewardPending = false
+            this.$store.dispatch('Notifications/add', {
+                title: 'Claim Reward',
+                message: 'Reward claimed successfully',
+                type: 'success',
+            })
+        }
     }
 
     async mounted() {
         console.log('mounted')
-        this.viewRewards()
+        this.viewRewards(false)
     }
 
     get userAddresses() {
@@ -247,15 +263,8 @@ export default class UserRewards extends Vue {
             }
 
             const txId = await contract.provider.sendTransaction(signedTx)
-            this.isClaimRewardPending = false
             console.log('txId', txId)
-            this.viewRewards()
-            this.resetInputs()
-            this.$store.dispatch('Notifications/add', {
-                title: 'Claim Reward',
-                message: 'Reward claimed successfully',
-                type: 'success',
-            })
+            this.viewRewards(true)
         } catch (e: any) {
             this.isClaimRewardPending = false
             this.err = e
@@ -347,10 +356,25 @@ export default class UserRewards extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../main';
+
+.loader {
+    text-align: center;
+    margin-top: 36px;
+
+    svg {
+        font-size: 30px;
+    }
+
+    .fetch-text {
+        margin-top: 8px;
+    }
+}
+
 .disabled-button {
     opacity: 0.4;
     pointer-events: none;
 }
+
 .user_rewards {
     padding-bottom: 5vh;
 }
@@ -375,7 +399,8 @@ label {
 
 .grid {
     margin: 20px auto;
-    width: 100%; /* Set width to 100% for responsiveness */
+    width: 100%;
+    /* Set width to 100% for responsiveness */
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-row-gap: 20px;
@@ -386,6 +411,7 @@ label {
     .grid {
         display: block;
     }
+
     .grid > div {
         margin: 10px;
     }
