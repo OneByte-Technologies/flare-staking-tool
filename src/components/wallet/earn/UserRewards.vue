@@ -24,31 +24,28 @@
                 <p>
                     {{ rewardBig(unclaimedRewards) }}
                 </p>
-                <div style="max-width: 90%; margin-top: 12px" v-if="sendTo === 'anotherWallet'">
-                    <v-text-field
-                        class="pass"
-                        label="Custom Wallet Address"
-                        dense
-                        solo
-                        type="text/plain"
-                        v-model="customAddress"
-                        hide-details
-                    ></v-text-field>
-                </div>
             </div>
             <div>
-                <RadioButtons
-                    :labels="['Send to My Wallet', 'Send to Another Wallet']"
-                    :keys="['myWallet', 'anotherWallet']"
-                    :disabled="false"
-                    v-model="sendTo"
-                ></RadioButtons>
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput
                     :max="unclaimedRewards"
                     v-model="inputReward"
                     :symbol="symbol"
                 ></AvaxInput>
+            </div>
+            <div v-if="canClaim">
+                <label>Send rewards to</label>
+
+                <RadioButtons
+                    :labels="['My Wallet', 'Another Wallet']"
+                    :keys="['myWallet', 'anotherWallet']"
+                    :disabled="false"
+                    v-model="sendTo"
+                ></RadioButtons>
+            </div>
+            <div class="custom-address" v-if="sendTo === 'anotherWallet' && canClaim">
+                <label style="">C-Chain Address</label>
+                <input type="text" v-model="customAddress" style="width: 100%" placeholder="0x.." />
             </div>
             <div class="claimbutton">
                 <p class="err">{{ err }}</p>
@@ -161,7 +158,8 @@ export default class UserRewards extends Vue {
     isRewardValid(): boolean {
         const rewardAmt = this.inputReward.mul(new BN(1000000000))
         console.log('Reward Amount ', rewardAmt)
-        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
+        const isAddressPresent = this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true
+        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt) && isAddressPresent
     }
 
     async claimRewards() {
@@ -389,5 +387,11 @@ label {
     grid-column: span 2;
     display: flex;
     justify-content: center;
+}
+
+input {
+    color: var(--primary-color);
+    background-color: var(--bg-light);
+    padding: 6px 14px;
 }
 </style>
