@@ -45,16 +45,7 @@
             </div>
             <div class="custom-address" v-if="sendTo === 'anotherWallet' && canClaim">
                 <label style="">C-Chain Address</label>
-
-                <v-text-field
-                    class="pass"
-                    label="0x.."
-                    dense
-                    solo
-                    type="text/plain"
-                    v-model="customAddress"
-                    hide-details
-                ></v-text-field>
+                <input type="text" v-model="customAddress" style="width: 100%" placeholder="0x.." />
             </div>
             <div class="claimbutton">
                 <p class="err">{{ err }}</p>
@@ -166,15 +157,8 @@ export default class UserRewards extends Vue {
 
     isRewardValid(): boolean {
         const rewardAmt = this.inputReward.mul(new BN(1000000000))
-        console.log('Reward Amount ', rewardAmt)
-        console.log(rewardAmt.gte(new BN(0)), '1')
-        console.log(this.unclaimedRewards.gte(rewardAmt), '245')
-        console.log(this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true, '3')
-        return (
-            rewardAmt.gt(new BN(0)) &&
-            this.unclaimedRewards.gte(rewardAmt) &&
-            (this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true)
-        )
+        const isValidPresent = this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true
+        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt) && isValidPresent
     }
 
     async claimRewards() {
@@ -285,7 +269,6 @@ export default class UserRewards extends Vue {
     }
 
     rewardExist() {
-        console.log(this.unclaimedRewards.toString(), 'unclaimed')
         if (this.unclaimedRewards.eq(new BN(0))) {
             this.canClaim = false
         }
@@ -348,9 +331,6 @@ export default class UserRewards extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../main';
-.pass {
-    background-color: var(--bg-light) !important;
-}
 .disabled-button {
     opacity: 0.4;
     pointer-events: none;
@@ -408,9 +388,9 @@ label {
     justify-content: center;
 }
 
-.custom-address {
-    .v-input__slot {
-        box-shadow: none;
-    }
+input {
+    color: var(--primary-color);
+    background-color: var(--bg-light);
+    padding: 6px 14px;
 }
 </style>
