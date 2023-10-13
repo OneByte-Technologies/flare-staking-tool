@@ -59,23 +59,23 @@ const routes = [
                 name: 'access',
                 component: Menu,
             },
-            {
-                path: 'keystore',
-                component: Keystore,
-            },
-            {
-                path: 'privatekey',
-                component: PrivateKey,
-            },
-            {
-                path: 'mnemonic',
-                component: Mnemonic,
-            },
-            {
-                path: 'account/:index',
-                component: Account,
-                name: 'Account',
-            },
+            // {
+            //     path: 'keystore',
+            //     component: Keystore,
+            // },
+            // {
+            //     path: 'privatekey',
+            //     component: PrivateKey,
+            // },
+            // {
+            //     path: 'mnemonic',
+            //     component: Mnemonic,
+            // },
+            // {
+            //     path: 'account/:index',
+            //     component: Account,
+            //     name: 'Account',
+            // },
             {
                 path: 'xpub',
                 component: Xpub,
@@ -93,12 +93,12 @@ const routes = [
         name: 'legal',
         component: Legal,
     },
-    {
-        path: '/create',
-        name: 'create',
-        component: Create,
-        beforeEnter: ifNotAuthenticated,
-    },
+    // {
+    //     path: '/create',
+    //     name: 'create',
+    //     component: Create,
+    //     beforeEnter: ifNotAuthenticated,
+    // },
     {
         path: '/xpub',
         name: 'wallet_readonly',

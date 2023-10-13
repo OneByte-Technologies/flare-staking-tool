@@ -1,11 +1,11 @@
 <template>
     <div class="access_card">
         <h1>{{ $t('access.title') }}</h1>
-        <router-link to="/create" class="link">{{ $t('access.create') }}</router-link>
+        <!-- <router-link to="/create" class="link">{{ $t('access.create') }}</router-link> -->
         <div class="menus">
-            <AccountsFound class="accounts_menu"></AccountsFound>
+            <!-- <AccountsFound class="accounts_menu"></AccountsFound> -->
             <div class="options">
-                <router-link to="/access/privatekey" class="menu_option button_primary">
+                <!-- <router-link to="/access/privatekey" class="menu_option button_primary">
                     {{ $t('access.but_private_key') }}
                     <ImageDayNight
                         day="/img/access_icons/day/privatekey.svg"
@@ -25,14 +25,14 @@
                         day="/img/access_icons/day/keystore.svg"
                         night="/img/access_icons/night/keystore.svg"
                     ></ImageDayNight>
-                </router-link>
+                </router-link> -->
 
                 <router-link
                     v-if="!disabled"
                     to="/access/ledger"
                     class="menu_option button_primary"
                 >
-                    Ledger (Recommended)
+                    Ledger
                     <ImageDayNight
                         day="/img/access_icons/day/ledger.svg"
                         night="/img/access_icons/night/ledger.svg"
@@ -40,7 +40,7 @@
                     ></ImageDayNight>
                 </router-link>
                 <div v-else class="disabled_button menu_option button_primary">
-                    Ledger (Recommended)
+                    Ledger
 
                     <span v-if="disabled" class="no_firefox">
                         {{ browserName }} is not supported
