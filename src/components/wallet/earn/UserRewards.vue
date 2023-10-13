@@ -24,31 +24,37 @@
                 <p>
                     {{ rewardBig(unclaimedRewards) }}
                 </p>
-                <div style="max-width: 90%; margin-top: 12px" v-if="sendTo === 'anotherWallet'">
-                    <v-text-field
-                        class="pass"
-                        label="Custom Wallet Address"
-                        dense
-                        solo
-                        type="text/plain"
-                        v-model="customAddress"
-                        hide-details
-                    ></v-text-field>
-                </div>
             </div>
-            <div>
-                <RadioButtons
-                    :labels="['Send to My Wallet', 'Send to Another Wallet']"
-                    :keys="['myWallet', 'anotherWallet']"
-                    :disabled="false"
-                    v-model="sendTo"
-                ></RadioButtons>
+            <div v-if="canClaim">
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput
                     :max="unclaimedRewards"
                     v-model="inputReward"
                     :symbol="symbol"
                 ></AvaxInput>
+            </div>
+            <div v-if="canClaim">
+                <label>Send rewards to</label>
+
+                <RadioButtons
+                    :labels="['My Wallet', 'Another Wallet']"
+                    :keys="['myWallet', 'anotherWallet']"
+                    :disabled="false"
+                    v-model="sendTo"
+                ></RadioButtons>
+            </div>
+            <div class="custom-address" v-if="sendTo === 'anotherWallet' && canClaim">
+                <label style="">C-Chain Address</label>
+
+                <v-text-field
+                    class="pass"
+                    label="0x.."
+                    dense
+                    solo
+                    type="text/plain"
+                    v-model="customAddress"
+                    hide-details
+                ></v-text-field>
             </div>
             <div class="claimbutton">
                 <p class="err">{{ err }}</p>
@@ -161,7 +167,14 @@ export default class UserRewards extends Vue {
     isRewardValid(): boolean {
         const rewardAmt = this.inputReward.mul(new BN(1000000000))
         console.log('Reward Amount ', rewardAmt)
-        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
+        console.log(rewardAmt.gte(new BN(0)), '1')
+        console.log(this.unclaimedRewards.gte(rewardAmt), '245')
+        console.log(this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true, '3')
+        return (
+            rewardAmt.gt(new BN(0)) &&
+            this.unclaimedRewards.gte(rewardAmt) &&
+            (this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true)
+        )
     }
 
     async claimRewards() {
@@ -272,6 +285,7 @@ export default class UserRewards extends Vue {
     }
 
     rewardExist() {
+        console.log(this.unclaimedRewards.toString(), 'unclaimed')
         if (this.unclaimedRewards.eq(new BN(0))) {
             this.canClaim = false
         }
@@ -334,6 +348,9 @@ export default class UserRewards extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../main';
+.pass {
+    background-color: var(--bg-light) !important;
+}
 .disabled-button {
     opacity: 0.4;
     pointer-events: none;
@@ -389,5 +406,11 @@ label {
     grid-column: span 2;
     display: flex;
     justify-content: center;
+}
+
+.custom-address {
+    .v-input__slot {
+        box-shadow: none;
+    }
 }
 </style>
