@@ -25,7 +25,7 @@
                     {{ rewardBig(unclaimedRewards) }}
                 </p>
             </div>
-            <div>
+            <div v-if="canClaim">
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput
                     :max="unclaimedRewards"
@@ -159,7 +159,7 @@ export default class UserRewards extends Vue {
         const rewardAmt = this.inputReward.mul(new BN(1000000000))
         console.log('Reward Amount ', rewardAmt)
         const isAddressPresent = this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true
-        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt) && isAddressPresent
+        return rewardAmt.gt(new BN(0)) && this.unclaimedRewards.gte(rewardAmt) && isAddressPresent
     }
 
     async claimRewards() {
@@ -272,8 +272,9 @@ export default class UserRewards extends Vue {
     rewardExist() {
         if (this.unclaimedRewards.eq(new BN(0))) {
             this.canClaim = false
+        }else{
+            this.canClaim = true
         }
-        this.canClaim = true
     }
 
     rewardBig(amt: BN): Big {
