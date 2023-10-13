@@ -389,6 +389,8 @@ export default class AddDelegator extends Vue {
         } else if (msg.includes('address format')) {
             this.err = this.$t('staking.delegate.errs.invalid_addr') as string
             // this.err = "Invalid address format. Your address must start with \"P-\"";
+        } else if (e.includes('Rejected')) {
+            this.err = e
         } else {
             this.err = e.message
         }
