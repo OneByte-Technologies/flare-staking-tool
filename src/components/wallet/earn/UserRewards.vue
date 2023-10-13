@@ -206,11 +206,7 @@ export default class UserRewards extends Vue {
                 } catch (e: any) {
                     console.log(e)
                     this.isClaimRewardPending = false
-                    if (e.includes('Rejected')) {
-                        this.err = 'Ledger Device: Rejected Signing'
-                    } else {
-                        this.err = e.message
-                    }
+                    this.err = e
                     throw this.err
                 }
 
