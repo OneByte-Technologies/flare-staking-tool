@@ -409,6 +409,7 @@ export default class ChainTransfer extends Vue {
                     break
             }
         } catch (e) {
+            this.exportState = TxState.failed
             throw e
         }
 

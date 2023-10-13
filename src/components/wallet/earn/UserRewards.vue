@@ -1,203 +1,208 @@
 <template>
     <div>
-        <div class="cols">
-            <form @submit.prevent="">
-                <transition-group name="fade" mode="out-in">
-                    <div key="form" class="ins_col">
-                        <div class="address-container" style="margin-top: 0px">
-                            <h4 class="light-heading">This is your original P Chain Address</h4>
-                            <p class="address-style" style="padding-bottom: 0px">
-                                {{ basePChainAddress }}
-                            </p>
-                        </div>
-                        <div class="address-container">
-                            <h4 class="light-heading">This is your encoded P Chain Address</h4>
-                            <p class="address-style">{{ encodePChainAddressToRegister }}</p>
-                            <input
-                                type="text"
-                                v-model="encodePChainAddressToRegister"
-                                style="width: 100%"
-                                placeholder="P chain address"
-                            />
-                        </div>
-                        <div class="address-container">
-                            <h4 class="light-heading">This is your C Chain Address</h4>
-                            <p class="address-style">
-                                {{ cChainAddressBinder }}
-                            </p>
-                            <input
-                                type="text"
-                                v-model="cChainAddress"
-                                style="width: 100%"
-                                placeholder="C chain address"
-                            />
-                            <div class="summary-warn">
-                                {{ $t('staking.addressBinder.summary.warn') }}
-                            </div>
-                        </div>
-                        <div class="address-container">
-                            <h4 class="light-heading">This is your Public Key</h4>
-                            <p class="address-style">
-                                {{ pubKey }}
-                            </p>
-                            <input
-                                type="text"
-                                v-model="pubKey"
-                                style="width: 100%"
-                                placeholder="publickey"
-                            />
-                        </div>
-                        <div v-if="success" class="complete">
-                            <h4>{{ $t('staking.transfer.success.titleAddressBind') }}</h4>
-                            <p style="color: var(--success); margin: 12px 0 !important">
-                                <fa icon="check-circle"></fa>
-                                {{ $t('staking.transfer.success.messageAddressBind') }}
-                            </p>
-                        </div>
-                        <v-btn
-                            v-else
-                            @click="bindAddress"
-                            block
-                            :class="[
-                                'button_secondary',
-                                {
-                                    'disabled-button':
-                                        isAddressBindingPending ||
-                                        registered ||
-                                        isInsufficientFunds,
-                                },
-                            ]"
-                            depressed
-                        >
-                            <span style="margin-right: 4px">Bind address</span>
-                            <fa v-if="isAddressBindingPending" icon="cog" spin></fa>
-                        </v-btn>
-                        <div v-if="isInsufficientFunds" class="summary-warn">
-                            <p>
-                                <fa icon="times-circle"></fa>
-                                {{ $t('staking.addressBinder.summary.insufficientFunds') }}
-                            </p>
-                        </div>
-                        <div class="summary-warn">
-                            <div v-if="bindingError" style="text-transform: capitalize">
-                                <fa icon="times-circle" style="margin-right: 4px"></fa>
-                                <span>{{ bindingError }}</span>
-                                <Tooltip
-                                    v-if="bindingDetailedError"
-                                    style="display: inline-block; margin-left: 4px"
-                                    :text="bindingDetailedError"
-                                >
-                                    <fa icon="question-circle"></fa>
-                                </Tooltip>
-                            </div>
-                        </div>
-                    </div>
-                </transition-group>
-            </form>
+        <div class="grid">
+            <div>
+                <label style="text-align: center">
+                    {{ $t('staking.rewards.total') }}
+                </label>
+                <p>
+                    {{ rewardBig(totalRewardNumber) }}
+                </p>
+            </div>
+            <div>
+                <label>
+                    {{ $t('staking.rewards.claimed') }}
+                </label>
+                <p>
+                    {{ rewardBig(claimedRewardNumber) }}
+                </p>
+            </div>
+            <div>
+                <label>
+                    {{ $t('staking.rewards.unclaimed') }}
+                </label>
+                <p>
+                    {{ rewardBig(unclaimedRewards) }}
+                </p>
+                <div style="max-width: 90%; margin-top: 12px" v-if="sendTo === 'anotherWallet'">
+                    <v-text-field
+                        class="pass"
+                        label="Custom Wallet Address"
+                        dense
+                        solo
+                        type="text/plain"
+                        v-model="customAddress"
+                        hide-details
+                    ></v-text-field>
+                </div>
+            </div>
+            <div>
+                <RadioButtons
+                    :labels="['Send to My Wallet', 'Send to Another Wallet']"
+                    :keys="['myWallet', 'anotherWallet']"
+                    :disabled="false"
+                    v-model="sendTo"
+                ></RadioButtons>
+                <label>{{ $t('staking.rewards.claim') }}</label>
+                <AvaxInput
+                    :max="unclaimedRewards"
+                    v-model="inputReward"
+                    :symbol="symbol"
+                ></AvaxInput>
+            </div>
+            <div class="claimbutton">
+                <p class="err">{{ err }}</p>
+                <v-btn
+                    v-if="canClaim"
+                    @click="claimRewards"
+                    :disabled="!isRewardValid()"
+                    :class="[
+                        'button_secondary',
+                        {
+                            'disabled-button': isClaimRewardPending,
+                        },
+                    ]"
+                >
+                    {{ $t('staking.rewards_card.submit') }}
+                    <fa style="margin-left: 4px" v-if="isClaimRewardPending" icon="cog" spin></fa>
+                </v-btn>
+            </div>
         </div>
     </div>
 </template>
-
 <script lang="ts">
-import { WalletType, WalletNameType } from '@/js/wallets/types'
-import { Vue, Component } from 'vue-property-decorator'
+import 'reflect-metadata'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { AvaWalletCore } from '../../../js/wallets/types'
+import UserRewardRow from '@/components/wallet/earn/UserRewardRow.vue'
+import { bnToBig } from '@/helpers/helper'
+import Big from 'big.js'
+import { BN } from 'avalanche'
+import { EarnState } from '@/store/modules/earn/types'
+import { ava } from '@/AVA'
+import { ethers } from 'ethers'
 import {
     defaultContractAddresses,
-    getAddressBinderABI,
+    getValidatorRewardManagerABI,
     getFlareContractRegistryABI,
-    addressBinderContractName,
-} from './FlareContractConstants'
-import { ethers } from 'ethers'
-import { bech32 } from 'bech32'
-import { ava } from '@/AVA'
-import Tooltip from '@/components/misc/Tooltip.vue'
-import { BN } from 'avalanche'
+    validatorRewardManagerContractName,
+} from '@/views/wallet/FlareContractConstants'
+import AvaxInput from '@/components/misc/AvaxInput.vue'
+import RadioButtons from '@/components/misc/RadioButtons.vue'
 
 @Component({
-    components: { Tooltip },
+    components: {
+        UserRewardRow,
+        AvaxInput,
+        RadioButtons,
+    },
 })
-export default class AddressBinder extends Vue {
-    success: boolean = false //old
-    registered: boolean = false //old
-    isAddressBindingPending = false
-    isInsufficientFunds: boolean = false
-    bindingError: string = ''
-    bindingDetailedError: string = ''
-    cChainAddress: string = ''
+export default class UserRewards extends Vue {
+    updateInterval: ReturnType<typeof setInterval> | undefined = undefined
+    canClaim: boolean = false
+    totalRewardNumber: BN = new BN(0)
+    claimedRewardNumber: BN = new BN(0)
+    unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
+    inputReward: BN = new BN(0)
+    isClaimRewardPending = false
+    err = ''
+    sendTo: string = 'myWallet' // Default to 'My Wallet'
+    customAddress: string = ''
 
-    get ethersWallet(): any {
-        return new ethers.Wallet(this.$store.state.activeWallet.ethKey)
-    }
-
-    get pubKey(): string {
-        return this.$store.state.activeWallet.type === 'ledger'
-            ? this.$store.state.activeWallet.publicKey
-            : this.ethersWallet.publicKey
-    }
-
-    get wallet(): WalletType {
-        return this.$store.state.activeWallet
-    }
-
-    get basePChainAddress(): string {
-        const addr = this.wallet.getAllAddressesP()
-        return addr[0]
-    }
-
-    get encodePChainAddressToRegister(): string {
-        return (
-            '0x' +
-            Buffer.from(
-                bech32.fromWords(bech32.decode(this.basePChainAddress.slice(2)).words)
-            ).toString('hex')
+    async viewRewards() {
+        const wallet = this.$store.state.activeWallet
+        const cAddress = wallet.getEvmChecksumAddress()
+        const rpcUrl: string = this.getIp()
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+        const contractAddress = await this.getContractAddress(
+            ava.getHRP(),
+            validatorRewardManagerContractName
         )
+        const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const rewards = await contract.getStateOfRewards(cAddress)
+        const totalRewardNumber: BN = new BN(rewards[0].toString())
+        this.totalRewardNumber = totalRewardNumber
+        const claimedRewardNumber: BN = new BN(rewards[1].toString())
+        this.claimedRewardNumber = claimedRewardNumber
+        const unclaimedRewards: BN = totalRewardNumber.sub(claimedRewardNumber)
+        this.unclaimedRewards = unclaimedRewards
+        console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
+        this.rewardExist()
     }
 
-    async bindAddress() {
-        this.isAddressBindingPending = true
-        this.bindingError = ''
-        this.bindingDetailedError = ''
+    async mounted() {
+        console.log('mounted')
+        this.viewRewards()
+    }
+
+    get userAddresses() {
+        let wallet: AvaWalletCore = this.$store.state.activeWallet
+        if (!wallet) return []
+
+        return wallet.getAllAddressesP()
+    }
+
+    created() {
+        this.$store.dispatch('Earn/refreshRewards')
+        this.$store.dispatch('Earn/rewardCheck')
+
+        // Update every 5 minutes
+        this.updateInterval = setInterval(() => {
+            this.$store.dispatch('Earn/refreshRewards')
+        }, 5 * 60 * 1000)
+    }
+
+    destroyed() {
+        // Clear interval if exists
+        this.updateInterval && clearInterval(this.updateInterval)
+    }
+
+    isRewardValid(): boolean {
+        const rewardAmt = this.inputReward.mul(new BN(1000000000))
+        console.log('Reward Amount ', rewardAmt)
+        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
+    }
+
+    async claimRewards() {
         try {
-            const cAddress = this.wallet.getEvmChecksumAddress()
-            this.cChainAddress = cAddress
+            this.isClaimRewardPending = true
+            const wallet = this.$store.state.activeWallet
+            const cAddress = wallet.getEvmChecksumAddress()
+            const recipientAddress = this.sendTo === 'anotherWallet' ? this.customAddress : cAddress
             const rpcUrl: string = this.getIp()
             const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
             const contractAddress = await this.getContractAddress(
                 ava.getHRP(),
-                addressBinderContractName
+                validatorRewardManagerContractName
             )
-            const abi = getAddressBinderABI() as ethers.ContractInterface
+            const abi = getValidatorRewardManagerABI() as ethers.ContractInterface
             const contract = new ethers.Contract(contractAddress, abi, provider)
             const nonce = await provider.getTransactionCount(cAddress)
-
-            const gasEstimate = await contract.estimateGas.registerAddresses(
-                this.pubKey,
-                this.encodePChainAddressToRegister,
-                cAddress,
-                { from: cAddress }
-            )
-            console.log('P-chain Address acc to tx', this.encodePChainAddressToRegister)
-            console.log('Gas Estimate', gasEstimate)
-            const gasPrice = await provider.getGasPrice()
-            console.log('Gas Price', gasPrice)
-            const balance = ethers.BigNumber.from((await this.getEthBalance()).toString())
-            const gasCost = gasEstimate.mul(gasPrice) // Calculate the gas cost
-            const hasEnoughFunds = balance.gte(gasCost)
-
-            if (!hasEnoughFunds) {
-                console.log('Insufficient funds')
-                // Store a variable for use in the template
-                this.isInsufficientFunds = true
-                this.isAddressBindingPending = false
-                return
+            let gasEstimate
+            try {
+                gasEstimate = await contract.estimateGas.claim(
+                    cAddress,
+                    recipientAddress,
+                    this.inputReward.mul(new BN(1000000000)).toString(),
+                    false,
+                    {
+                        from: cAddress,
+                    }
+                )
+            } catch (error) {
+                console.log('error', error)
+                console.log('Incorrect arguments passed')
             }
-
-            const populatedTx = await contract.populateTransaction.registerAddresses(
-                this.pubKey,
-                this.encodePChainAddressToRegister,
-                cAddress.toLowerCase()
+            const gasPrice = await provider.getGasPrice()
+            console.log('gas Price', gasPrice, 'gas Estimate', gasEstimate)
+            const populatedTx = await contract.populateTransaction.claim(
+                cAddress,
+                recipientAddress,
+                this.inputReward.mul(new BN(1000000000)).toString(),
+                false
             )
-            console.log('populated tx', populatedTx)
+            console.log('Populated Tx', populatedTx)
             const chainId = ava.getNetworkID()
             const unsignedTx = {
                 ...populatedTx,
@@ -207,86 +212,43 @@ export default class AddressBinder extends Vue {
                 gasLimit: gasEstimate,
             }
             console.log('unsignedtx', unsignedTx)
+
             let signedTx
 
-            if (this.wallet.type === 'ledger') {
+            if (wallet.type === 'ledger') {
                 const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
                 const txHash = ethers.utils.keccak256(serializedUnsignedTx).slice(2)
                 const txBuffer = Buffer.from(txHash, 'hex')
                 let signature = ''
                 try {
-                    signature = await this.wallet.signContractLedger(txBuffer)
-                } catch (e) {
+                    signature = await wallet.signContractLedger(txBuffer)
+                } catch (e: any) {
                     console.log(e)
+                    this.isClaimRewardPending = false
+                    this.err = e
+                    throw this.err
                 }
 
                 signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
             } else {
-                signedTx = await this.ethersWallet.signTransaction(unsignedTx)
+                const ethersWallet = new ethers.Wallet(wallet.ethKey)
+                signedTx = await ethersWallet.signTransaction(unsignedTx)
             }
+
             const txId = await contract.provider.sendTransaction(signedTx)
+            this.isClaimRewardPending = false
             console.log('txId', txId)
-            await this.delay(2500)
-            const result = await contract.cAddressToPAddress(cAddress)
-
-            if (result && result !== '0x0000000000000000000000000000000000000000') {
-                console.log('Success. You are registered')
-                this.registered = true
-                this.onSuccess()
-            } else {
-                console.log('Please Register')
-                this.registered = false
-                this.onFail()
-            }
+            this.viewRewards()
+            this.$store.dispatch('Notifications/add', {
+                title: 'Claim Reward',
+                message: 'Reward claimed successfully',
+                type: 'success',
+            })
         } catch (e: any) {
-            const genericError =
-                'Something went wrong while binding your address. Please try again.'
-            this.bindingError = e?.reason || genericError
-            if (e.includes('Rejected')) {
-                this.bindingError = 'Ledger Device: Rejected Signing'
-            }
-            this.bindingDetailedError = e?.error?.message || ''
+            this.isClaimRewardPending = false
+            this.err = e
+            throw this.err
         }
-        this.isAddressBindingPending = false
-    }
-
-    delay(t: any) {
-        return new Promise((resolve) => setTimeout(() => resolve, t))
-    }
-
-    onSuccess() {
-        this.success = true
-        this.$store.dispatch('Notifications/add', {
-            type: 'success',
-            title: 'Binding Complete',
-            message: 'You have registered',
-        })
-        this.$store.dispatch('updateIsRegistered')
-    }
-
-    onFail() {
-        this.success = false
-        this.$store.dispatch('Notifications/add', {
-            type: 'Fail',
-            title: 'Binding Error',
-            message: 'Please register again',
-        })
-    }
-
-    async getEthBalance() {
-        const bal: BN = await this.$store.state.activeWallet.getEthBalance()
-        return bal
-    }
-
-    privateKeyC(): string | null {
-        // if (this.walletType() !== 'ledger') {
-        let wallet = this.$store.state.activeWallet
-        return wallet.ethKey
-        // } else return null
-    }
-
-    walletType(): WalletNameType {
-        return this.wallet.type
     }
 
     getIp() {
@@ -299,19 +261,52 @@ export default class AddressBinder extends Vue {
         const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
         return rpcUrl
     }
-
-    get cChainAddressBinder() {
-        let wallet = this.activeWallet
-        if (!wallet) {
-            this.cChainAddress = '-'
-        } else {
-            this.cChainAddress = wallet.getEvmChecksumAddress()
+    get symbol() {
+        let symbol = ''
+        if (ava.getNetworkID() === 2) {
+            symbol = 'FLR'
+        } else if (ava.getNetworkID() === 114) {
+            symbol = 'C2FLR'
         }
-        return this.cChainAddress.toLowerCase()
+        return symbol
     }
 
-    get activeWallet(): WalletType | null {
-        return this.$store.state.activeWallet
+    rewardExist() {
+        if (this.unclaimedRewards.eq(new BN(0))) {
+            this.canClaim = false
+        }
+        this.canClaim = true
+    }
+
+    rewardBig(amt: BN): Big {
+        return Big(amt.toString()).div(Math.pow(10, 18))
+    }
+
+    get stakingTxs() {
+        return this.$store.state.Earn.stakingTxs as EarnState['stakingTxs']
+    }
+
+    get validatorTxs() {
+        return this.stakingTxs.filter((tx) => tx.txType === 'AddValidatorTx')
+    }
+
+    get delegatorTxs() {
+        return this.stakingTxs.filter((tx) => tx.txType === 'AddDelegatorTx')
+    }
+
+    get totLength() {
+        return this.validatorTxs.length + this.delegatorTxs.length
+    }
+
+    get totalReward() {
+        let tot = this.stakingTxs.reduce((acc, val) => {
+            return acc.add(new BN(val.estimatedReward ?? 0))
+        }, new BN(0))
+        return tot
+    }
+
+    get totalRewardBig(): Big {
+        return bnToBig(this.totalReward, 9)
     }
 
     async getContractAddress(network: string, contractName: string): Promise<string> {
@@ -338,84 +333,24 @@ export default class AddressBinder extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use '../../main';
-
-form {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    column-gap: 90px;
-}
-
-.light-heading {
-    font-weight: 400;
-    margin-top: 30px;
-}
-
-.address-container {
-    margin: 30px 0px;
-}
-
-.address-style {
-    color: #6e7479;
-    padding-bottom: 10px;
-    font-size: 12px;
-    word-break: break-all;
-}
-
-.ins_col {
-    max-width: 490px;
-    padding-bottom: 8vh;
-}
-
-.amt {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border: 1px solid #999;
-    padding: 4px 14px;
-}
-
-.bigIn {
-    flex-grow: 1;
-}
-
-input {
-    color: var(--primary-color);
-    background-color: var(--bg-light);
-    padding: 6px 14px;
-}
-
-.desc {
-    font-size: 13px;
-    margin-bottom: 8px !important;
-    color: var(--primary-color-light);
-}
-
-.summary-desc {
-    word-break: break-all;
-    font-size: 10px;
-    color: #fff;
-    font-style: italic;
-}
-
-.summary-descP {
-    word-break: break-all;
-    font-size: 10px;
-    color: #fff;
-    font-style: italic;
-    padding-bottom: 1rem;
-}
-
-.summary-warn {
-    color: var(--error);
-    margin-top: 4px;
-    font-size: 14px;
-}
-
+@use '../../../main';
 .disabled-button {
     opacity: 0.4;
     pointer-events: none;
+}
+.user_rewards {
+    padding-bottom: 5vh;
+}
+
+.reward_row {
+    margin-bottom: 12px;
+}
+
+h3 {
+    margin-top: 0.3em;
+    font-size: 2em;
+    color: var(--primary-color-light);
+    font-weight: lighter;
 }
 
 label {
@@ -425,134 +360,34 @@ label {
     margin-bottom: 3px;
 }
 
-.dates {
+.grid {
+    margin: 20px auto;
+    width: 100%; /* Set width to 100% for responsiveness */
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 15px;
-
-    label > span {
-        float: right;
-        opacity: 0.4;
-        cursor: pointer;
-
-        &:hover {
-            opacity: 1;
-        }
-    }
-}
-
-.submit_box {
-    .v-btn {
-        margin-top: 14px;
-    }
-}
-
-.summary {
-    border-left: 2px solid var(--bg-light);
-    padding-left: 30px;
-
-    > div {
-        margin-bottom: 14px;
-
-        p {
-            font-size: 24px;
-        }
-    }
-
-    .err {
-        margin: 14px 0 !important;
-        font-size: 14px;
-    }
-}
-
-.success_cont {
-    .check {
-        font-size: 4em;
-        color: var(--success);
-    }
-
-    .tx_id {
-        font-size: 13px;
-        color: var(--primary-color-light);
-        word-break: break-all;
-        margin: 14px 0 !important;
-        font-weight: bold;
-    }
-}
-
-.reward_in {
-    transition-duration: 0.2s;
-
-    &[type='local'] {
-        .reward_addr_in {
-            opacity: 0.3;
-            user-select: none;
-            pointer-events: none;
-        }
-    }
-}
-
-.reward_tabs {
-    margin-bottom: 8px;
-    font-size: 13px;
-
-    button {
-        color: var(--primary-color-light);
-
-        &:hover {
-            color: var(--primary-color);
-        }
-
-        &[selected] {
-            color: var(--secondary-color);
-        }
-    }
-
-    span {
-        margin: 0px 12px;
-    }
-}
-
-.amount_warning {
-    color: var(--warning);
-}
-
-.tx_status {
-    display: flex;
-    justify-content: space-between;
-
-    .status_icon {
-        align-items: center;
-        display: flex;
-        font-size: 24px;
-    }
-}
-
-.tx_status,
-.reason_cont {
-    background-color: var(--bg-light);
-    padding: 4px 12px;
-    margin-bottom: 6px;
+    grid-row-gap: 20px;
+    padding: 10px;
 }
 
 @include main.mobile-device {
-    form {
-        grid-template-columns: 1fr;
+    .grid {
+        display: block;
     }
+    .grid > div {
+        margin: 10px;
+    }
+}
 
-    .dates {
-        grid-template-columns: 1fr;
-    }
+.err {
+    margin: 14px 0 !important;
+    font-size: 14px;
+}
 
-    .amt_in {
-        width: 100%;
-    }
-
-    .summary {
-        border-left: none;
-        border-top: 2px solid var(--bg-light);
-        padding-left: 0;
-        padding-top: 30px;
-    }
+.claimbutton {
+    margin-top: 20px;
+    align-items: center;
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
 }
 </style>

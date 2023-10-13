@@ -383,14 +383,14 @@ export default class AddDelegator extends Vue {
         console.error(e)
         let msg: string = e.message
 
-        if (msg.includes('startTime')) {
+        if (e.includes('rejected')) {
+            this.err = e
+        } else if (msg.includes('startTime')) {
             this.err = this.$t('staking.delegate.errs.start_end') as string
             // this.err = "Start date must be in the future and end date must be after start date."
         } else if (msg.includes('address format')) {
             this.err = this.$t('staking.delegate.errs.invalid_addr') as string
             // this.err = "Invalid address format. Your address must start with \"P-\"";
-        } else if (e.includes('Rejected')) {
-            this.err = e
         } else {
             this.err = e.message
         }
