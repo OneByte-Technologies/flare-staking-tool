@@ -490,18 +490,8 @@ abstract class AbstractWallet {
             [rewardAddress],
             delegationFee
         )
+        const tx = await this.signP(unsignedTx)
 
-        let tx
-        try {
-            tx = await this.signP(unsignedTx)
-        } catch (e: any) {
-            if (e.includes('Rejected')) {
-                const err = 'Ledger Device: Rejected Signing'
-                throw err
-            } else {
-                throw e
-            }
-        }
         return issueP(tx)
     }
 
@@ -592,17 +582,8 @@ abstract class AbstractWallet {
             [rewardAddress] // reward address
         )
 
-        let tx
-        try {
-            tx = await this.signP(unsignedTx)
-        } catch (e: any) {
-            if (e.includes('Rejected')) {
-                const err = 'Ledger Device: Rejected Signing'
-                throw err
-            } else {
-                throw e
-            }
-        }
+        const tx = await this.signP(unsignedTx)
+
         return issueP(tx)
     }
 }
