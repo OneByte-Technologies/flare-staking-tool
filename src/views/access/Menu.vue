@@ -46,10 +46,10 @@
                         {{ browserName }} is not supported
                     </span>
                 </div>
-                <!-- <router-link to="/access/xpub" class="menu_option button_primary">
+                <router-link to="/access/xpub" class="menu_option button_primary">
                     XPUB (Readonly)
                     <span><fa icon="glasses"></fa></span>
-                </router-link> -->
+                </router-link>
             </div>
         </div>
 
