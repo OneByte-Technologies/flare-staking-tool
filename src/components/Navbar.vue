@@ -17,9 +17,9 @@
                 <router-link to="/access" class="action_but" data-cy="access">
                     {{ $t('nav.access') }}
                 </router-link>
-                <router-link to="/create" class="action_but" data-cy="create">
+                <!-- <router-link to="/create" class="action_but" data-cy="create">
                     {{ $t('nav.create') }}
-                </router-link>
+                </router-link> -->
             </template>
             <network-menu></network-menu>
             <!-- <LanguageSelect class="lang_web"></LanguageSelect> -->
@@ -79,7 +79,7 @@
                 </template>
                 <template v-else>
                     <router-link to="/access">{{ $t('nav.access') }}</router-link>
-                    <router-link to="/create">{{ $t('nav.create') }}</router-link>
+                    <!-- <router-link to="/create">{{ $t('nav.create') }}</router-link> -->
                 </template>
                 <div class="mobile_bottom">
                     <AccountMenu></AccountMenu>

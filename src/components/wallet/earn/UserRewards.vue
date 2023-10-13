@@ -24,8 +24,25 @@
                 <p>
                     {{ rewardBig(unclaimedRewards) }}
                 </p>
+                <div style="max-width: 90%; margin-top: 12px" v-if="sendTo === 'anotherWallet'">
+                    <v-text-field
+                        class="pass"
+                        label="Custom Wallet Address"
+                        dense
+                        solo
+                        type="text/plain"
+                        v-model="customAddress"
+                        hide-details
+                    ></v-text-field>
+                </div>
             </div>
             <div>
+                <RadioButtons
+                    :labels="['Send to My Wallet', 'Send to Another Wallet']"
+                    :keys="['myWallet', 'anotherWallet']"
+                    :disabled="false"
+                    v-model="sendTo"
+                ></RadioButtons>
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput
                     :max="unclaimedRewards"
@@ -71,11 +88,13 @@ import {
     validatorRewardManagerContractName,
 } from '@/views/wallet/FlareContractConstants'
 import AvaxInput from '@/components/misc/AvaxInput.vue'
+import RadioButtons from '@/components/misc/RadioButtons.vue'
 
 @Component({
     components: {
         UserRewardRow,
         AvaxInput,
+        RadioButtons,
     },
 })
 export default class UserRewards extends Vue {
@@ -227,12 +246,7 @@ export default class UserRewards extends Vue {
             })
         } catch (e: any) {
             this.isClaimRewardPending = false
-            const msg: string = e.message
-            if (msg.includes('0x6986')) {
-                this.err = 'Ledger Device: Rejected Signing'
-            } else {
-                this.err = e.message
-            }
+            this.err = e
             throw this.err
         }
     }

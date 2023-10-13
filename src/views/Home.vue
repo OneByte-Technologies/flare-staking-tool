@@ -8,7 +8,7 @@
                         <div class="login_wrapper">
                             <div class="login_option">
                                 <header>
-                                    <div class="img_container">
+                                    <div>
                                         <img
                                             v-if="$root.theme === 'day'"
                                             src="@/assets/diamond-primary.svg"
@@ -29,7 +29,7 @@
                                     </router-link>
                                 </div>
                             </div>
-                            <div class="login_option">
+                            <!-- <div class="login_option">
                                 <header>
                                     <div class="img_container">
                                         <img
@@ -46,7 +46,7 @@
                                     <h2>{{ $t('home.create.title') }}</h2>
                                     <p>{{ $t('home.create.desc') }}</p>
                                 </header>
-                                <div>
+                            <div>
                                     <router-link
                                         data-cy="create"
                                         to="/create"
@@ -55,7 +55,7 @@
                                         {{ $t('home.create.submit') }}
                                     </router-link>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <ToS class="tos" style="align-self: center; margin: 30px !important"></ToS>
                     </div>
@@ -108,21 +108,24 @@ export default class Home extends Vue {}
 
         .login_wrapper {
             margin-top: 60px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            column-gap: main.$container-padding;
+            display: flex;
+            // grid-template-columns: 1fr 1fr;
+            // column-gap: main.$container-padding;
+            justify-content: center;
+            align-items: center;
 
             .login_option {
                 display: flex;
                 flex-direction: column;
                 border-radius: 2px;
-                align-items: flex-start;
-                justify-content: space-between;
+                align-items: center;
+                justify-content: center;
                 background-color: var(--bg-light);
-                padding: 60px 90px main.$container-padding main.$container-padding;
+                padding: 60px 90px main.$container-padding 90px;
 
                 header {
                     margin-bottom: 60px;
+                    text-align: center;
 
                     img {
                         width: 89px;
