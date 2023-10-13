@@ -28,9 +28,11 @@
             <div v-if="canClaim">
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput
+                    ref="input_reward"
                     :max="unclaimedRewards"
                     v-model="inputReward"
                     :symbol="symbol"
+                    :denomination="18"
                 ></AvaxInput>
             </div>
             <div v-if="canClaim">
@@ -106,6 +108,10 @@ export default class UserRewards extends Vue {
     sendTo: string = 'myWallet' // Default to 'My Wallet'
     customAddress: string = ''
 
+    $refs!: {
+        input_reward: AvaxInput
+    }
+
     async viewRewards() {
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
@@ -156,10 +162,17 @@ export default class UserRewards extends Vue {
     }
 
     isRewardValid(): boolean {
-        const rewardAmt = this.inputReward.mul(new BN(1000000000))
+        const rewardAmt = this.inputReward
         console.log('Reward Amount ', rewardAmt)
-        const isAddressPresent = this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true
+        const isAddressPresent =
+            this.sendTo === 'anotherWallet' ? ethers.utils.isAddress(this.customAddress) : true
         return rewardAmt.gt(new BN(0)) && this.unclaimedRewards.gte(rewardAmt) && isAddressPresent
+    }
+
+    resetInputs() {
+        this.$refs.input_reward.clear()
+        this.sendTo = 'myWallet'
+        this.customAddress = ''
     }
 
     async claimRewards() {
@@ -182,7 +195,7 @@ export default class UserRewards extends Vue {
                 gasEstimate = await contract.estimateGas.claim(
                     cAddress,
                     recipientAddress,
-                    this.inputReward.mul(new BN(1000000000)).toString(),
+                    this.inputReward.toString(),
                     false,
                     {
                         from: cAddress,
@@ -197,7 +210,7 @@ export default class UserRewards extends Vue {
             const populatedTx = await contract.populateTransaction.claim(
                 cAddress,
                 recipientAddress,
-                this.inputReward.mul(new BN(1000000000)).toString(),
+                this.inputReward.toString(),
                 false
             )
             console.log('Populated Tx', populatedTx)
@@ -237,6 +250,7 @@ export default class UserRewards extends Vue {
             this.isClaimRewardPending = false
             console.log('txId', txId)
             this.viewRewards()
+            this.resetInputs()
             this.$store.dispatch('Notifications/add', {
                 title: 'Claim Reward',
                 message: 'Reward claimed successfully',
