@@ -63,9 +63,9 @@ const addressCount = 10
     },
 })
 export default class LedgerCard extends Vue {
-    selectedStandard: string = 'BIP44'
+    selectedStandard: string = ''
     selectedAddress: string = ''
-    isFetchingAddresses: boolean = true
+    isFetchingAddresses: boolean = false
     version?: string = undefined
     addressList: string[] = []
     derivedAddress: derivedAddresses[] = []
@@ -125,6 +125,7 @@ export default class LedgerCard extends Vue {
         }
         return transport
     }
+
     async init() {
         this.addressList = []
         this.isFetchingAddresses = true
@@ -167,10 +168,6 @@ export default class LedgerCard extends Vue {
         console.log('returning derivation path')
 
         return selectedDerivedAddress?.derivationPath
-    }
-
-    mounted() {
-        this.init()
     }
 
     async onSelectStandard() {
