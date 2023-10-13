@@ -272,7 +272,7 @@ export default class UserRewards extends Vue {
     rewardExist() {
         if (this.unclaimedRewards.eq(new BN(0))) {
             this.canClaim = false
-        }else{
+        } else {
             this.canClaim = true
         }
     }
