@@ -76,10 +76,10 @@ const routes = [
             //     component: Account,
             //     name: 'Account',
             // },
-            // {
-            //     path: 'xpub',
-            //     component: Xpub,
-            // },
+            {
+                path: 'xpub',
+                component: Xpub,
+            },
             {
                 path: 'ledger',
                 component: LedgerCard,
