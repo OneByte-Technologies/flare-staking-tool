@@ -6,6 +6,7 @@
                 class="ledger-input"
                 v-model="selectedStandard"
                 @change="onSelectStandard"
+                :disabled="isFetchingAddresses"
                 :items="standard"
                 label="Please select a standard for derivation path"
                 filled
@@ -125,6 +126,7 @@ export default class LedgerCard extends Vue {
         }
         return transport
     }
+
     async init() {
         this.addressList = []
         this.isFetchingAddresses = true
