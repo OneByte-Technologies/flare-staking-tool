@@ -106,7 +106,7 @@ import {
     getAddressBinderABI,
     getFlareContractRegistryABI,
     addressBinderContractName,
-} from './FlareContractConstants'
+} from '@/views/wallet/FlareContractConstants'
 import { ethers } from 'ethers'
 import { bech32 } from 'bech32'
 import { ava } from '@/AVA'
@@ -338,7 +338,7 @@ export default class AddressBinder extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use '../../main';
+@use '../../../main';
 
 form {
     display: grid;
