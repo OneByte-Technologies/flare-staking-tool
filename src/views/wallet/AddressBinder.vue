@@ -247,8 +247,8 @@ export default class AddressBinder extends Vue {
         this.isAddressBindingPending = false
     }
 
-    delay(t: any) {
-        return new Promise((resolve) => setTimeout(() => resolve, t))
+    delay(t: number) {
+        return new Promise((resolve) => setTimeout(resolve, t))
     }
 
     onSuccess() {
