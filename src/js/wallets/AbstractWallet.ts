@@ -515,8 +515,9 @@ abstract class AbstractWallet {
 
         const res = await glacier.operations.postTransactionExportJob({
             requestBody: {
-                type: CreatePrimaryNetworkTransactionExportRequest.type
-                    .TRANSACTION_EXPORT_PRIMARY_NETWORK,
+                type:
+                    CreatePrimaryNetworkTransactionExportRequest.type
+                        .TRANSACTION_EXPORT_PRIMARY_NETWORK,
                 startDate: startDate.toISOString().split('T')[0],
                 endDate: endDate.toISOString().split('T')[0],
                 options: {
