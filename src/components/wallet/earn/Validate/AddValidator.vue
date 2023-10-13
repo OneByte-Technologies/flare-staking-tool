@@ -663,7 +663,9 @@ export default class AddValidator extends Vue {
         let msg: string = err.message
         console.error(err)
 
-        if (msg.includes('startTime')) {
+        if (err.includes('rejected')) {
+            this.err = err
+        } else if (msg.includes('startTime')) {
             this.err = this.$t('staking.validate.errs.date') as string
         } else if (msg.includes('must be at least')) {
             let minAmt = this.minStakeAmt

@@ -9,7 +9,7 @@
             <span v-if="!isAvaxToken">ANT</span>
         </p>
         <p class="name_col mobile_only">{{ symbol }}</p>
-        <router-link :to="sendLink" class="send_col" v-if="isBalance">
+        <router-link to="/wallet/transfer" class="send_col" v-if="isBalance">
             <img v-if="$root.theme === 'day'" src="@/assets/sidebar/transfer_nav.png" />
             <img v-else src="@/assets/sidebar/transfer_nav_night.svg" />
         </router-link>

@@ -24,17 +24,11 @@ const fetchValidatorInfo = async (ctx: Context) => {
     return validator
 }
 
-// fetches pending validator info
-const fetchPendingValidatorInfo = async (ctx: Context) => {
-    const pendingValidator = await ctx.pchain.getPendingValidators()
-    console.log('Pending Validators', pendingValidator)
-    return pendingValidator
-}
-
 // fetches the delegation stake (from both current and pending validator) for the current user
 const fetchDelegateStake = async (ctx: Context, validatorFunction: (ctx: Context) => {}) => {
     const validatorsInfo = await validatorFunction(ctx)
     const validatorData = (validatorsInfo as any)?.validators
+    delegationCount = 0
     const userStake = []
     for (let i = 0; i < validatorData.length; i++) {
         for (
@@ -55,6 +49,7 @@ const fetchDelegateStake = async (ctx: Context, validatorFunction: (ctx: Context
                     startTime: startDate,
                     endTime: endDate,
                 })
+                delegationCount++
             }
         }
     }
@@ -67,7 +62,6 @@ const getTotalFromDelegation = (data: DelegatedAmount[]) => {
 
     for (let i = 0; i < data.length; i++) {
         total += data[i].stakeAmount
-        delegationCount++
     }
     return total
 }
@@ -92,20 +86,16 @@ export async function fetchMirrorFunds(ctx: Context) {
     const stakedAmountInFLR = parseFloat(integerToDecimal(stakedAmount.toString(), 18))
     // fetch for the chain
     const delegationToCurrentValidator = await fetchDelegateStake(ctx, fetchValidatorInfo)
-    const delegationToPendingValidator = await fetchDelegateStake(ctx, fetchPendingValidatorInfo)
     const currentAmt = getTotalFromDelegation(delegationToCurrentValidator)
-    const pendingAmt = getTotalFromDelegation(delegationToPendingValidator)
-    const totalDelegatedAmount = currentAmt + pendingAmt
+    const totalDelegatedAmount = currentAmt
     const totalInFLR = parseFloat(totalDelegatedAmount.toString())
     return {
         'Total Mirrored Amount': `${totalInFLR} FLR`,
         'Mirror Funds Details': {
             ...delegationToCurrentValidator,
-            ...delegationToPendingValidator,
         },
         'Delegation Count': delegationCount,
         'Total Current Amount': currentAmt,
-        'Total Pending Amount': pendingAmt,
     }
 }
 

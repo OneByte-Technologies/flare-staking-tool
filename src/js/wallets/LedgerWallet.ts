@@ -543,10 +543,17 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             }
 
             return signedTx as SignedTx
-        } catch (e) {
+        } catch (e: any) {
             store.commit('Ledger/closeModal')
             console.error(e)
-            throw e
+            let err
+            const msg: string = e.message
+            if (msg.includes('0x6986')) {
+                err = 'Ledger Device: Signing Rejected'
+            } else {
+                err = e.message
+            }
+            throw err
         }
     }
 
@@ -862,10 +869,17 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             const sigMap = ledgerSignedTx.signatures
             const sig = sigMap.get(`${this.signPath}`)?.toString('hex')
             return sig!
-        } catch (e) {
+        } catch (e: any) {
             store.commit('Ledger/closeModal')
             console.error(e)
-            throw e
+            let err
+            const msg: string = e.message
+            if (msg.includes('0x6986')) {
+                err = 'Ledger Device: Rejected Signing'
+            } else {
+                err = e.message
+            }
+            throw err
         }
     }
 
@@ -926,10 +940,17 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
                 chainParams
             )
             return signedTx
-        } catch (e) {
+        } catch (e: any) {
             store.commit('Ledger/closeModal')
             console.error(e)
-            throw e
+            let err
+            const msg: string = e.message
+            if (msg.includes('0x6986')) {
+                err = 'Ledger Device: Rejected Signing'
+            } else {
+                err = e.message
+            }
+            throw err
         }
     }
 

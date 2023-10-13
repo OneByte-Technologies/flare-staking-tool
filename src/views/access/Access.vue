@@ -46,8 +46,9 @@ export default class Access extends Vue {}
 
 .access_view {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: 160px;
+    // justify-content: center;
+    // align-items: center;
 }
 
 .access_card {
