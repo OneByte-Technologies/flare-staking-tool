@@ -220,6 +220,7 @@ export default class AddressBinder extends Vue {
                     console.log(e)
                     this.isAddressBindingPending = false
                     this.bindingError = 'Ledger Device: Rejected Signing'
+                    return
                 }
 
                 signedTx = ethers.utils.serializeTransaction(unsignedTx, '0x' + signature)
