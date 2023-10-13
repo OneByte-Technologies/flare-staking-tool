@@ -25,7 +25,7 @@
                     {{ rewardBig(unclaimedRewards) }}
                 </p>
             </div>
-            <div v-if="canClaim">
+            <div>
                 <label>{{ $t('staking.rewards.claim') }}</label>
                 <AvaxInput
                     :max="unclaimedRewards"
