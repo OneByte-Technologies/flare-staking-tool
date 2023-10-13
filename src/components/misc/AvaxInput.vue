@@ -6,7 +6,7 @@
                 ref="amt_in"
                 class="amt_in"
                 contenteditable="amt_in"
-                :denomination="9"
+                :denomination="denomination"
                 :max="max"
                 placeholder="0.00"
                 @change="amount_in"
@@ -55,12 +55,20 @@ export default class AvaxInput extends Vue {
 
     @Prop() balance?: Big | null
     @Prop() symbol!: string
+    @Prop({ default: 9 }) denomination!: number
+
+    $refs!: {
+        amt_in: BigNumInput
+    }
 
     maxOut(ev: MouseEvent) {
         ev.preventDefault()
         ev.stopPropagation()
-        //@ts-ignore
         this.$refs.amt_in.maxout()
+    }
+
+    clear() {
+        this.$refs.amt_in.clear()
     }
 
     amount_in(val: BN) {
