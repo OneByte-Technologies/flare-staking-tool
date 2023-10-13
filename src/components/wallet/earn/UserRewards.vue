@@ -157,6 +157,7 @@ export default class UserRewards extends Vue {
 
     isRewardValid(): boolean {
         const rewardAmt = this.inputReward.mul(new BN(1000000000))
+        console.log('Reward Amount ', rewardAmt)
         const isValidPresent = this.sendTo === 'anotherWallet' ? this.customAddress !== '' : true
         return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt) && isValidPresent
     }
