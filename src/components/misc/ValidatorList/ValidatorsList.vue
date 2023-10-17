@@ -13,10 +13,8 @@
                     <tr class="header_tr">
                         <th display="inline-flex">
                             {{ $t('staking.delegate.list.id') }}
-                            <span class="dot green"></span>
-                            <span>Available</span>
-                            <span class="dot yellow"></span>
-                            <span>Unavailable</span>
+                            <span class="dot"></span>
+                            <span class="text">Currently delegated nodes</span>
                         </th>
                         <th style="text-align: right">
                             {{ $t('staking.delegate.list.val_stake') }}
@@ -44,6 +42,7 @@
                         :key="v.nodeID"
                         :validator="v"
                         @select="onselect"
+                        :canDelegate="canDelegate(v.nodeID)"
                     ></ValidatorRow>
                 </tbody>
             </table>
@@ -67,6 +66,7 @@ import Tooltip from '@/components/misc/Tooltip.vue'
 import { ValidatorListItem } from '@/store/modules/platform/types'
 import { ValidatorListFilter } from '@/components/wallet/earn/Delegate/types'
 import { filterValidatorList } from '@/components/wallet/earn/Delegate/helper'
+import { getNodes } from '@/views/wallet/FlareContract'
 
 @Component({
     components: { Tooltip, ValidatorRow, FilterSettings },
@@ -121,6 +121,13 @@ export default class ValidatorsList extends Vue {
     onselect(val: ValidatorListItem) {
         this.$emit('select', val)
     }
+
+    canDelegate(nodeId: string) {
+        const delCount = getNodes().length
+        console.log('Del COUNT', delCount, 'Node Id', nodeId)
+        if (delCount < 3 || getNodes().includes(nodeId)) return true
+        return false
+    }
 }
 </script>
 <style scoped lang="scss">
@@ -166,15 +173,12 @@ th {
     height: 10px;
     border-radius: 50%;
     display: inline-flex;
-    margin-right: 10px;
-    margin-left: 15px;
+    margin-right: 4px;
+    margin-left: 16px;
+    background-color: lightgreen;
 }
 
-.green {
-    background-color: green;
-}
-
-.yellow {
-    background-color: yellow;
+.text {
+    font-weight: normal;
 }
 </style>

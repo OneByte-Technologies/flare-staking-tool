@@ -2,8 +2,7 @@
     <tr class="validator_row">
         <td class="id">
             {{ validator.nodeID }}
-            <span v-if="isDelegated" class="dot green"></span>
-            <span v-else class="dot yellow"></span>
+            <span v-if="isDelegated" class="dot"></span>
         </td>
         <td class="amount">{{ amtText }}</td>
         <td class="amount">{{ remainingAmtText }}</td>
@@ -11,7 +10,24 @@
         <td>{{ remainingTimeText }}</td>
         <!-- <td>{{ feeText }}%</td> -->
         <td>
-            <button class="button_secondary" @click="select">Select</button>
+            <button
+                :class="[
+                    'button_secondary',
+                    {
+                        'disabled-button': !canDelegate,
+                    },
+                ]"
+                @click="select"
+            >
+                Select
+            </button>
+            <Tooltip
+                v-if="!canDelegate"
+                style="display: inline-block; margin-left: 4px"
+                text="You can only delegate to three unique nodes at once"
+            >
+                <fa icon="question-circle"></fa>
+            </Tooltip>
         </td>
     </tr>
 </template>
@@ -23,10 +39,18 @@ import { BN } from 'avalanche'
 import { bnToBig } from '@/helpers/helper'
 import { ValidatorListItem } from '@/store/modules/platform/types'
 import { getNodes } from '@/views/wallet/FlareContract'
+import Tooltip from '@/components/misc/Tooltip.vue'
 
-@Component
+@Component({
+    components: { Tooltip },
+})
 export default class ValidatorsList extends Vue {
     @Prop() validator!: ValidatorListItem
+    @Prop(Boolean) canDelegate!: boolean
+
+    mounted() {
+        console.log('Validator', this.validator, 'Can Delegate', this.canDelegate)
+    }
 
     get remainingMs(): number {
         let end = this.validator.endTime
@@ -95,8 +119,16 @@ button {
     border-radius: 3px;
 }
 
+.disabled-button {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
 .id {
     word-break: break-all;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 td {
     padding: 4px 14px;
@@ -104,19 +136,12 @@ td {
     border: 1px solid var(--bg);
     font-size: 13px;
 }
+
 .dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    display: inline-flex;
-    margin-left: 10px;
-}
-.green {
-    background-color: green;
-}
-
-.yellow {
-    background-color: yellow;
+    background-color: lightgreen;
 }
 
 @include main.medium-device {
