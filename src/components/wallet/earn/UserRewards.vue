@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="grid">
+        <div v-if="!isFetchingRewards" class="grid">
             <div>
                 <label style="text-align: center">
                     {{ $t('staking.rewards.total') }}
@@ -24,31 +24,30 @@
                 <p>
                     {{ rewardBig(unclaimedRewards) }}
                 </p>
-                <div style="max-width: 90%; margin-top: 12px" v-if="sendTo === 'anotherWallet'">
-                    <v-text-field
-                        class="pass"
-                        label="Custom Wallet Address"
-                        dense
-                        solo
-                        type="text/plain"
-                        v-model="customAddress"
-                        hide-details
-                    ></v-text-field>
-                </div>
             </div>
-            <div>
+            <div v-if="canClaim">
+                <label>{{ $t('staking.rewards.claim') }}</label>
+                <AvaxInput
+                    ref="input_reward"
+                    :max="unclaimedRewards"
+                    v-model="inputReward"
+                    :symbol="symbol"
+                    :denomination="18"
+                ></AvaxInput>
+            </div>
+            <div v-if="canClaim">
+                <label>Send rewards to</label>
+
                 <RadioButtons
-                    :labels="['Send to My Wallet', 'Send to Another Wallet']"
+                    :labels="['My Wallet', 'Another Wallet']"
                     :keys="['myWallet', 'anotherWallet']"
                     :disabled="false"
                     v-model="sendTo"
                 ></RadioButtons>
-                <label>{{ $t('staking.rewards.claim') }}</label>
-                <AvaxInput
-                    :max="unclaimedRewards"
-                    v-model="inputReward"
-                    :symbol="symbol"
-                ></AvaxInput>
+            </div>
+            <div class="custom-address" v-if="sendTo === 'anotherWallet' && canClaim">
+                <label style="">C-Chain Address</label>
+                <input type="text" v-model="customAddress" style="width: 100%" placeholder="0x.." />
             </div>
             <div class="claimbutton">
                 <p class="err">{{ err }}</p>
@@ -67,6 +66,10 @@
                     <fa style="margin-left: 4px" v-if="isClaimRewardPending" icon="cog" spin></fa>
                 </v-btn>
             </div>
+        </div>
+        <div class="loader" v-else>
+            <fa icon="spinner" spin></fa>
+            <div class="fetch-text">Fetching rewards...</div>
         </div>
     </div>
 </template>
@@ -105,11 +108,16 @@ export default class UserRewards extends Vue {
     unclaimedRewards: BN = this.totalRewardNumber.sub(this.claimedRewardNumber)
     inputReward: BN = new BN(0)
     isClaimRewardPending = false
+    isFetchingRewards = true
     err = ''
     sendTo: string = 'myWallet' // Default to 'My Wallet'
     customAddress: string = ''
 
-    async viewRewards() {
+    $refs!: {
+        input_reward: AvaxInput
+    }
+
+    async viewRewards(fromClaimRewards: boolean) {
         const wallet = this.$store.state.activeWallet
         const cAddress = wallet.getEvmChecksumAddress()
         const rpcUrl: string = this.getIp()
@@ -129,11 +137,22 @@ export default class UserRewards extends Vue {
         this.unclaimedRewards = unclaimedRewards
         console.log('Unclaimed Rewards To String', unclaimedRewards.toString())
         this.rewardExist()
+        this.isFetchingRewards = false
+
+        if (fromClaimRewards) {
+            this.resetInputs()
+            this.isClaimRewardPending = false
+            this.$store.dispatch('Notifications/add', {
+                title: 'Claim Reward',
+                message: 'Reward claimed successfully',
+                type: 'success',
+            })
+        }
     }
 
     async mounted() {
         console.log('mounted')
-        this.viewRewards()
+        this.viewRewards(false)
     }
 
     get userAddresses() {
@@ -159,9 +178,17 @@ export default class UserRewards extends Vue {
     }
 
     isRewardValid(): boolean {
-        const rewardAmt = this.inputReward.mul(new BN(1000000000))
+        const rewardAmt = this.inputReward
         console.log('Reward Amount ', rewardAmt)
-        return rewardAmt.gte(new BN(0)) && this.unclaimedRewards.gte(rewardAmt)
+        const isAddressPresent =
+            this.sendTo === 'anotherWallet' ? ethers.utils.isAddress(this.customAddress) : true
+        return rewardAmt.gt(new BN(0)) && this.unclaimedRewards.gte(rewardAmt) && isAddressPresent
+    }
+
+    resetInputs() {
+        this.$refs.input_reward.clear()
+        this.sendTo = 'myWallet'
+        this.customAddress = ''
     }
 
     async claimRewards() {
@@ -184,7 +211,7 @@ export default class UserRewards extends Vue {
                 gasEstimate = await contract.estimateGas.claim(
                     cAddress,
                     recipientAddress,
-                    this.inputReward.mul(new BN(1000000000)).toString(),
+                    this.inputReward.toString(),
                     false,
                     {
                         from: cAddress,
@@ -199,7 +226,7 @@ export default class UserRewards extends Vue {
             const populatedTx = await contract.populateTransaction.claim(
                 cAddress,
                 recipientAddress,
-                this.inputReward.mul(new BN(1000000000)).toString(),
+                this.inputReward.toString(),
                 false
             )
             console.log('Populated Tx', populatedTx)
@@ -236,14 +263,8 @@ export default class UserRewards extends Vue {
             }
 
             const txId = await contract.provider.sendTransaction(signedTx)
-            this.isClaimRewardPending = false
             console.log('txId', txId)
-            this.viewRewards()
-            this.$store.dispatch('Notifications/add', {
-                title: 'Claim Reward',
-                message: 'Reward claimed successfully',
-                type: 'success',
-            })
+            this.viewRewards(true)
         } catch (e: any) {
             this.isClaimRewardPending = false
             this.err = e
@@ -274,8 +295,9 @@ export default class UserRewards extends Vue {
     rewardExist() {
         if (this.unclaimedRewards.eq(new BN(0))) {
             this.canClaim = false
+        } else {
+            this.canClaim = true
         }
-        this.canClaim = true
     }
 
     rewardBig(amt: BN): Big {
@@ -334,10 +356,25 @@ export default class UserRewards extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../main';
+
+.loader {
+    text-align: center;
+    margin-top: 36px;
+
+    svg {
+        font-size: 30px;
+    }
+
+    .fetch-text {
+        margin-top: 8px;
+    }
+}
+
 .disabled-button {
     opacity: 0.4;
     pointer-events: none;
 }
+
 .user_rewards {
     padding-bottom: 5vh;
 }
@@ -362,7 +399,8 @@ label {
 
 .grid {
     margin: 20px auto;
-    width: 100%; /* Set width to 100% for responsiveness */
+    width: 100%;
+    /* Set width to 100% for responsiveness */
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-row-gap: 20px;
@@ -373,6 +411,7 @@ label {
     .grid {
         display: block;
     }
+
     .grid > div {
         margin: 10px;
     }
@@ -389,5 +428,11 @@ label {
     grid-column: span 2;
     display: flex;
     justify-content: center;
+}
+
+input {
+    color: var(--primary-color);
+    background-color: var(--bg-light);
+    padding: 6px 14px;
 }
 </style>

@@ -14,8 +14,8 @@
         "desc": "FlareStake is a simple, secure, noncustodial tool for staking Flare assets.",
         "access": {
             "title": "Welcome Back!",
-            "desc": "Use an existing wallet to stake Flare assets.",
-            "submit": "Use an Existing Wallet"
+            "desc": "Access your wallet to stake Flare assets.",
+            "submit": "Access Wallet"
         },
         "create": {
             "title": "New to Flare?",

@@ -105,7 +105,8 @@
                 </p>
                 <div>
                     <a :href="explorerLink" target="_blank" class="explorer">
-                        {{ $t('transfer.c_chain.success.label2') }}
+                        <span>{{ $t('transfer.c_chain.success.label2') }}</span>
+                        <span><fa style="margin-left: 4px" icon="external-link-alt"></fa></span>
                     </a>
                 </div>
                 <v-btn
@@ -174,7 +175,6 @@ export default class FormC extends Vue {
     formCollectible: iErc721SelectInput | null = null
 
     txHash = ''
-    txExplorer = ''
 
     $refs!: {
         token_in: EVMInputDropdown
@@ -470,12 +470,6 @@ export default class FormC extends Vue {
         this.isLoading = false
         this.isSuccess = true
         this.txHash = txId
-
-        if (this.$store.state.Network.selectedNetwork === 14) {
-            this.txExplorer = `https://flare-explorer.flare.network/tx/${this.txHash}`
-        } else {
-            this.txExplorer = `https://coston2-explorer.flare.network/tx/${this.txHash}`
-        }
 
         this.$store.dispatch('Notifications/add', {
             title: this.$t('transfer.success_title'),
