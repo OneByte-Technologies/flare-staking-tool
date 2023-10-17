@@ -8,14 +8,18 @@ import {
 } from './FlareContractConstants'
 import { integerToDecimal } from './utils'
 import { ava } from '@/AVA'
+import axios from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 
 type DelegatedAmount = {
+    nodeId: string
     stakeAmount: number
     startTime: Date
     endTime: Date
 }
 
 let delegationCount: number
+const nodes: string[] = []
 
 ////////// MIRROR FUND /////////
 // fetches current validator info
@@ -45,11 +49,11 @@ const fetchDelegateStake = async (ctx: Context, validatorFunction: (ctx: Context
                 )
                 const endDate = new Date(parseInt(validatorData[i]?.delegators[j]?.endTime) * 1000)
                 userStake.push({
+                    nodeId: validatorData[i].nodeID,
                     stakeAmount: parseFloat(validatorData[i]?.delegators[j]?.stakeAmount) / 1e9,
                     startTime: startDate,
                     endTime: endDate,
                 })
-                delegationCount++
             }
         }
     }
@@ -86,9 +90,11 @@ export async function fetchMirrorFunds(ctx: Context) {
     const stakedAmountInFLR = parseFloat(integerToDecimal(stakedAmount.toString(), 18))
     // fetch for the chain
     const delegationToCurrentValidator = await fetchDelegateStake(ctx, fetchValidatorInfo)
+    allowedNode(delegationToCurrentValidator)
     const currentAmt = getTotalFromDelegation(delegationToCurrentValidator)
     const totalDelegatedAmount = currentAmt
     const totalInFLR = parseFloat(totalDelegatedAmount.toString())
+    // pendingDel(ctx)
     return {
         'Total Mirrored Amount': `${totalInFLR} FLR`,
         'Mirror Funds Details': {
@@ -134,4 +140,18 @@ const getIp = () => {
 
 export function getDelCount() {
     return delegationCount
+}
+
+export function getNodes() {
+    return nodes
+}
+
+async function allowedNode(delegationInfo: DelegatedAmount[]) {
+    delegationInfo.forEach((info) => {
+        if (!nodes.includes(info.nodeId)) {
+            nodes.push(info.nodeId)
+        }
+    })
+    delegationCount = nodes.length
+    return nodes
 }
