@@ -11,7 +11,13 @@
             <table>
                 <thead>
                     <tr class="header_tr">
-                        <th>{{ $t('staking.delegate.list.id') }}</th>
+                        <th display="inline-flex">
+                            {{ $t('staking.delegate.list.id') }}
+                            <span class="dot green"></span>
+                            <span>Available</span>
+                            <span class="dot yellow"></span>
+                            <span>Unavailable</span>
+                        </th>
                         <th style="text-align: right">
                             {{ $t('staking.delegate.list.val_stake') }}
                         </th>
@@ -154,5 +160,21 @@ th {
     top: 0;
     left: 0;
     z-index: 2;
+}
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-flex;
+    margin-right: 10px;
+    margin-left: 15px;
+}
+
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
 }
 </style>

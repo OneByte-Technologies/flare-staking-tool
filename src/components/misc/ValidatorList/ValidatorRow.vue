@@ -1,6 +1,10 @@
 <template>
     <tr class="validator_row">
-        <td class="id">{{ validator.nodeID }}</td>
+        <td class="id">
+            {{ validator.nodeID }}
+            <span v-if="isDelegated" class="dot green"></span>
+            <span v-else class="dot yellow"></span>
+        </td>
         <td class="amount">{{ amtText }}</td>
         <td class="amount">{{ remainingAmtText }}</td>
         <td style="text-align: center">{{ numDelegators }}</td>
@@ -18,6 +22,7 @@ import moment from 'moment'
 import { BN } from 'avalanche'
 import { bnToBig } from '@/helpers/helper'
 import { ValidatorListItem } from '@/store/modules/platform/types'
+import { getNodes } from '@/views/wallet/FlareContract'
 
 @Component
 export default class ValidatorsList extends Vue {
@@ -69,6 +74,11 @@ export default class ValidatorsList extends Vue {
     select() {
         this.$emit('select', this.validator)
     }
+
+    get isDelegated() {
+        if (getNodes().length < 3 || getNodes().includes(this.validator.nodeID)) return true
+        return false
+    }
 }
 </script>
 <style scoped lang="scss">
@@ -93,6 +103,20 @@ td {
     background-color: var(--bg-light);
     border: 1px solid var(--bg);
     font-size: 13px;
+}
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-flex;
+    margin-left: 10px;
+}
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
 }
 
 @include main.medium-device {
