@@ -8,8 +8,7 @@ import {
 } from './FlareContractConstants'
 import { integerToDecimal } from './utils'
 import { ava } from '@/AVA'
-import axios from 'axios'
-import { AxiosError, AxiosResponse } from 'axios'
+
 
 type DelegatedAmount = {
     nodeId: string
