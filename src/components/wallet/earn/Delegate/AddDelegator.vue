@@ -213,7 +213,7 @@ import { sortUTxoSetP } from '@/helpers/sortUTXOs'
 import { selectMaxUtxoForStaking } from '@/helpers/utxoSelection/selectMaxUtxoForStaking'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { bnToAvaxP } from '@avalabs/avalanche-wallet-sdk'
-import { getDelCount } from '@/views/wallet/FlareContract'
+import { getNodes } from '@/views/wallet/FlareContract'
 import { fetchMirrorFunds } from '@/views/wallet/FlareContract'
 import { Context } from '@/views/wallet/Interfaces'
 
@@ -279,7 +279,7 @@ export default class AddDelegator extends Vue {
 
     get canDelegate(): boolean {
         console.log('DelCount Working ? ', getDelCount() < 3)
-        return getDelCount() < 3
+        return getNodes().length < 3 || getNodes().includes(this.formNodeID)
     }
 
     get wallet(): WalletType {
@@ -298,7 +298,7 @@ export default class AddDelegator extends Vue {
 
         try {
             this.isLoading = false
-            if (getDelCount() < 3) {
+            if (getNodes().length < 3 || getNodes().includes(this.formNodeID)) {
                 let txId = await this.wallet.delegate(
                     this.formNodeID,
                     this.formAmt,
