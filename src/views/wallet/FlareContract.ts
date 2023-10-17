@@ -9,7 +9,6 @@ import {
 import { integerToDecimal } from './utils'
 import { ava } from '@/AVA'
 
-
 type DelegatedAmount = {
     nodeId: string
     stakeAmount: number

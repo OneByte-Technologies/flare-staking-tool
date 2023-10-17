@@ -278,7 +278,6 @@ export default class AddDelegator extends Vue {
     }
 
     get canDelegate(): boolean {
-        console.log('DelCount Working ? ', getDelCount() < 3)
         return getNodes().length < 3 || getNodes().includes(this.formNodeID)
     }
 
