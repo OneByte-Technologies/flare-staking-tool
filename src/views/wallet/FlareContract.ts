@@ -94,7 +94,6 @@ export async function fetchMirrorFunds(ctx: Context) {
     const currentAmt = getTotalFromDelegation(delegationToCurrentValidator)
     const totalDelegatedAmount = currentAmt
     const totalInFLR = parseFloat(totalDelegatedAmount.toString())
-    // pendingDel(ctx)
     return {
         'Total Mirrored Amount': `${totalInFLR} FLR`,
         'Mirror Funds Details': {
