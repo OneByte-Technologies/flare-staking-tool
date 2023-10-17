@@ -36,9 +36,14 @@
 
         <div class="mobile_right">
             <network-menu></network-menu>
-            <v-btn @click="isDrawer = !isDrawer" icon class="mobile_drawer">
+            <!-- <v-btn @click="isDrawer = !isDrawer" icon class="mobile_drawer">
                 <fa icon="bars"></fa>
-            </v-btn>
+            </v-btn> -->
+            <div class="hamburger" :class="{ active: isDrawer }" @click="isDrawer = !isDrawer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
         </div>
 
         <!--   MOBILE MENU     -->
@@ -133,7 +138,7 @@ export default class Navbar extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../main';
-@use "../light_theme";
+@use '../light_theme';
 
 img {
     max-height: 25px;
@@ -236,7 +241,36 @@ button {
         }
     }
 }
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
+    margin-bottom: 4px; /* Add this line */
+}
 
+.bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--primary-color);
+    transition: transform 0.3s ease;
+    margin-bottom: 4px; /* Add this line */
+}
+
+.hamburger.active .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
 @include main.mobile-device {
     .lang_web {
         display: none;
@@ -253,6 +287,7 @@ button {
     .mobile_right {
         display: flex;
         align-items: center;
+        gap: 2rem;
     }
 
     .mobile_drawer {
