@@ -406,6 +406,11 @@ span {
 }
 
 @include main.mobile-device {
+    .header {
+        h1 {
+            font-size: 24px;
+        }
+    }
     .options {
         grid-template-columns: none;
         grid-row-gap: 15px;
