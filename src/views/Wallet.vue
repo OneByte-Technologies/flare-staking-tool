@@ -152,7 +152,8 @@ export default class Wallet extends Vue {
     display: grid;
     grid-template-columns: 200px 1fr;
     column-gap: 15px;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     background-color: var(--bg-wallet);
     &.extra-column {
         grid-template-columns: 200px 1fr 300px;
@@ -165,7 +166,8 @@ export default class Wallet extends Vue {
 
 .panel {
     overflow: auto;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
 }
 
 .wallet_main {

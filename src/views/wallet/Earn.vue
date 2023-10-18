@@ -83,10 +83,15 @@
                                 class="button_secondary"
                                 data-cy="delegate"
                                 @click="addDelegator"
+                                :disabled="$store.state.isMirrorFundsPending"
                                 depressed
                                 small
                             >
-                                {{ $t('staking.delegate_card.submit') }}
+                                {{
+                                    $store.state.isMirrorFundsPending
+                                        ? 'Fetching nodes info...'
+                                        : $t('staking.delegate_card.submit')
+                                }}
                             </v-btn>
                         </div>
                     </div>

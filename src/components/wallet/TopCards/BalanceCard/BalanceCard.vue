@@ -210,7 +210,7 @@ export default class BalanceCard extends Vue {
     @Watch('refresh')
     async mirrorFunds() {
         try {
-            const mirrorFundsData = await fetchMirrorFunds(this.ctx)
+            const mirrorFundsData = await fetchMirrorFunds(this.ctx, this.$store)
             console.log('Mirror Funds Data', mirrorFundsData)
             // Handle the data as needed, e.g., update component data or state
             this.totalMirrorAmount = parseFloat(
@@ -239,6 +239,7 @@ export default class BalanceCard extends Vue {
     }
 
     updateBalance(): void {
+        this.$store.commit('updateMirrorFundsPending', true)
         this.$store.dispatch('Assets/updateUTXOs')
         this.$store.dispatch('History/updateTransactionHistory')
     }

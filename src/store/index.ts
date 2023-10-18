@@ -64,6 +64,7 @@ export default new Vuex.Store({
             usd: 0,
         },
         isRegistered: false,
+        isMirrorFundsPending: false,
     },
     getters: {
         addresses(state: RootState): string[] {
@@ -93,6 +94,9 @@ export default new Vuex.Store({
                 // Update the websocket addresses
                 updateFilterAddresses()
             }
+        },
+        updateMirrorFundsPending(state, val) {
+            state.isMirrorFundsPending = val
         },
     },
     actions: {

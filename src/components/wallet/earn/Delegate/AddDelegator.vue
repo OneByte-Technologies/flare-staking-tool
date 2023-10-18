@@ -292,8 +292,8 @@ export default class AddDelegator extends Vue {
         this.isLoading = true
         this.err = ''
 
-        // Start delegation in 30 seconds
-        let startDate = new Date(Date.now() + 0.5 * MIN_MS)
+        // Start delegation in 5 seconds
+        let startDate = new Date(Date.now() + (MIN_MS / 60) * 5)
 
         try {
             this.isLoading = false
@@ -326,6 +326,7 @@ export default class AddDelegator extends Vue {
         })
 
         // Update History
+        this.$store.commit('updateMirrorFundsPending', true)
         setTimeout(() => {
             this.$store.dispatch('Assets/updateUTXOs')
             this.$store.dispatch('History/updateTransactionHistory')
@@ -355,6 +356,7 @@ export default class AddDelegator extends Vue {
 
     async updateTxStatus(txId: string) {
         let res = await pChain.getTxStatus(txId)
+        console.log('res', res)
         let status
         let reason = null
         if (typeof res === 'string') {
@@ -367,7 +369,7 @@ export default class AddDelegator extends Vue {
         if (!status || status === 'Processing' || status === 'Unknown') {
             setTimeout(() => {
                 this.updateTxStatus(txId)
-            }, 5000)
+            }, 6000)
         } else {
             this.txStatus = status
             this.txReason = reason
