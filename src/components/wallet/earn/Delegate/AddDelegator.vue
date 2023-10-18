@@ -356,7 +356,6 @@ export default class AddDelegator extends Vue {
 
     async updateTxStatus(txId: string) {
         let res = await pChain.getTxStatus(txId)
-        console.log('res', res)
         let status
         let reason = null
         if (typeof res === 'string') {
@@ -369,7 +368,7 @@ export default class AddDelegator extends Vue {
         if (!status || status === 'Processing' || status === 'Unknown') {
             setTimeout(() => {
                 this.updateTxStatus(txId)
-            }, 6000)
+            }, 5000)
         } else {
             this.txStatus = status
             this.txReason = reason
