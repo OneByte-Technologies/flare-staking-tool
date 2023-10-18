@@ -7,14 +7,16 @@
             @change="applyFilter"
             :validators="validators"
         ></FilterSettings>
+        <div class="icon-info" v-if="delegationCount > 0">
+            <div class="dot"></div>
+            <div class="text">Currently delegated nodes</div>
+        </div>
         <div class="table_cont">
             <table>
                 <thead>
                     <tr class="header_tr">
-                        <th display="inline-flex">
+                        <th>
                             {{ $t('staking.delegate.list.id') }}
-                            <span class="dot"></span>
-                            <span class="text">Currently delegated nodes</span>
                         </th>
                         <th style="text-align: right">
                             {{ $t('staking.delegate.list.val_stake') }}
@@ -42,7 +44,7 @@
                         :key="v.nodeID"
                         :validator="v"
                         @select="onselect"
-                        :canDelegate="canDelegate(v.nodeID)"
+                        :canDelegate="delegationCount < 3"
                     ></ValidatorRow>
                 </tbody>
             </table>
@@ -114,19 +116,16 @@ export default class ValidatorsList extends Vue {
         return list
     }
 
+    get delegationCount() {
+        return getNodes().length
+    }
+
     get validatorsFiltered(): ValidatorListItem[] {
         return filterValidatorList(this.validators, this.filter)
     }
 
     onselect(val: ValidatorListItem) {
         this.$emit('select', val)
-    }
-
-    canDelegate(nodeId: string) {
-        const delCount = getNodes().length
-        console.log('Del COUNT', delCount, 'Node Id', nodeId)
-        if (delCount < 3 || getNodes().includes(nodeId)) return true
-        return false
     }
 }
 </script>
@@ -145,14 +144,14 @@ table {
     width: 100%;
     border-collapse: collapse;
 }
-tr {
-}
+
 th {
     position: sticky;
-    top: 0;
+    top: -1px;
     padding: 2px 14px;
     font-size: 14px;
     background-color: var(--bg-wallet-light);
+    z-index: 1;
 }
 
 .empty_list {
@@ -168,17 +167,22 @@ th {
     left: 0;
     z-index: 2;
 }
+
+.icon-info {
+    display: flex;
+    align-items: center;
+}
+
 .dot {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    display: inline-flex;
     margin-right: 4px;
-    margin-left: 16px;
-    background-color: lightgreen;
+    background-color: limegreen;
 }
 
 .text {
     font-weight: normal;
+    font-size: 12px;
 }
 </style>

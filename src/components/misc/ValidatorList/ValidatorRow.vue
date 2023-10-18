@@ -1,32 +1,25 @@
 <template>
     <tr class="validator_row">
         <td class="id">
-            {{ validator.nodeID }}
-            <span v-if="isDelegated" class="dot"></span>
+            <div>
+                <span style="display: inline-block">{{ validator.nodeID }}</span>
+                <span v-if="isDelegated" class="dot"></span>
+            </div>
         </td>
         <td class="amount">{{ amtText }}</td>
         <td class="amount">{{ remainingAmtText }}</td>
         <td style="text-align: center">{{ numDelegators }}</td>
         <td>{{ remainingTimeText }}</td>
         <!-- <td>{{ feeText }}%</td> -->
-        <td>
-            <button
-                :class="[
-                    'button_secondary',
-                    {
-                        'disabled-button': !canDelegate,
-                    },
-                ]"
-                @click="select"
-            >
-                Select
-            </button>
+        <td class="action" v-if="canDelegate || isDelegated">
+            <button class="button_secondary" @click="select">Select</button>
+        </td>
+        <td class="action" v-else>
             <Tooltip
-                v-if="!canDelegate"
                 style="display: inline-block; margin-left: 4px"
                 text="You can only delegate to three unique nodes at once"
             >
-                <fa icon="question-circle"></fa>
+                <fa icon="lock"></fa>
             </Tooltip>
         </td>
     </tr>
@@ -100,8 +93,8 @@ export default class ValidatorsList extends Vue {
     }
 
     get isDelegated() {
-        if (getNodes().length < 3 || getNodes().includes(this.validator.nodeID)) return true
-        return false
+        const nodes = getNodes()
+        return nodes.includes(this.validator.nodeID)
     }
 }
 </script>
@@ -119,19 +112,18 @@ button {
     border-radius: 3px;
 }
 
-.disabled-button {
-    opacity: 0.3;
-    pointer-events: none;
+.id {
+    // word-break: break-all;
+    position: relative;
 }
 
-.id {
-    word-break: break-all;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.action {
+    text-align: center;
+    min-height: 34.5px;
 }
+
 td {
-    padding: 4px 14px;
+    padding: 4px 12px;
     background-color: var(--bg-light);
     border: 1px solid var(--bg);
     font-size: 13px;
@@ -141,7 +133,11 @@ td {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: lightgreen;
+    background-color: limegreen;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 @include main.medium-device {
