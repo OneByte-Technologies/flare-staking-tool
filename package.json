@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "flare-staking-tool",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "scripts": {
         "build": "vue-cli-service build",
         "build:dev": "vue-cli-service build --fix --mode development",
