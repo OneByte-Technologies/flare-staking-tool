@@ -1,4 +1,5 @@
 import { Context } from './Interfaces'
+import { Store } from 'vuex'
 import { ethers } from 'ethers'
 import {
     pChainStakeMirror,
@@ -73,7 +74,8 @@ const getTotalFromDelegation = (data: DelegatedAmount[]) => {
  * @param ctx - context
  * @returns - total mirror funds and funds with start and end time
  */
-export async function fetchMirrorFunds(ctx: Context) {
+export async function fetchMirrorFunds(ctx: Context, store: Store<any>) {
+    store.commit('updateMirrorFundsPending', true)
     delegationCount = 0
     // fetch from the contract
     const rpcUrl = getIp()
@@ -92,6 +94,7 @@ export async function fetchMirrorFunds(ctx: Context) {
     const currentAmt = getTotalFromDelegation(delegationToCurrentValidator)
     const totalDelegatedAmount = currentAmt
     const totalInFLR = parseFloat(totalDelegatedAmount.toString())
+    store.commit('updateMirrorFundsPending', false)
     return {
         'Total Mirrored Amount': `${totalInFLR} FLR`,
         'Mirror Funds Details': {

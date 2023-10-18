@@ -171,6 +171,7 @@ th {
 .icon-info {
     display: flex;
     align-items: center;
+    margin-bottom: 8px;
 }
 
 .dot {
