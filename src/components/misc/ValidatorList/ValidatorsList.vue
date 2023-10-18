@@ -7,11 +7,17 @@
             @change="applyFilter"
             :validators="validators"
         ></FilterSettings>
+        <div class="icon-info" v-if="delegationCount > 0">
+            <div class="dot"></div>
+            <div class="text">Currently delegated nodes</div>
+        </div>
         <div class="table_cont">
             <table>
                 <thead>
                     <tr class="header_tr">
-                        <th>{{ $t('staking.delegate.list.id') }}</th>
+                        <th>
+                            {{ $t('staking.delegate.list.id') }}
+                        </th>
                         <th style="text-align: right">
                             {{ $t('staking.delegate.list.val_stake') }}
                         </th>
@@ -38,6 +44,7 @@
                         :key="v.nodeID"
                         :validator="v"
                         @select="onselect"
+                        :canDelegate="delegationCount < 3"
                     ></ValidatorRow>
                 </tbody>
             </table>
@@ -61,6 +68,7 @@ import Tooltip from '@/components/misc/Tooltip.vue'
 import { ValidatorListItem } from '@/store/modules/platform/types'
 import { ValidatorListFilter } from '@/components/wallet/earn/Delegate/types'
 import { filterValidatorList } from '@/components/wallet/earn/Delegate/helper'
+import { getNodes } from '@/views/wallet/FlareContract'
 
 @Component({
     components: { Tooltip, ValidatorRow, FilterSettings },
@@ -108,6 +116,10 @@ export default class ValidatorsList extends Vue {
         return list
     }
 
+    get delegationCount() {
+        return getNodes().length
+    }
+
     get validatorsFiltered(): ValidatorListItem[] {
         return filterValidatorList(this.validators, this.filter)
     }
@@ -132,14 +144,14 @@ table {
     width: 100%;
     border-collapse: collapse;
 }
-tr {
-}
+
 th {
     position: sticky;
-    top: 0;
+    top: -1px;
     padding: 2px 14px;
     font-size: 14px;
     background-color: var(--bg-wallet-light);
+    z-index: 1;
 }
 
 .empty_list {
@@ -154,5 +166,23 @@ th {
     top: 0;
     left: 0;
     z-index: 2;
+}
+
+.icon-info {
+    display: flex;
+    align-items: center;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    background-color: limegreen;
+}
+
+.text {
+    font-weight: normal;
+    font-size: 12px;
 }
 </style>

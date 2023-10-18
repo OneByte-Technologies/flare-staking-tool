@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-tooltip bottom>
+        <v-tooltip bottom class="custom-tooltip">
             <template v-slot:activator="{ on, attrs }">
                 <button v-bind="attrs" v-on="on">
                     <slot></slot>
@@ -17,3 +17,8 @@ export default {
     },
 }
 </script>
+<style scoped lang="scss">
+.v-tooltip__content {
+    background-color: #1f1f1f;
+}
+</style>
