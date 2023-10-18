@@ -83,10 +83,15 @@
                                 class="button_secondary"
                                 data-cy="delegate"
                                 @click="addDelegator"
+                                :disabled="$store.state.isMirrorFundsPending"
                                 depressed
                                 small
                             >
-                                {{ $t('staking.delegate_card.submit') }}
+                                {{
+                                    $store.state.isMirrorFundsPending
+                                        ? 'Fetching nodes info...'
+                                        : $t('staking.delegate_card.submit')
+                                }}
                             </v-btn>
                         </div>
                     </div>
@@ -406,6 +411,11 @@ span {
 }
 
 @include main.mobile-device {
+    .header {
+        h1 {
+            font-size: 24px;
+        }
+    }
     .options {
         grid-template-columns: none;
         grid-row-gap: 15px;

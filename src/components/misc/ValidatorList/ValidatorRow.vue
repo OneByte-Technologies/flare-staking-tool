@@ -37,13 +37,9 @@ import Tooltip from '@/components/misc/Tooltip.vue'
 @Component({
     components: { Tooltip },
 })
-export default class ValidatorsList extends Vue {
+export default class ValidatorsRow extends Vue {
     @Prop() validator!: ValidatorListItem
     @Prop(Boolean) canDelegate!: boolean
-
-    mounted() {
-        console.log('Validator', this.validator, 'Can Delegate', this.canDelegate)
-    }
 
     get remainingMs(): number {
         let end = this.validator.endTime

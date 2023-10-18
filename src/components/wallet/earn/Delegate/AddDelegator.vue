@@ -292,8 +292,8 @@ export default class AddDelegator extends Vue {
         this.isLoading = true
         this.err = ''
 
-        // Start delegation in 30 seconds
-        let startDate = new Date(Date.now() + 0.5 * MIN_MS)
+        // Start delegation in 5 seconds
+        let startDate = new Date(Date.now() + (MIN_MS / 60) * 5)
 
         try {
             this.isLoading = false
@@ -326,6 +326,7 @@ export default class AddDelegator extends Vue {
         })
 
         // Update History
+        this.$store.commit('updateMirrorFundsPending', true)
         setTimeout(() => {
             this.$store.dispatch('Assets/updateUTXOs')
             this.$store.dispatch('History/updateTransactionHistory')

@@ -2,15 +2,16 @@
     <div class="main_panel">
         <ConfirmLogout ref="logout"></ConfirmLogout>
         <div class="panel_nav">
+            <Tooltip text="Close right sidebar" class="hover_but close_icon">
+                <fa size="lg" icon="times" @click="closeMainPanel"></fa>
+            </Tooltip>
             <DayNightToggle class="hover_but"></DayNightToggle>
             <network-menu class="net_menu"></network-menu>
             <button @click="logout" class="logout">
                 {{ $t('logout.button') }}
             </button>
         </div>
-        <transition name="fade" mode="out-in">
-            <transaction-history-panel class="panel_content"></transaction-history-panel>
-        </transition>
+        <transaction-history-panel class="panel_content"></transaction-history-panel>
     </div>
 </template>
 <script>
@@ -18,6 +19,7 @@ import NetworkMenu from '../NetworkSettings/NetworkMenu'
 import TransactionHistoryPanel from './TransactionHistoryPanel'
 import DayNightToggle from '@/components/misc/DayNightToggle'
 import ConfirmLogout from '@/components/modals/ConfirmLogout.vue'
+import Tooltip from '@/components/misc/Tooltip.vue'
 
 export default {
     components: {
@@ -25,12 +27,19 @@ export default {
         TransactionHistoryPanel,
         DayNightToggle,
         ConfirmLogout,
+        Tooltip,
+    },
+    props: {
+        onClose: Function,
     },
     methods: {
         logout() {
             // this.$store.dispatch('logout');
             // @ts-ignore
             this.$refs.logout.open()
+        },
+        closeMainPanel() {
+            this.onClose()
         },
     },
 }
@@ -43,14 +52,11 @@ export default {
     grid-template-rows: max-content 1fr;
     row-gap: 6px;
 }
+
 .panel_nav {
     background-color: var(--bg-wallet-light);
-    /*display: flex;*/
-    /*align-items: center;*/
-    /*flex-direction: row;*/
-    display: grid;
-    grid-template-columns: max-content max-content 1fr;
-    /*justify-content: space-between;*/
+    display: flex;
+    align-items: center;
     padding: 24px 16px;
     font-size: 14px;
 
@@ -73,6 +79,10 @@ export default {
     overflow: auto;
     background-color: var(--bg-wallet-light);
     height: 100%;
+}
+
+.close_icon {
+    margin-top: 3px;
 }
 
 .logout {

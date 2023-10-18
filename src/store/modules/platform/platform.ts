@@ -107,10 +107,7 @@ const platform_module: Module<PlatformState, RootState> = {
                 if (v.delegators && v.delegators.length > 0) {
                     for (let y = 0; y < v.delegators.length; y++) {
                         const delegator: Delegators = v.delegators[y]
-                        console.log('DELEGATORS///', delegator)
-
                         const rewardOwner = v.delegators[y].rewardOwner
-                        console.log('////////RewardOwner', rewardOwner)
                         delegatedAmt = delegatedAmt.add(new BN(delegator.stakeAmount))
                     }
                 }
