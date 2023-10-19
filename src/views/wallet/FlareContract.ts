@@ -139,7 +139,16 @@ const getIp = () => {
 
 export function getNodes() {
     const pendingDelegators = getPendingDelegators()
-    return nodes.concat(pendingDelegators)
+
+    // Combine nodes and pendingDelegators
+    const combinedNodes = nodes.concat(pendingDelegators)
+
+    // Filter to keep unique values
+    const uniqueNodes = combinedNodes.filter((value, index, self) => {
+        return self.indexOf(value) === index
+    })
+
+    return uniqueNodes.slice(0,3)
 }
 
 function populateNodesData(delegationInfo: DelegatedAmount[]) {
