@@ -8,6 +8,7 @@ import {
     defaultContractAddresses,
 } from './FlareContractConstants'
 import { integerToDecimal } from './utils'
+import { getPendingDelegators } from '@/helpers/pendingDelegatorHelper'
 import { ava } from '@/AVA'
 
 type DelegatedAmount = {
@@ -17,7 +18,6 @@ type DelegatedAmount = {
     endTime: Date
 }
 
-let delegationCount: number
 const nodes: string[] = []
 
 ////////// MIRROR FUND /////////
@@ -31,7 +31,6 @@ const fetchValidatorInfo = async (ctx: Context) => {
 const fetchDelegateStake = async (ctx: Context, validatorFunction: (ctx: Context) => {}) => {
     const validatorsInfo = await validatorFunction(ctx)
     const validatorData = (validatorsInfo as any)?.validators
-    delegationCount = 0
     const userStake = []
     for (let i = 0; i < validatorData.length; i++) {
         for (
@@ -76,7 +75,6 @@ const getTotalFromDelegation = (data: DelegatedAmount[]) => {
  */
 export async function fetchMirrorFunds(ctx: Context, store: Store<any>) {
     store.commit('updateMirrorFundsPending', true)
-    delegationCount = 0
     // fetch from the contract
     const rpcUrl = getIp()
     const pChainStakeMirrorContractAddress = await getContractAddress(
@@ -90,7 +88,8 @@ export async function fetchMirrorFunds(ctx: Context, store: Store<any>) {
     const stakedAmountInFLR = parseFloat(integerToDecimal(stakedAmount.toString(), 18))
     // fetch for the chain
     const delegationToCurrentValidator = await fetchDelegateStake(ctx, fetchValidatorInfo)
-    allowedNode(delegationToCurrentValidator)
+    populateNodesData(delegationToCurrentValidator)
+    const nodes = getNodes()
     const currentAmt = getTotalFromDelegation(delegationToCurrentValidator)
     const totalDelegatedAmount = currentAmt
     const totalInFLR = parseFloat(totalDelegatedAmount.toString())
@@ -100,7 +99,7 @@ export async function fetchMirrorFunds(ctx: Context, store: Store<any>) {
         'Mirror Funds Details': {
             ...delegationToCurrentValidator,
         },
-        'Delegation Count': delegationCount,
+        'Delegation Count': nodes.length,
         'Total Current Amount': currentAmt,
     }
 }
@@ -138,20 +137,16 @@ const getIp = () => {
     return rpcUrl
 }
 
-export function getDelCount() {
-    return delegationCount
-}
-
 export function getNodes() {
-    return nodes
+    const pendingDelegators = getPendingDelegators()
+    return nodes.concat(pendingDelegators)
 }
 
-async function allowedNode(delegationInfo: DelegatedAmount[]) {
+function populateNodesData(delegationInfo: DelegatedAmount[]) {
     delegationInfo.forEach((info) => {
         if (!nodes.includes(info.nodeId)) {
             nodes.push(info.nodeId)
         }
     })
-    delegationCount = nodes.length
     return nodes
 }
