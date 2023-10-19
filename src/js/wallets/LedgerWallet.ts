@@ -496,7 +496,6 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         }[chainId]
 
         const title = `Sign ${parseableTxs[txType]}`
-
         const bip32Paths = this.pathsToUniqueBipPaths(paths)
 
         const accountPath = bippath.fromString(`${this.accountPath}`)
@@ -797,14 +796,14 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
     async signP(unsignedTx: PlatformUnsignedTx): Promise<PlatformTx> {
         const chainId: ChainIdType = 'P'
 
-        const { paths } = this.getTransactionPaths<PlatformUnsignedTx>(unsignedTx, chainId)
-
+        // const { paths } = this.getTransactionPaths<PlatformUnsignedTx>(unsignedTx, chainId)
+        const paths = [this.signPath]
         // We dont know the number of change paths but can assume worst case and use number of signer paths
-        const canSign = this.provider.canParseTx(
-            unsignedTx.toBuffer().length,
-            paths.length,
-            paths.length
-        )
+        // const canSign = this.provider.canParseTx(
+        //     unsignedTx.toBuffer().length,
+        //     paths.length,
+        //     paths.length
+        // )
 
         // let signedTx
         // if (canSign) {
