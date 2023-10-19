@@ -19,7 +19,7 @@ function getPendingDelegators(): string[] {
 
     // Remove old entries
     storedData = storedData.filter((delegator) => {
-        return currentTime - delegator.timestamp <= 60000 // 60000 milliseconds = 1 minute
+        return currentTime - delegator.timestamp <= 45000 // 45000 milliseconds = 45 seconds
     })
 
     // Update the local storage data with the filtered entries
