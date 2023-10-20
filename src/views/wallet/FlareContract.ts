@@ -148,7 +148,7 @@ export function getNodes() {
         return self.indexOf(value) === index
     })
 
-    return uniqueNodes.slice(0,3)
+    return uniqueNodes.slice(0, 3)
 }
 
 function populateNodesData(delegationInfo: DelegatedAmount[]) {
