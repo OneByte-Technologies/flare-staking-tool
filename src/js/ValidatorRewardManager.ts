@@ -10,45 +10,45 @@ const coston2ValidatorRewardManagerAddress = '0x33913AcE907F682E305f36d7538D3cCd
 const coston2ValidatorRewardManagerABI = [
     [
         {
-            "type": "constructor",
-            "stateMutability": "nonpayable",
-            "inputs": [
-              {
-                "type": "address",
-                "name": "_governance",
-                "internalType": "address"
-              },
-              {
-                "type": "address",
-                "name": "_addressUpdater",
-                "internalType": "address"
-              },
-              {
-                "type": "address",
-                "name": "_oldRewardManager",
-                "internalType": "address"
-              }
-            ]
-          },
-          {
-            "type": "event",
-            "name": "AllowedClaimRecipientsChanged",
-            "inputs": [
-              {
-                "type": "address",
-                "name": "rewardOwner",
-                "internalType": "address",
-                "indexed": false
-              },
-              {
-                "type": "address[]",
-                "name": "recipients",
-                "internalType": "address[]",
-                "indexed": false
-              }
+            type: 'constructor',
+            stateMutability: 'nonpayable',
+            inputs: [
+                {
+                    type: 'address',
+                    name: '_governance',
+                    internalType: 'address',
+                },
+                {
+                    type: 'address',
+                    name: '_addressUpdater',
+                    internalType: 'address',
+                },
+                {
+                    type: 'address',
+                    name: '_oldRewardManager',
+                    internalType: 'address',
+                },
             ],
-            "anonymous": false
-          },
+        },
+        {
+            type: 'event',
+            name: 'AllowedClaimRecipientsChanged',
+            inputs: [
+                {
+                    type: 'address',
+                    name: 'rewardOwner',
+                    internalType: 'address',
+                    indexed: false,
+                },
+                {
+                    type: 'address[]',
+                    name: 'recipients',
+                    internalType: 'address[]',
+                    indexed: false,
+                },
+            ],
+            anonymous: false,
+        },
         {
             type: 'event',
             name: 'ClaimExecutorsChanged',

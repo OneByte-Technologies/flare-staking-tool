@@ -329,7 +329,7 @@ export default class AddDelegator extends Vue {
         this.$store.commit('updateMirrorFundsPending', true)
         this.$store.dispatch('Assets/updateUTXOs')
         this.$store.dispatch('History/updateTransactionHistory')
-        
+
         // Fetch funds again so that pending delegator moves to current delegators list
         setTimeout(() => {
             this.$store.dispatch('Assets/updateUTXOs')
