@@ -367,7 +367,7 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
             const cred: Credential = CredentialClass(items[i].getInput().getCredentialID())
 
             for (let j = 0; j < sigidxs.length; j++) {
-                const pathIndex = i + j
+                const pathIndex = 0
                 const pathStr = paths[pathIndex]
 
                 const sigRaw = sigMap.get(pathStr)
@@ -496,7 +496,6 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         }[chainId]
 
         const title = `Sign ${parseableTxs[txType]}`
-
         const bip32Paths = this.pathsToUniqueBipPaths(paths)
 
         const accountPath = bippath.fromString(`${this.accountPath}`)
@@ -800,11 +799,11 @@ class LedgerWallet extends AbstractHdWallet implements AvaWalletCore {
         const { paths } = this.getTransactionPaths<PlatformUnsignedTx>(unsignedTx, chainId)
 
         // We dont know the number of change paths but can assume worst case and use number of signer paths
-        const canSign = this.provider.canParseTx(
-            unsignedTx.toBuffer().length,
-            paths.length,
-            paths.length
-        )
+        // const canSign = this.provider.canParseTx(
+        //     unsignedTx.toBuffer().length,
+        //     paths.length,
+        //     paths.length
+        // )
 
         // let signedTx
         // if (canSign) {
