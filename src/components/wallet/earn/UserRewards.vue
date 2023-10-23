@@ -92,6 +92,7 @@ import {
 } from '@/views/wallet/FlareContractConstants'
 import AvaxInput from '@/components/misc/AvaxInput.vue'
 import RadioButtons from '@/components/misc/RadioButtons.vue'
+import { TestnetConfig, MainnetConfig } from '@/store/modules/network/constants'
 
 @Component({
     components: {
@@ -275,13 +276,14 @@ export default class UserRewards extends Vue {
     getIp() {
         let ip = ''
         if (ava.getHRP() === 'costwo') {
-            ip = 'coston2'
+            ip = TestnetConfig.url
         } else if (ava.getHRP() === 'flare') {
-            ip = 'flare'
+            ip = MainnetConfig.url
         }
-        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        const rpcUrl: string = `${ip}/ext/C/rpc`
         return rpcUrl
     }
+
     get symbol() {
         let symbol = ''
         if (ava.getNetworkID() === 2) {

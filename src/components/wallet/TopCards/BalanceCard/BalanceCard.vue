@@ -144,6 +144,7 @@ import { bech32 } from 'bech32'
 import { fetchMirrorFunds } from '@/views/wallet/FlareContract'
 import { ava, pChain, cChain } from '@/AVA'
 import { Context } from '@/views/wallet/Interfaces'
+import { TestnetConfig, MainnetConfig } from '@/store/modules/network/constants'
 @Component({
     components: {
         UtxosBreakdownModal,
@@ -230,11 +231,11 @@ export default class BalanceCard extends Vue {
     getIp() {
         let ip = ''
         if (ava.getHRP() === 'costwo') {
-            ip = 'coston2'
+            ip = TestnetConfig.url
         } else if (ava.getHRP() === 'flare') {
-            ip = 'flare'
+            ip = MainnetConfig.url
         }
-        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        const rpcUrl: string = `${ip}/ext/C/rpc`
         return rpcUrl
     }
 

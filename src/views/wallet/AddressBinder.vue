@@ -112,6 +112,7 @@ import { bech32 } from 'bech32'
 import { ava } from '@/AVA'
 import Tooltip from '@/components/misc/Tooltip.vue'
 import { BN } from 'avalanche'
+import { TestnetConfig, MainnetConfig } from '@/store/modules/network/constants'
 
 @Component({
     components: { Tooltip },
@@ -288,11 +289,11 @@ export default class AddressBinder extends Vue {
     getIp() {
         let ip = ''
         if (ava.getHRP() === 'costwo') {
-            ip = 'coston2'
+            ip = TestnetConfig.url
         } else if (ava.getHRP() === 'flare') {
-            ip = 'flare'
+            ip = MainnetConfig.url
         }
-        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+        const rpcUrl: string = `${ip}/ext/C/rpc`
         return rpcUrl
     }
 
