@@ -10,6 +10,7 @@ import {
 import { integerToDecimal } from './utils'
 import { getPendingDelegators } from '@/helpers/pendingDelegatorHelper'
 import { ava } from '@/AVA'
+import { TestnetConfig, MainnetConfig } from '@/store/modules/network/constants'
 
 type DelegatedAmount = {
     nodeId: string
@@ -24,6 +25,7 @@ const nodes: string[] = []
 // fetches current validator info
 const fetchValidatorInfo = async (ctx: Context) => {
     const validator = await ctx.pchain.getCurrentValidators()
+    console.log('Validators', validator)
     return validator
 }
 
@@ -129,11 +131,11 @@ export async function getContractAddress(network: string, contractName: string):
 const getIp = () => {
     let ip = ''
     if (ava.getHRP() === 'costwo') {
-        ip = 'coston2'
+        ip = TestnetConfig.url
     } else if (ava.getHRP() === 'flare') {
-        ip = 'flare'
+        ip = MainnetConfig.url
     }
-    const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
+    const rpcUrl: string = `${ip}/ext/C/rpc`
     return rpcUrl
 }
 

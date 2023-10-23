@@ -227,17 +227,6 @@ export default class Earn extends Vue {
         clearInterval(this.intervalID)
     }
 
-    getIp() {
-        let ip = ''
-        if (ava.getHRP() === 'costwo') {
-            ip = 'coston2'
-        } else if (ava.getHRP() === 'flare') {
-            ip = 'flare'
-        }
-        const rpcUrl: string = `https://${ip}-api.flare.network/ext/C/rpc`
-        return rpcUrl
-    }
-
     get platformUnlocked(): BN {
         return this.$store.getters['Assets/walletPlatformBalance'].available
     }
